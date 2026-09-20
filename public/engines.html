@@ -239,14 +239,24 @@ body.pupil.hundred-engine #diagram{min-height:355px}.pupil .hundred-workspace h3
 .strict-money-one{clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);background:linear-gradient(135deg,#fff2a8,#e5b732);border:0}.strict-money-cent{border-radius:50%;border:2px solid #477d75;background:linear-gradient(135deg,#c6f5ff,#55bde0)}.strict-money-cent::before{content:"";position:absolute;inset:3px;border:1px solid #ffffffcc;border-radius:50%}.strict-money-c5{background:linear-gradient(135deg,#c8f8d2,#58bf78)}
 .moved-token{outline:3px solid #2f9d62;outline-offset:1px;animation:money-arrive .65s ease both}.renamed-token{outline:3px solid #d93683;outline-offset:1px;animation:money-pop .75s ease both}.exchange-token{z-index:4;animation:money-exchange 1.25s ease forwards}.exchange-token::after{content:"";position:absolute;inset:-3px;border:3px solid #d93683;border-radius:inherit}.borrowed-token,.removed-token{z-index:5;animation:money-remove 1.05s ease forwards}.borrowed-token::after,.removed-token::after{content:"×";position:absolute;inset:0;display:grid;place-items:center;color:#c52735;font-size:29px;font-weight:900;z-index:5;text-shadow:0 0 2px #fff}.borrowed-token{animation-name:money-borrow-away}
 @keyframes money-arrive{0%{opacity:.25;transform:translateY(30px) scale(.8)}100%{opacity:1;transform:none}}@keyframes money-pop{0%{opacity:0;transform:scale(.3)}70%{transform:scale(1.16)}100%{opacity:1;transform:scale(1)}}@keyframes money-exchange{0%,42%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.35)}}@keyframes money-remove{0%,48%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.35)}}@keyframes money-borrow-away{0%,38%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateX(28px) scale(.35)}}
-@media(prefers-reduced-motion:reduce){.moved-token,.renamed-token,.exchange-token,.borrowed-token,.removed-token{animation:none}.exchange-token,.borrowed-token,.removed-token{opacity:.35}}
-.strict-money-process{min-height:31px;margin:5px 0 0;padding:4px 7px;border:1px solid #b8cfbb;border-radius:7px;background:#f4faf2;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;text-align:center;font-size:10px;line-height:1.15;color:#355446}.strict-money-process b{color:#176a47}.strict-money-process b+span,.strict-money-process span+b{border-left:1px solid #9db7a2;padding-left:6px}.strict-money-process[data-transition="regroup"],.strict-money-process[data-transition="borrow"]{background:#fff3f8;border-color:#e3a9c4}.strict-money-process[data-transition="regroup"] b,.strict-money-process[data-transition="borrow"] b{color:#a52d67}.strict-money-process.ready{border-style:dashed;background:#fff}.strict-money-status{margin:3px 0 0;text-align:center;min-height:17px;font-size:11px;font-weight:800;color:#2b5948}
+.strict-money-mat{--money-row-travel:135px;--money-col-travel:clamp(70px,9vw,145px)}
+.money-move-up-token{z-index:7;outline:4px solid #2f9d62;outline-offset:2px;animation:money-move-up 1.8s cubic-bezier(.2,.75,.2,1) both}.money-group-token{z-index:7;outline:4px solid #e43886;outline-offset:2px;animation:money-group-hold 2.1s ease-in-out both}.money-carry-token{z-index:7;outline:4px solid #e43886;outline-offset:2px;animation:money-carry-left 1.8s cubic-bezier(.2,.75,.2,1) both}.money-record-token{z-index:7;outline:4px solid #2f9d62;outline-offset:2px;animation:money-record 1s ease both}.money-donor-token{z-index:7;outline:4px solid #e43886;outline-offset:2px;animation:money-donor-hold 1.8s ease-in-out both}.money-donor-token::after{content:"×";position:absolute;inset:0;display:grid;place-items:center;color:#c52735;font-size:34px;font-weight:900;text-shadow:0 0 3px #fff}.money-borrow-ghost{animation:money-borrow-slow 2.2s ease forwards!important}.money-borrow-new-token{z-index:7;outline:4px solid #e43886;outline-offset:2px;animation:money-borrow-right 2.2s cubic-bezier(.2,.75,.2,1) both}.money-remove-slow-token{animation:money-remove-slow 2s ease forwards!important}
+@keyframes money-move-up{0%{opacity:.35;transform:translateY(var(--money-row-travel)) scale(.9)}28%{opacity:1}82%{transform:translateY(0) scale(1.08)}100%{transform:none}}
+@keyframes money-group-hold{0%,100%{outline-color:#e43886;filter:drop-shadow(0 2px 1px #183c3533)}45%,75%{outline-color:#f2a900;filter:drop-shadow(0 0 8px #f2a900)}}
+@keyframes money-carry-left{0%{opacity:.25;transform:translateX(var(--money-col-travel)) scale(.55)}25%{opacity:1}82%{transform:translateX(0) scale(1.12)}100%{transform:none}}
+@keyframes money-donor-hold{0%,100%{transform:scale(1)}48%,75%{transform:scale(1.16);filter:drop-shadow(0 0 8px #e43886)}}
+@keyframes money-borrow-slow{0%,30%{opacity:1;transform:none}65%{opacity:.9;transform:translateX(calc(var(--money-col-travel) * .55)) scale(.75)}100%{opacity:0;transform:translateX(var(--money-col-travel)) scale(.35)}}
+@keyframes money-borrow-right{0%{opacity:.15;transform:translateX(calc(var(--money-col-travel) * -1)) scale(.55)}28%{opacity:1}82%{transform:translateX(0) scale(1.08)}100%{transform:none}}
+@keyframes money-remove-slow{0%,38%{opacity:1;transform:scale(1)}62%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:translateY(-34px) scale(.35)}}
+@keyframes money-record{0%{transform:scale(.78);filter:brightness(1)}55%{transform:scale(1.15);filter:brightness(1.18)}100%{transform:none}}
+@media(prefers-reduced-motion:reduce){.moved-token,.renamed-token,.exchange-token,.borrowed-token,.removed-token,.money-move-up-token,.money-group-token,.money-carry-token,.money-record-token,.money-donor-token,.money-borrow-new-token{animation:none}.exchange-token,.borrowed-token,.removed-token{opacity:.35}}
+.strict-money-process{min-height:31px;margin:5px 0 0;padding:4px 7px;border:1px solid #b8cfbb;border-radius:7px;background:#f4faf2;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;text-align:center;font-size:10px;line-height:1.15;color:#355446}.strict-money-process b{color:#176a47}.strict-money-process b+span,.strict-money-process span+b{border-left:1px solid #9db7a2;padding-left:6px}.strict-money-process[data-transition="regroup"],.strict-money-process[data-transition="borrow"],.strict-money-process.watching{background:#fff3f8;border-color:#e3a9c4}.strict-money-process[data-transition="regroup"] b,.strict-money-process[data-transition="borrow"] b,.strict-money-process.watching b{color:#a52d67}.strict-money-process.ready{border-style:dashed;background:#fff}.strict-money-process.watching{animation:money-watch-pulse 1.2s ease-in-out infinite}.strict-money-status{margin:3px 0 0;text-align:center;min-height:17px;font-size:11px;font-weight:800;color:#2b5948}@keyframes money-watch-pulse{50%{box-shadow:0 0 0 4px #eb4f9920}}
 .strict-money-algorithm{width:100%;max-width:370px;margin:0 auto;border:1px solid #b9cdb8;border-radius:9px;background:#fff;padding:7px 9px 9px;font-variant-numeric:tabular-nums}
 .strict-money-algo-bands{display:grid;grid-template-columns:3fr 2fr;margin-left:46px;padding-right:2px}.strict-money-algo-bands b{text-align:center;font-size:11px;background:#e6f3fb;border-radius:5px 0 0 5px;padding:2px}.strict-money-algo-bands b+ b{background:#fff0c8;border-radius:0 5px 5px 0}
 .strict-money-place-head,.strict-money-algo-row{display:grid;grid-template-columns:24px 18px repeat(3,minmax(31px,1fr)) 11px repeat(2,minmax(31px,1fr));gap:2px;align-items:center;text-align:center}.strict-money-place-head{font-size:9px;color:#617466;min-height:20px}.strict-money-place-head span{white-space:nowrap}.strict-money-algo-row{min-height:33px;font-size:23px;line-height:1}.strict-money-algo-row i{font-style:normal;font-weight:900}.strict-money-dollar,.strict-money-decimal{font-size:23px}.strict-money-decimal{align-self:end;line-height:1.1}
 .strict-money-algo-cell{min-width:0;height:29px;display:grid;place-items:center;border-radius:4px;font-weight:800}.strict-money-carry-row,.strict-money-rename-row{min-height:25px;font-size:15px;color:#b22d68}.strict-money-carry-row .strict-money-algo-cell,.strict-money-rename-row .strict-money-algo-cell{height:23px}.strict-money-carry-row .strict-money-dollar,.strict-money-carry-row .strict-money-decimal{visibility:hidden}.strict-money-rename-row .strict-money-dollar,.strict-money-rename-row .strict-money-decimal{color:#b22d68;font-size:15px}
 .strict-money-algo-cell.active{outline:2px dashed #eb4f99;outline-offset:-1px;background:#fff2f8}.strict-money-algo-cell.crossed-digit{text-decoration:line-through 3px #c52735;color:#735d5d}.strict-money-algo-cell.result-cell{border:2px solid #75aa74;background:#ecf7e8;color:#174e3c}.strict-money-rule{border-top:3px solid #183c35;margin:2px 0 2px 42px}
-.strict-money-step-card{width:100%;max-width:370px;min-height:103px;margin:0 auto;border:1px solid #edb6ce;border-left:5px solid #eb4f99;border-radius:8px;background:#fff7fb;padding:7px 10px}.strict-money-step-card>span{display:block;font-size:9px;letter-spacing:.8px;color:#a52d67;font-weight:900}.strict-money-step-card strong{display:block;font-size:14px;margin:2px 0}.strict-money-step-equation{min-height:29px;margin:4px 0;padding:4px 8px;border:1px solid #d8b0c3;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}.strict-money-step-equation b{min-width:25px;height:22px;display:grid;place-items:center;border-radius:5px;background:#f8d9e8;color:#9b245b}.strict-money-step-equation.borrow b,.strict-money-step-card.complete .strict-money-step-equation b{background:#dff1dd;color:#28713d}.strict-money-step-card p{font-size:11px;line-height:1.25;margin:3px 0;color:#4e6457}.strict-money-step-card.complete{border-color:#97c39a;border-left-color:#459050;background:#f0faee}.strict-money-step-card.complete>span{color:#357741}
+.strict-money-step-card{width:100%;max-width:370px;min-height:103px;margin:0 auto;border:1px solid #edb6ce;border-left:5px solid #eb4f99;border-radius:8px;background:#fff7fb;padding:7px 10px}.strict-money-step-card>span{display:block;font-size:9px;letter-spacing:.8px;color:#a52d67;font-weight:900}.strict-money-step-card strong{display:block;font-size:14px;margin:2px 0}.strict-money-step-equation{min-height:29px;margin:4px 0;padding:4px 8px;border:1px solid #d8b0c3;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}.strict-money-step-equation b{min-width:25px;height:22px;display:grid;place-items:center;border-radius:5px;background:#f8d9e8;color:#9b245b}.strict-money-step-equation.borrow b,.strict-money-step-card.complete .strict-money-step-equation b{background:#dff1dd;color:#28713d}.strict-money-step-card p{font-size:11px;line-height:1.25;margin:3px 0;color:#4e6457}.strict-money-step-card.complete{border-color:#97c39a;border-left-color:#459050;background:#f0faee}.strict-money-step-card.complete>span{color:#357741}.strict-money-step-card.watching{background:#fff7fb;box-shadow:0 0 0 3px #eb4f9922}.strict-money-step-equation.watch-copy{justify-content:flex-start;line-height:1.25}.strict-money-watch-progress{display:flex;align-items:flex-start;justify-content:center;gap:5px;margin-top:7px}.strict-money-watch-progress>span{width:30px;height:30px;border:2px solid #c7d4c5;border-radius:50%;display:grid;place-items:center;background:#fff;color:#607263;font-size:12px;font-weight:900;position:relative}.strict-money-watch-progress>span b{position:absolute;top:31px;font-size:8px;white-space:nowrap;color:#607263}.strict-money-watch-progress>span.current{background:#e43886;border-color:#a52d67;color:#fff;transform:scale(1.12)}.strict-money-watch-progress>span.done{background:#459050;border-color:#28713d;color:#fff}.strict-money-watch-progress>span.current b{color:#a52d67}.strict-money-watch-progress>span.done b{color:#28713d}.strict-money-symbolic .diagram-toolbar [data-money-sound][aria-pressed="false"]{color:#6d776f;background:#f0f2ee}
 .pupil .strict-money-workspace{max-width:1120px;margin:auto;grid-template-columns:minmax(500px,1.3fr) minmax(330px,.7fr)}.pupil .strict-money-mat{height:312px}.pupil .strict-money-mat.subtracting{height:270px}.pupil .strict-money-column>strong{font-size:16px}.pupil .strict-money-token{width:39px;height:31px}.pupil .strict-money-note{width:63px;height:29px}.pupil .strict-money-token+ .strict-money-token{margin-bottom:-19px}.pupil .strict-money-token b{font-size:9px}.pupil .strict-money-algo-row{font-size:27px;min-height:37px}.pupil .strict-money-step-card strong{font-size:16px}.pupil .strict-money-step-card p{font-size:14px}
 @media(max-width:820px){.strict-money-workspace{grid-template-columns:minmax(335px,1.1fr) minmax(245px,.9fr);gap:6px}.strict-money-algorithm,.strict-money-step-card{max-width:300px}.strict-money-mat{height:270px}.strict-money-mat.subtracting{height:230px}.strict-money-token{width:30px;height:24px}.strict-money-note{width:47px;height:23px}.strict-money-token+ .strict-money-token{margin-bottom:-15px}.strict-money-token b{font-size:7px}.strict-money-step-card{min-height:82px;padding:6px 8px}.strict-money-step-card strong{font-size:12px}.strict-money-step-card p{font-size:10px}.strict-money-algo-row{font-size:20px}}
 @media(max-width:620px){.money-engine #diagram:has(.strict-money-workspace){min-height:760px;max-height:none;overflow:visible}.strict-money-workspace,.pupil .strict-money-workspace{grid-template-columns:1fr;min-height:720px}.strict-money-mat,.pupil .strict-money-mat{height:320px}.strict-money-mat.subtracting,.pupil .strict-money-mat.subtracting{height:260px}.strict-money-algorithm,.strict-money-step-card{max-width:390px}.strict-money-token{width:38px;height:30px}.strict-money-note{width:62px;height:28px}.strict-money-token+ .strict-money-token{margin-bottom:-18px}.strict-money-token b{font-size:9px}}
@@ -257,6 +267,21 @@ body.pupil.hundred-engine #diagram{min-height:355px}.pupil .hundred-workspace h3
 .pupil.money-engine .activity-bar{padding:8px 16px}.pupil.money-engine .question-block{padding:10px 20px 5px}.pupil.money-engine h2{font-size:clamp(24px,2.35vw,31px);line-height:1.2}.pupil.money-engine #diagram{min-height:245px}.pupil.money-engine #answerForm{padding:7px 20px 5px}.pupil.money-engine #answerFields{margin-bottom:6px}.pupil.money-engine .answer-input{min-height:40px;padding:5px 9px}.pupil .money-conversion-value{font-size:44px}.pupil .money-teaching-step span{font-size:15px}.pupil .money-algorithm-row{font-size:31px}.pupil .money-model-choices button{font-size:15px;min-height:40px}.pupil .money-whole,.pupil .money-parts span{font-size:22px}
 @media(max-height:740px) and (min-width:700px){.money-engine #diagram{min-height:245px;padding:8px}.money-engine .money-board{max-height:145px}.money-coin-art{width:58px;height:58px}.money-coin-ring{width:44px;height:44px}.money-dollar-coin-art{width:61px;height:61px}.money-note-art{width:104px;height:55px}.money-conversion-value{padding:11px}.money-teaching-step{padding:5px 8px}.money-teaching-step span{font-size:12px}.money-algorithm{padding:6px 11px}.money-algorithm-row{font-size:24px}}
 @media(max-width:620px){.money-engine #diagram{min-height:430px;max-height:none;overflow:auto}.money-conversion{grid-template-columns:1fr;gap:7px}.money-conversion-arrow{transform:rotate(90deg);font-size:27px}.money-conversion-value{padding:10px;font-size:31px}.money-teaching-step{grid-template-columns:52px 1fr}.money-engine .money-board{max-height:none}.saving-levels span{padding:5px 10px;font-size:14px}.money-model-choices{display:grid;grid-template-columns:1fr 1fr;width:100%}.money-compare-row{grid-template-columns:80px minmax(0,1fr)}.money-compare-row strong{font-size:10px}.money-parts span,.money-whole{font-size:17px;padding:9px 5px}.money-answer-entry{grid-template-columns:22px minmax(80px,105px) 15px minmax(72px,90px)}.money-answer-symbol,.money-answer-dot{font-size:29px}.money-algorithm-head,.money-algorithm-row{grid-template-columns:24px 20px minmax(60px,1fr) 16px minmax(60px,1fr)}}
+@media(min-width:1100px){
+ .money-engine .question-block{padding:11px 24px 5px}.money-engine h2{font-size:clamp(31px,2.25vw,42px);line-height:1.16}
+ .money-engine #diagram:has(.strict-money-workspace){min-height:430px;margin:4px 12px;padding:9px 14px;overflow:hidden}
+ .money-engine .strict-money-workspace{min-height:400px;grid-template-columns:minmax(610px,1.42fr) minmax(390px,.78fr);gap:16px}
+ .money-engine .strict-money-bands{height:28px}.money-engine .strict-money-bands b{font-size:16px;line-height:28px}
+ .money-engine .strict-money-mat{height:310px;--money-row-travel:155px;--money-col-travel:clamp(105px,9vw,185px)}.money-engine .strict-money-mat.subtracting{height:284px}.money-engine .strict-money-mat.combined .strict-money-column{grid-template-rows:38px minmax(0,1fr)}
+ .money-engine .strict-money-column{grid-template-rows:38px minmax(0,1fr) minmax(0,1fr)}.money-engine .strict-money-mat.subtracting .strict-money-column{grid-template-rows:38px minmax(0,1fr)}.money-engine .strict-money-column>strong{font-size:19px}
+ .money-engine .strict-money-token{width:44px;height:35px}.money-engine .strict-money-note{width:72px;height:34px}.money-engine .strict-money-token+ .strict-money-token{margin-bottom:-22px}.money-engine .strict-money-token b{font-size:10px}
+ .money-engine .strict-money-process{min-height:42px;font-size:14px;padding:6px 10px}.money-engine .strict-money-status{font-size:14px;min-height:21px}
+ .money-engine .strict-money-algorithm,.money-engine .strict-money-step-card{max-width:none}.money-engine .strict-money-algorithm{padding:8px 11px 10px}.money-engine .strict-money-algo-bands b{font-size:14px}.money-engine .strict-money-place-head{font-size:11px;min-height:24px}.money-engine .strict-money-algo-row{font-size:31px;min-height:42px}.money-engine .strict-money-algo-cell{height:36px}.money-engine .strict-money-carry-row,.money-engine .strict-money-rename-row{font-size:20px;min-height:30px}.money-engine .strict-money-carry-row .strict-money-algo-cell,.money-engine .strict-money-rename-row .strict-money-algo-cell{height:28px}
+ .money-engine .strict-money-step-card{min-height:139px;padding:10px 14px}.money-engine .strict-money-step-card>span{font-size:11px}.money-engine .strict-money-step-card strong{font-size:19px}.money-engine .strict-money-step-equation{font-size:18px;min-height:39px}.money-engine .strict-money-step-card p{font-size:15px}.money-engine .strict-money-watch-progress>span{width:34px;height:34px;font-size:14px}.money-engine .strict-money-watch-progress>span b{top:35px;font-size:9px}
+ .money-engine .strict-money-symbolic .diagram-toolbar{margin-top:7px}.money-engine .strict-money-symbolic .diagram-toolbar button{font-size:15px;min-height:42px;padding:7px 14px}
+ .money-engine #answerForm{display:grid;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:18px;padding:7px 20px 5px}.money-engine #answerFields{margin:0}.money-engine #feedback,.money-engine #hint{grid-column:1/-1}.money-engine #feedback{margin-top:4px}
+ .pupil.money-engine .activity,.pupil.money-engine #questionView,.pupil.money-engine .strict-money-workspace{max-width:none}.pupil.money-engine main{padding:6px}.pupil.money-engine #diagram:has(.strict-money-workspace){min-height:465px}.pupil.money-engine .strict-money-workspace{min-height:435px;grid-template-columns:minmax(690px,1.5fr) minmax(460px,.76fr);gap:19px}.pupil.money-engine .strict-money-mat{height:340px;--money-row-travel:170px}.pupil.money-engine .strict-money-mat.subtracting{height:310px}.pupil.money-engine .strict-money-token{width:49px;height:39px}.pupil.money-engine .strict-money-note{width:80px;height:38px}.pupil.money-engine .strict-money-token+ .strict-money-token{margin-bottom:-25px}.pupil.money-engine .strict-money-token b{font-size:11px}.pupil.money-engine .strict-money-algo-row{font-size:35px;min-height:46px}.pupil.money-engine .strict-money-step-card{min-height:151px}.pupil.money-engine .strict-money-step-card strong{font-size:21px}.pupil.money-engine .strict-money-step-card p{font-size:16px}.pupil.money-engine .strict-money-step-equation{font-size:19px}.pupil.money-engine .strict-money-process{font-size:15px}.pupil.money-engine .strict-money-status{font-size:15px}
+}
 </style></head><body>
 <script id="saved-config" type="application/json">null</script>
 <header><div><p class="eyebrow">CONFIGURABLE CLASSROOM INTERACTIVE</p><h1 id="engineTitle">Teaching engine</h1></div><div class="header-buttons"><button type="button" id="guideButton">Teacher guide</button><button type="button" id="viewButton">Pupil view</button><button type="button" id="downloadButton" class="primary teacher-only">Download activity ↓</button></div></header>
@@ -707,7 +732,7 @@ function renderDiagram(){const host=$('diagram'),c=current.data;multiplicationRe
   interaction.plan=operationPlan(c);interaction.step=0;interaction.operationComplete=false;drawOperation();}
  else if(engine==='numberline')drawNumberline();
  else if(engine==='bar')drawBars();
- else if(engine==='money'){interaction.money=0;interaction.coins=[];interaction.moneyStep=0;interaction.moneyModel=null;drawMoney();}
+ else if(engine==='money'){interaction.money=0;interaction.coins=[];interaction.moneyStep=0;interaction.moneyModel=null;interaction.moneySound=true;interaction.moneyAnimation=null;interaction.moneySettledStep=null;interaction.moneyBusy=false;drawMoney();}
  else if(engine==='fraction'){interaction.shadedCells=Array(c.den).fill(false);if(c.task!=='shade')interaction.shadedCells=Array.from({length:c.den},(_,i)=>i<c.a);drawFractions();}
  else if(engine==='time'){interaction.clock=c.task==='set'?[12,0]:[c.a,c.b];drawClocks();}
  else if(engine==='geometry')drawGeometry();
@@ -1194,22 +1219,61 @@ function moneySubtractionPlan(c){
  return {adding:false,answer:c.a-c.b,actions,lower,original,initial:{work:{...original},revised:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),result:Object.fromEntries(MONEY_DESC.map(p=>[p,null]))}};
 }
 function moneyPlanState(plan,step){return step?plan.actions[Math.min(step,plan.actions.length)-1]:plan.initial;}
-function moneyTransitionStrip(plan,last){
+function moneyAnimatedState(plan,step,phase){
+ const action=plan.actions[step],before=moneyPlanState(plan,step);
+ if(!action)return before;
+ if(action.type==='add'){
+  if(['move','group'].includes(phase))return {...before,top:{...before.top,[action.place]:action.total},bottom:{...before.bottom,[action.place]:0},result:{...before.result},carries:{...before.carries}};
+  if(phase==='exchange')return {...action,result:{...before.result}};
+  return action;
+ }
+ if(action.type==='borrow')return phase==='donor'?before:action;
+ if(phase==='remove')return {...action,result:{...before.result}};
+ return action;
+}
+function moneyAnimationText(action,phase){
+ if(action.type==='add'){
+  if(phase==='move')return {title:`Move the lower-row ${MONEY_LABEL[action.place]} tokens up.`,detail:'Watch the two rows come together in the highlighted column.'};
+  if(phase==='group')return {title:`Circle a group of ${action.base}.`,detail:`Keep the group together: ${action.exchange}.`};
+  if(phase==='exchange')return {title:`Exchange the group for 1 × ${MONEY_LABEL[action.next]}.`,detail:'Watch the new token move one column to the left.'};
+  return {title:`Write ${moneyShownDigit(action.place,action.remainder)} in the answer.`,detail:`${action.equation}. The written digit now appears.`};
+ }
+ if(action.type==='borrow'){
+  if(phase==='donor')return {title:`Borrow 1 × ${MONEY_LABEL[action.from]}.`,detail:'Cross out one token in the adjacent larger place.'};
+  if(phase==='exchange')return {title:`Rename it as ${action.factor} × ${MONEY_LABEL[action.to]}.`,detail:`Move the equal-value smaller tokens one column to the right.`};
+  return {title:'Update the renamed numbers.',detail:`${action.equation}. The total value has not changed.`};
+ }
+ if(phase==='remove')return {title:`Cross out ${moneyShownDigit(action.place,action.remove)} in the ${MONEY_PLACE_WORD[action.place]}.`,detail:'Watch the tokens being taken away before writing the answer digit.'};
+ return {title:`Write ${moneyShownDigit(action.place,action.work[action.place])} in the answer.`,detail:`${action.equation}.`};
+}
+function moneyTransitionStrip(plan,last,animation){
+ if(animation){const action=plan.actions[animation.step],copy=moneyAnimationText(action,animation.phase);return `<div class="strict-money-process watching" data-transition="${animation.phase}" role="status" aria-live="polite"><b>WATCH</b><span>${E(copy.title)}</span></div>`;}
  if(!last)return `<div class="strict-money-process ready" data-transition="ready"><b>Start</b><span>${plan.adding?'Align the decimal dots. Begin with 5¢.':'Begin with 5¢. Subtract if possible; otherwise rename first.'}</span></div>`;
  if(last.type==='add')return `<div class="strict-money-process" data-transition="${last.carry?'regroup':'combine'}"><b>Moved together</b><span>${E(last.equation)}</span><b>${last.carry?`Regroup ${E(last.exchange)}`:'No regrouping'}</b><span>Record ${moneyShownDigit(last.place,last.remainder)}.</span></div>`;
  if(last.type==='borrow')return `<div class="strict-money-process" data-transition="borrow"><b>Renamed</b><span>1 × ${E(MONEY_LABEL[last.from])} → ${last.factor} × ${E(MONEY_LABEL[last.to])}</span><b>Same value</b></div>`;
  return `<div class="strict-money-process" data-transition="subtract"><b>Crossed out</b><span>${E(last.equation)}</span><b>Record ${moneyShownDigit(last.place,last.work[last.place])}.</b></div>`;
 }
-function moneyOperationMat(plan,state,step){
- const next=plan.actions[step],last=step?plan.actions[step-1]:null,active=new Set(next?.type==='borrow'?[next.from,next.to]:next?[next.place]:[]),removed=last?.type==='subtract'?last.remove:0,removedPlace=last?.type==='subtract'?last.place:'';
+function moneyOperationMat(plan,state,step,animation=null,settled=false){
+ const next=plan.actions[step],last=!animation&&step?plan.actions[step-1]:null,activeAction=animation?plan.actions[animation.step]:next,active=new Set(activeAction?.type==='borrow'?[activeAction.from,activeAction.to]:activeAction?[activeAction.place]:[]),removed=!settled&&last?.type==='subtract'?last.remove:0,removedPlace=!settled&&last?.type==='subtract'?last.place:'';
  const recent=new Set(last?.type==='borrow'?[last.from,last.to]:last?[last.place]:[]);
  const columns=MONEY_DESC.map(place=>{
   const topOptions={};
-  if(plan.adding&&last?.type==='add'){
+  if(animation){
+   const action=plan.actions[animation.step],phase=animation.phase;
+   if(action.type==='add'&&place===action.place&&phase==='move'){topOptions.marked=Math.min(state.top[place],action.second);topOptions.markClass='money-move-up-token';}
+   if(action.type==='add'&&place===action.place&&phase==='group'){topOptions.marked=action.base*action.carry;topOptions.markClass='money-group-token';}
+   if(action.type==='add'&&place===action.next&&phase==='exchange'){topOptions.marked=action.carry;topOptions.markClass='money-carry-token';}
+   if(action.type==='add'&&place===action.place&&phase==='record'){topOptions.marked=state.top[place];topOptions.markClass='money-record-token';}
+   if(action.type==='borrow'&&place===action.from&&phase==='donor'){topOptions.marked=1;topOptions.markClass='money-donor-token';}
+   if(action.type==='borrow'&&place===action.from&&phase==='exchange')topOptions.ghosts=[{count:1,className:'borrowed-token money-borrow-ghost'}];
+   if(action.type==='borrow'&&place===action.to&&phase==='exchange'){topOptions.marked=action.factor;topOptions.markClass='money-borrow-new-token';}
+   if(action.type==='subtract'&&place===action.place&&phase==='remove')topOptions.ghosts=[{count:action.remove,className:'removed-token money-remove-slow-token'}];
+   if(action.type==='subtract'&&place===action.place&&phase==='record'){topOptions.marked=state.work[place];topOptions.markClass='money-record-token';}
+  }else if(plan.adding&&!settled&&last?.type==='add'){
    if(place===last.place){topOptions.marked=state.top[place];topOptions.markClass='moved-token';if(last.carry)topOptions.ghosts=[{count:last.base*last.carry,className:'exchange-token'}];}
    if(place===last.next&&last.carry){topOptions.marked=last.carry;topOptions.markClass='renamed-token';}
   }
-  if(!plan.adding&&last?.type==='borrow'){
+  if(!animation&&!settled&&!plan.adding&&last?.type==='borrow'){
    if(place===last.from)topOptions.ghosts=[{count:1,className:'borrowed-token'}];
    if(place===last.to){topOptions.marked=last.factor;topOptions.markClass='renamed-token';}
   }
@@ -1217,7 +1281,7 @@ function moneyOperationMat(plan,state,step){
   return `<section class="strict-money-column strict-money-col-${place} ${active.has(place)?'active':''} ${recent.has(place)?'recent':''}"><strong>${MONEY_LABEL[place]}</strong><div class="strict-money-zone strict-money-top">${moneyMatPile(place,plan.adding?state.top[place]:state.work[place],topOptions)}</div>${plan.adding?`<div class="strict-money-zone strict-money-bottom">${moneyMatPile(place,state.bottom[place])}</div>`:''}</section>`;
  }).join('');
  const complete=step>=plan.actions.length;
- return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div>${moneyTransitionStrip(plan,last)}<p class="strict-money-status">${E(complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):`Next: ${next.title}`)}</p></div>`;
+ return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''} ${animation?'money-animating phase-'+animation.phase:''}" data-money-phase="${animation?.phase||'settled'}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div>${moneyTransitionStrip(plan,last,animation)}<p class="strict-money-status">${E(animation?'Please watch the complete movement.':complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):`Next: ${next.title}`)}</p></div>`;
 }
 function moneyOriginalDigits(value){const counts=moneyPlaceCounts(value),dollars=Math.floor(value/100);return {...counts,d100:dollars>=100?counts.d100:'',d10:dollars>=10?counts.d10:'',d1:counts.d1,c10:counts.c10,c5:counts.c5*5};}
 function moneyAlgorithmCell(place,value,classes=''){return `<span class="strict-money-algo-cell ${classes}" data-place="${place}">${value===null?(classes.includes('result-cell')?'?':''):E(value)}</span>`;}
@@ -1239,6 +1303,50 @@ function moneyOperationStepPanel(plan,step){
  const marker=complete||action.type==='borrow'?'<b>✓</b>':'<b>?</b>';
  return `<div class="strict-money-step-card ${complete?'complete':''}"><span>${complete?'COMPLETE':`STEP ${step+1} OF ${plan.actions.length}`}</span><strong>${E(complete?'All places are complete.':action.title)}</strong><div class="strict-money-step-equation ${action?.type||''}">${E(equation)}${marker}</div><p>${E(instruction)}</p></div><div class="diagram-toolbar">${complete?'':`<button type="button" data-money-next>Next step →</button>`}${step?'<button type="button" data-money-restart>Restart steps</button>':''}</div>`;
 }
+function moneyActionPhases(action){
+ if(action.type==='add')return action.carry?[['move',2000],['group',2300],['exchange',2000],['record',1200]]:[['move',2000],['record',1200]];
+ if(action.type==='borrow')return [['donor',2000],['exchange',2400],['record',1300]];
+ return [['remove',2200],['record',1200]];
+}
+function moneyOperationPanel(plan,step,animation){
+ if(!animation)return moneyOperationStepPanel(plan,step).replace(/<\/div>$/,`<button type="button" data-money-sound aria-pressed="${interaction.moneySound!==false}">${interaction.moneySound===false?'Sound off':'Sound on'}</button></div>`);
+ const action=plan.actions[animation.step],copy=moneyAnimationText(action,animation.phase),phases=moneyActionPhases(action).map(item=>item[0]),currentPhase=phases.indexOf(animation.phase);
+ return `<div class="strict-money-step-card watching"><span>WATCH THE MOVEMENT</span><strong>${E(copy.title)}</strong><div class="strict-money-step-equation watch-copy">${E(copy.detail)}</div><div class="strict-money-watch-progress">${phases.map((phase,i)=>`<span class="${i<currentPhase?'done':i===currentPhase?'current':''}">${i+1}<b>${E(phase==='donor'?'Borrow':phase[0].toUpperCase()+phase.slice(1))}</b></span>`).join('')}</div></div><div class="diagram-toolbar"><button type="button" disabled>Moving slowly…</button><button type="button" data-money-sound aria-pressed="${interaction.moneySound!==false}">${interaction.moneySound===false?'Sound off':'Sound on'}</button></div>`;
+}
+let moneyAudioContext=null;
+function moneyTone(frequency,start,duration,end=frequency,type='sine'){
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;moneyAudioContext??=new Audio();if(moneyAudioContext.state==='suspended')moneyAudioContext.resume();const now=moneyAudioContext.currentTime+start,osc=moneyAudioContext.createOscillator(),gain=moneyAudioContext.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,now);osc.frequency.linearRampToValueAtTime(end,now+duration);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.055,now+.035);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain).connect(moneyAudioContext.destination);osc.start(now);osc.stop(now+duration+.03);}catch{}
+}
+function playMoneySound(actionType,phase){
+ if(interaction.moneySound===false)return;
+ if(phase==='move'){moneyTone(300,0,.55,470);return;}
+ if(phase==='group'){moneyTone(250,0,.15,220,'triangle');moneyTone(250,.28,.15,220,'triangle');return;}
+ if(phase==='exchange'){const down=actionType==='borrow';moneyTone(down?520:330,0,.2,down?430:390);moneyTone(down?420:440,.24,.24,down?330:540);return;}
+ if(phase==='donor'||phase==='remove'){moneyTone(290,0,.18,230,'triangle');moneyTone(230,.3,.18,190,'triangle');return;}
+ moneyTone(600,0,.3,720);moneyTone(800,.16,.38,900);
+}
+const moneyWait=ms=>new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?Math.min(ms,250):ms));
+async function playMoneyOperationStep(plan){
+ const run=interaction,step=Math.min(run.moneyStep,plan.actions.length),action=plan.actions[step];if(!action||run.moneyBusy)return;
+ run.moneyBusy=true;run.moneySettledStep=null;hints++;
+ let completed=false;
+ try{
+  for(const [phase,duration] of moneyActionPhases(action)){
+   if(interaction!==run)return;
+   run.moneyAnimation={step,phase};drawMoney();playMoneySound(action.type,phase);await moneyWait(duration);
+  }
+  if(interaction!==run)return;
+  run.moneyStep=Math.min(plan.actions.length,step+1);run.moneyAnimation=null;run.moneySettledStep=run.moneyStep;completed=true;
+ }finally{
+  if(interaction===run){run.moneyBusy=false;if(!completed)run.moneyAnimation=null;drawMoney();}
+ }
+}
+function wireMoneyOperationSteps(host,plan){
+ const next=host.querySelector('[data-money-next]'),restart=host.querySelector('[data-money-restart]'),sound=host.querySelector('[data-money-sound]');
+ if(next)next.onclick=()=>playMoneyOperationStep(plan);
+ if(restart)restart.onclick=()=>{if(interaction.moneyBusy)return;interaction.moneyStep=0;interaction.moneyAnimation=null;interaction.moneySettledStep=null;hints++;drawMoney();};
+ if(sound)sound.onclick=()=>{interaction.moneySound=interaction.moneySound===false;sound.textContent=interaction.moneySound?'Sound on':'Sound off';sound.setAttribute('aria-pressed',String(interaction.moneySound));};
+}
 function wireMoneySteps(host,max,label='Next step'){
  const next=host.querySelector('[data-money-next]'),restart=host.querySelector('[data-money-restart]');
  if(next)next.onclick=()=>{interaction.moneyStep=Math.min(max,interaction.moneyStep+1);hints++;drawMoney();};
@@ -1256,9 +1364,9 @@ function drawMoneyConversion(c,host){
  wireMoneySteps(host,steps.length,'Reveal next step');
 }
 function drawMoneyAlgorithm(c,host){
- const plan=c.task==='add'?moneyAdditionPlan(c):moneySubtractionPlan(c),step=Math.min(interaction.moneyStep,plan.actions.length),state=moneyPlanState(plan,step);
- host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationStepPanel(plan,step)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
- wireMoneySteps(host,plan.actions.length);
+ const plan=c.task==='add'?moneyAdditionPlan(c):moneySubtractionPlan(c),step=Math.min(interaction.moneyStep,plan.actions.length),animation=interaction.moneyAnimation?.step===step?interaction.moneyAnimation:null,state=animation?moneyAnimatedState(plan,step,animation.phase):moneyPlanState(plan,step),settled=interaction.moneySettledStep===step;
+ host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step,animation,settled)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationPanel(plan,step,animation)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
+ wireMoneyOperationSteps(host,plan);
 }
 function moneyPartWhole(c){
  const total=c.wordType==='total'?'?':moneyText(c.a),left=c.wordType==='total'?moneyText(c.a):moneyText(c.b),right=c.wordType==='total'?moneyText(c.b):'?';
@@ -1313,6 +1421,8 @@ The written money format is always explicit: the dollar sign comes before the do
 Add money · Step by step follows the Adding Money interactive. The concrete mat has five columns ($100, $10, $1, 10¢ and 5¢) and two rows. Every note or coin token is drawn separately. Before each click, the teaching card shows the active place and leaves its answer as ?. Press Next step in this order: 5¢, 10¢, $1, $10, $100. The second row’s tokens join the first row in the active column. When a column reaches its exchange value, the outlined group disappears and a highlighted token appears in the next column: two 5¢ become one 10¢; ten 10¢ become one $1; then groups of ten continue through $10 and $100. The completed-move strip states what moved, whether it regrouped and what digit was recorded. The written calculation reveals the matching result digit and carry at the same time.
 
 Subtract money · Step by step follows the Subtracting Money interactive. It uses one working row showing only the first amount; it does not place a second “take away” row underneath. Work from 5¢ to $100. If a place can subtract, the next click subtracts immediately. If there are not enough tokens, Next step first renames one adjacent larger token: 10¢ becomes two 5¢, $1 becomes ten 10¢, $10 becomes ten $1, or $100 becomes ten $10. Borrowing across zero is shown one adjacent column at a time, never skipped. The donor is crossed out while the new smaller tokens appear highlighted. The written calculation crosses out the old digit and records the renamed amount above it. Only the following step crosses out and removes the required tokens, then reveals that result digit.
+
+For classroom display, choose Pupil view. The money mat, written calculation and current instruction expand across the available projector width. One press of Next step now plays a slow sequence: move or identify the tokens, exchange or remove them, then write the digit. The button stays disabled until the full movement finishes. Gentle original sound cues distinguish movement, exchange or borrowing, and recording the digit; use Sound on or Sound off beside the step button. A cross on a note or coin appears only while that token is being borrowed or removed and disappears when the movement is complete. Crossed-out digits in the written subtraction remain because they record the renaming mathematically.
 
 Pause before every Next step and ask pupils to predict the move. Keep the concrete mat and written calculation in view together. After all places are complete, pupils enter the whole answer and check it. They may also solve directly without revealing every step.
 

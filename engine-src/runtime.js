@@ -75,7 +75,7 @@ function renderDiagram(){const host=$('diagram'),c=current.data;multiplicationRe
   interaction.plan=operationPlan(c);interaction.step=0;interaction.operationComplete=false;drawOperation();}
  else if(engine==='numberline')drawNumberline();
  else if(engine==='bar')drawBars();
- else if(engine==='money'){interaction.money=0;interaction.coins=[];interaction.moneyStep=0;interaction.moneyModel=null;drawMoney();}
+ else if(engine==='money'){interaction.money=0;interaction.coins=[];interaction.moneyStep=0;interaction.moneyModel=null;interaction.moneySound=true;interaction.moneyAnimation=null;interaction.moneySettledStep=null;interaction.moneyBusy=false;drawMoney();}
  else if(engine==='fraction'){interaction.shadedCells=Array(c.den).fill(false);if(c.task!=='shade')interaction.shadedCells=Array.from({length:c.den},(_,i)=>i<c.a);drawFractions();}
  else if(engine==='time'){interaction.clock=c.task==='set'?[12,0]:[c.a,c.b];drawClocks();}
  else if(engine==='geometry')drawGeometry();
@@ -562,22 +562,61 @@ function moneySubtractionPlan(c){
  return {adding:false,answer:c.a-c.b,actions,lower,original,initial:{work:{...original},revised:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),result:Object.fromEntries(MONEY_DESC.map(p=>[p,null]))}};
 }
 function moneyPlanState(plan,step){return step?plan.actions[Math.min(step,plan.actions.length)-1]:plan.initial;}
-function moneyTransitionStrip(plan,last){
+function moneyAnimatedState(plan,step,phase){
+ const action=plan.actions[step],before=moneyPlanState(plan,step);
+ if(!action)return before;
+ if(action.type==='add'){
+  if(['move','group'].includes(phase))return {...before,top:{...before.top,[action.place]:action.total},bottom:{...before.bottom,[action.place]:0},result:{...before.result},carries:{...before.carries}};
+  if(phase==='exchange')return {...action,result:{...before.result}};
+  return action;
+ }
+ if(action.type==='borrow')return phase==='donor'?before:action;
+ if(phase==='remove')return {...action,result:{...before.result}};
+ return action;
+}
+function moneyAnimationText(action,phase){
+ if(action.type==='add'){
+  if(phase==='move')return {title:`Move the lower-row ${MONEY_LABEL[action.place]} tokens up.`,detail:'Watch the two rows come together in the highlighted column.'};
+  if(phase==='group')return {title:`Circle a group of ${action.base}.`,detail:`Keep the group together: ${action.exchange}.`};
+  if(phase==='exchange')return {title:`Exchange the group for 1 × ${MONEY_LABEL[action.next]}.`,detail:'Watch the new token move one column to the left.'};
+  return {title:`Write ${moneyShownDigit(action.place,action.remainder)} in the answer.`,detail:`${action.equation}. The written digit now appears.`};
+ }
+ if(action.type==='borrow'){
+  if(phase==='donor')return {title:`Borrow 1 × ${MONEY_LABEL[action.from]}.`,detail:'Cross out one token in the adjacent larger place.'};
+  if(phase==='exchange')return {title:`Rename it as ${action.factor} × ${MONEY_LABEL[action.to]}.`,detail:`Move the equal-value smaller tokens one column to the right.`};
+  return {title:'Update the renamed numbers.',detail:`${action.equation}. The total value has not changed.`};
+ }
+ if(phase==='remove')return {title:`Cross out ${moneyShownDigit(action.place,action.remove)} in the ${MONEY_PLACE_WORD[action.place]}.`,detail:'Watch the tokens being taken away before writing the answer digit.'};
+ return {title:`Write ${moneyShownDigit(action.place,action.work[action.place])} in the answer.`,detail:`${action.equation}.`};
+}
+function moneyTransitionStrip(plan,last,animation){
+ if(animation){const action=plan.actions[animation.step],copy=moneyAnimationText(action,animation.phase);return `<div class="strict-money-process watching" data-transition="${animation.phase}" role="status" aria-live="polite"><b>WATCH</b><span>${E(copy.title)}</span></div>`;}
  if(!last)return `<div class="strict-money-process ready" data-transition="ready"><b>Start</b><span>${plan.adding?'Align the decimal dots. Begin with 5¢.':'Begin with 5¢. Subtract if possible; otherwise rename first.'}</span></div>`;
  if(last.type==='add')return `<div class="strict-money-process" data-transition="${last.carry?'regroup':'combine'}"><b>Moved together</b><span>${E(last.equation)}</span><b>${last.carry?`Regroup ${E(last.exchange)}`:'No regrouping'}</b><span>Record ${moneyShownDigit(last.place,last.remainder)}.</span></div>`;
  if(last.type==='borrow')return `<div class="strict-money-process" data-transition="borrow"><b>Renamed</b><span>1 × ${E(MONEY_LABEL[last.from])} → ${last.factor} × ${E(MONEY_LABEL[last.to])}</span><b>Same value</b></div>`;
  return `<div class="strict-money-process" data-transition="subtract"><b>Crossed out</b><span>${E(last.equation)}</span><b>Record ${moneyShownDigit(last.place,last.work[last.place])}.</b></div>`;
 }
-function moneyOperationMat(plan,state,step){
- const next=plan.actions[step],last=step?plan.actions[step-1]:null,active=new Set(next?.type==='borrow'?[next.from,next.to]:next?[next.place]:[]),removed=last?.type==='subtract'?last.remove:0,removedPlace=last?.type==='subtract'?last.place:'';
+function moneyOperationMat(plan,state,step,animation=null,settled=false){
+ const next=plan.actions[step],last=!animation&&step?plan.actions[step-1]:null,activeAction=animation?plan.actions[animation.step]:next,active=new Set(activeAction?.type==='borrow'?[activeAction.from,activeAction.to]:activeAction?[activeAction.place]:[]),removed=!settled&&last?.type==='subtract'?last.remove:0,removedPlace=!settled&&last?.type==='subtract'?last.place:'';
  const recent=new Set(last?.type==='borrow'?[last.from,last.to]:last?[last.place]:[]);
  const columns=MONEY_DESC.map(place=>{
   const topOptions={};
-  if(plan.adding&&last?.type==='add'){
+  if(animation){
+   const action=plan.actions[animation.step],phase=animation.phase;
+   if(action.type==='add'&&place===action.place&&phase==='move'){topOptions.marked=Math.min(state.top[place],action.second);topOptions.markClass='money-move-up-token';}
+   if(action.type==='add'&&place===action.place&&phase==='group'){topOptions.marked=action.base*action.carry;topOptions.markClass='money-group-token';}
+   if(action.type==='add'&&place===action.next&&phase==='exchange'){topOptions.marked=action.carry;topOptions.markClass='money-carry-token';}
+   if(action.type==='add'&&place===action.place&&phase==='record'){topOptions.marked=state.top[place];topOptions.markClass='money-record-token';}
+   if(action.type==='borrow'&&place===action.from&&phase==='donor'){topOptions.marked=1;topOptions.markClass='money-donor-token';}
+   if(action.type==='borrow'&&place===action.from&&phase==='exchange')topOptions.ghosts=[{count:1,className:'borrowed-token money-borrow-ghost'}];
+   if(action.type==='borrow'&&place===action.to&&phase==='exchange'){topOptions.marked=action.factor;topOptions.markClass='money-borrow-new-token';}
+   if(action.type==='subtract'&&place===action.place&&phase==='remove')topOptions.ghosts=[{count:action.remove,className:'removed-token money-remove-slow-token'}];
+   if(action.type==='subtract'&&place===action.place&&phase==='record'){topOptions.marked=state.work[place];topOptions.markClass='money-record-token';}
+  }else if(plan.adding&&!settled&&last?.type==='add'){
    if(place===last.place){topOptions.marked=state.top[place];topOptions.markClass='moved-token';if(last.carry)topOptions.ghosts=[{count:last.base*last.carry,className:'exchange-token'}];}
    if(place===last.next&&last.carry){topOptions.marked=last.carry;topOptions.markClass='renamed-token';}
   }
-  if(!plan.adding&&last?.type==='borrow'){
+  if(!animation&&!settled&&!plan.adding&&last?.type==='borrow'){
    if(place===last.from)topOptions.ghosts=[{count:1,className:'borrowed-token'}];
    if(place===last.to){topOptions.marked=last.factor;topOptions.markClass='renamed-token';}
   }
@@ -585,7 +624,7 @@ function moneyOperationMat(plan,state,step){
   return `<section class="strict-money-column strict-money-col-${place} ${active.has(place)?'active':''} ${recent.has(place)?'recent':''}"><strong>${MONEY_LABEL[place]}</strong><div class="strict-money-zone strict-money-top">${moneyMatPile(place,plan.adding?state.top[place]:state.work[place],topOptions)}</div>${plan.adding?`<div class="strict-money-zone strict-money-bottom">${moneyMatPile(place,state.bottom[place])}</div>`:''}</section>`;
  }).join('');
  const complete=step>=plan.actions.length;
- return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div>${moneyTransitionStrip(plan,last)}<p class="strict-money-status">${E(complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):`Next: ${next.title}`)}</p></div>`;
+ return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''} ${animation?'money-animating phase-'+animation.phase:''}" data-money-phase="${animation?.phase||'settled'}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div>${moneyTransitionStrip(plan,last,animation)}<p class="strict-money-status">${E(animation?'Please watch the complete movement.':complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):`Next: ${next.title}`)}</p></div>`;
 }
 function moneyOriginalDigits(value){const counts=moneyPlaceCounts(value),dollars=Math.floor(value/100);return {...counts,d100:dollars>=100?counts.d100:'',d10:dollars>=10?counts.d10:'',d1:counts.d1,c10:counts.c10,c5:counts.c5*5};}
 function moneyAlgorithmCell(place,value,classes=''){return `<span class="strict-money-algo-cell ${classes}" data-place="${place}">${value===null?(classes.includes('result-cell')?'?':''):E(value)}</span>`;}
@@ -607,6 +646,50 @@ function moneyOperationStepPanel(plan,step){
  const marker=complete||action.type==='borrow'?'<b>✓</b>':'<b>?</b>';
  return `<div class="strict-money-step-card ${complete?'complete':''}"><span>${complete?'COMPLETE':`STEP ${step+1} OF ${plan.actions.length}`}</span><strong>${E(complete?'All places are complete.':action.title)}</strong><div class="strict-money-step-equation ${action?.type||''}">${E(equation)}${marker}</div><p>${E(instruction)}</p></div><div class="diagram-toolbar">${complete?'':`<button type="button" data-money-next>Next step →</button>`}${step?'<button type="button" data-money-restart>Restart steps</button>':''}</div>`;
 }
+function moneyActionPhases(action){
+ if(action.type==='add')return action.carry?[['move',2000],['group',2300],['exchange',2000],['record',1200]]:[['move',2000],['record',1200]];
+ if(action.type==='borrow')return [['donor',2000],['exchange',2400],['record',1300]];
+ return [['remove',2200],['record',1200]];
+}
+function moneyOperationPanel(plan,step,animation){
+ if(!animation)return moneyOperationStepPanel(plan,step).replace(/<\/div>$/,`<button type="button" data-money-sound aria-pressed="${interaction.moneySound!==false}">${interaction.moneySound===false?'Sound off':'Sound on'}</button></div>`);
+ const action=plan.actions[animation.step],copy=moneyAnimationText(action,animation.phase),phases=moneyActionPhases(action).map(item=>item[0]),currentPhase=phases.indexOf(animation.phase);
+ return `<div class="strict-money-step-card watching"><span>WATCH THE MOVEMENT</span><strong>${E(copy.title)}</strong><div class="strict-money-step-equation watch-copy">${E(copy.detail)}</div><div class="strict-money-watch-progress">${phases.map((phase,i)=>`<span class="${i<currentPhase?'done':i===currentPhase?'current':''}">${i+1}<b>${E(phase==='donor'?'Borrow':phase[0].toUpperCase()+phase.slice(1))}</b></span>`).join('')}</div></div><div class="diagram-toolbar"><button type="button" disabled>Moving slowly…</button><button type="button" data-money-sound aria-pressed="${interaction.moneySound!==false}">${interaction.moneySound===false?'Sound off':'Sound on'}</button></div>`;
+}
+let moneyAudioContext=null;
+function moneyTone(frequency,start,duration,end=frequency,type='sine'){
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;moneyAudioContext??=new Audio();if(moneyAudioContext.state==='suspended')moneyAudioContext.resume();const now=moneyAudioContext.currentTime+start,osc=moneyAudioContext.createOscillator(),gain=moneyAudioContext.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,now);osc.frequency.linearRampToValueAtTime(end,now+duration);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.055,now+.035);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain).connect(moneyAudioContext.destination);osc.start(now);osc.stop(now+duration+.03);}catch{}
+}
+function playMoneySound(actionType,phase){
+ if(interaction.moneySound===false)return;
+ if(phase==='move'){moneyTone(300,0,.55,470);return;}
+ if(phase==='group'){moneyTone(250,0,.15,220,'triangle');moneyTone(250,.28,.15,220,'triangle');return;}
+ if(phase==='exchange'){const down=actionType==='borrow';moneyTone(down?520:330,0,.2,down?430:390);moneyTone(down?420:440,.24,.24,down?330:540);return;}
+ if(phase==='donor'||phase==='remove'){moneyTone(290,0,.18,230,'triangle');moneyTone(230,.3,.18,190,'triangle');return;}
+ moneyTone(600,0,.3,720);moneyTone(800,.16,.38,900);
+}
+const moneyWait=ms=>new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?Math.min(ms,250):ms));
+async function playMoneyOperationStep(plan){
+ const run=interaction,step=Math.min(run.moneyStep,plan.actions.length),action=plan.actions[step];if(!action||run.moneyBusy)return;
+ run.moneyBusy=true;run.moneySettledStep=null;hints++;
+ let completed=false;
+ try{
+  for(const [phase,duration] of moneyActionPhases(action)){
+   if(interaction!==run)return;
+   run.moneyAnimation={step,phase};drawMoney();playMoneySound(action.type,phase);await moneyWait(duration);
+  }
+  if(interaction!==run)return;
+  run.moneyStep=Math.min(plan.actions.length,step+1);run.moneyAnimation=null;run.moneySettledStep=run.moneyStep;completed=true;
+ }finally{
+  if(interaction===run){run.moneyBusy=false;if(!completed)run.moneyAnimation=null;drawMoney();}
+ }
+}
+function wireMoneyOperationSteps(host,plan){
+ const next=host.querySelector('[data-money-next]'),restart=host.querySelector('[data-money-restart]'),sound=host.querySelector('[data-money-sound]');
+ if(next)next.onclick=()=>playMoneyOperationStep(plan);
+ if(restart)restart.onclick=()=>{if(interaction.moneyBusy)return;interaction.moneyStep=0;interaction.moneyAnimation=null;interaction.moneySettledStep=null;hints++;drawMoney();};
+ if(sound)sound.onclick=()=>{interaction.moneySound=interaction.moneySound===false;sound.textContent=interaction.moneySound?'Sound on':'Sound off';sound.setAttribute('aria-pressed',String(interaction.moneySound));};
+}
 function wireMoneySteps(host,max,label='Next step'){
  const next=host.querySelector('[data-money-next]'),restart=host.querySelector('[data-money-restart]');
  if(next)next.onclick=()=>{interaction.moneyStep=Math.min(max,interaction.moneyStep+1);hints++;drawMoney();};
@@ -624,9 +707,9 @@ function drawMoneyConversion(c,host){
  wireMoneySteps(host,steps.length,'Reveal next step');
 }
 function drawMoneyAlgorithm(c,host){
- const plan=c.task==='add'?moneyAdditionPlan(c):moneySubtractionPlan(c),step=Math.min(interaction.moneyStep,plan.actions.length),state=moneyPlanState(plan,step);
- host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationStepPanel(plan,step)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
- wireMoneySteps(host,plan.actions.length);
+ const plan=c.task==='add'?moneyAdditionPlan(c):moneySubtractionPlan(c),step=Math.min(interaction.moneyStep,plan.actions.length),animation=interaction.moneyAnimation?.step===step?interaction.moneyAnimation:null,state=animation?moneyAnimatedState(plan,step,animation.phase):moneyPlanState(plan,step),settled=interaction.moneySettledStep===step;
+ host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step,animation,settled)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationPanel(plan,step,animation)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
+ wireMoneyOperationSteps(host,plan);
 }
 function moneyPartWhole(c){
  const total=c.wordType==='total'?'?':moneyText(c.a),left=c.wordType==='total'?moneyText(c.a):moneyText(c.b),right=c.wordType==='total'?moneyText(c.b):'?';
@@ -681,6 +764,8 @@ The written money format is always explicit: the dollar sign comes before the do
 Add money · Step by step follows the Adding Money interactive. The concrete mat has five columns ($100, $10, $1, 10¢ and 5¢) and two rows. Every note or coin token is drawn separately. Before each click, the teaching card shows the active place and leaves its answer as ?. Press Next step in this order: 5¢, 10¢, $1, $10, $100. The second row’s tokens join the first row in the active column. When a column reaches its exchange value, the outlined group disappears and a highlighted token appears in the next column: two 5¢ become one 10¢; ten 10¢ become one $1; then groups of ten continue through $10 and $100. The completed-move strip states what moved, whether it regrouped and what digit was recorded. The written calculation reveals the matching result digit and carry at the same time.
 
 Subtract money · Step by step follows the Subtracting Money interactive. It uses one working row showing only the first amount; it does not place a second “take away” row underneath. Work from 5¢ to $100. If a place can subtract, the next click subtracts immediately. If there are not enough tokens, Next step first renames one adjacent larger token: 10¢ becomes two 5¢, $1 becomes ten 10¢, $10 becomes ten $1, or $100 becomes ten $10. Borrowing across zero is shown one adjacent column at a time, never skipped. The donor is crossed out while the new smaller tokens appear highlighted. The written calculation crosses out the old digit and records the renamed amount above it. Only the following step crosses out and removes the required tokens, then reveals that result digit.
+
+For classroom display, choose Pupil view. The money mat, written calculation and current instruction expand across the available projector width. One press of Next step now plays a slow sequence: move or identify the tokens, exchange or remove them, then write the digit. The button stays disabled until the full movement finishes. Gentle original sound cues distinguish movement, exchange or borrowing, and recording the digit; use Sound on or Sound off beside the step button. A cross on a note or coin appears only while that token is being borrowed or removed and disappears when the movement is complete. Crossed-out digits in the written subtraction remain because they record the renaming mathematically.
 
 Pause before every Next step and ask pupils to predict the move. Keep the concrete mat and written calculation in view together. After all places are complete, pupils enter the whole answer and check it. They may also solve directly without revealing every step.
 
