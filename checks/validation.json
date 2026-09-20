@@ -1,0 +1,102 @@
+{
+  "engines": [
+    {
+      "engine": "place",
+      "name": "Place value",
+      "taskGradeCombinations": 15,
+      "passed": 15
+    },
+    {
+      "engine": "operations",
+      "name": "Operations & grouping",
+      "taskGradeCombinations": 17,
+      "passed": 17
+    },
+    {
+      "engine": "numberline",
+      "name": "Number line",
+      "taskGradeCombinations": 12,
+      "passed": 12
+    },
+    {
+      "engine": "bar",
+      "name": "Bar models",
+      "taskGradeCombinations": 15,
+      "passed": 15
+    },
+    {
+      "engine": "money",
+      "name": "Money",
+      "taskGradeCombinations": 18,
+      "passed": 18
+    },
+    {
+      "engine": "fraction",
+      "name": "Fractions",
+      "taskGradeCombinations": 11,
+      "passed": 11
+    },
+    {
+      "engine": "time",
+      "name": "Time",
+      "taskGradeCombinations": 11,
+      "passed": 11
+    },
+    {
+      "engine": "geometry",
+      "name": "Shapes, angles & lines",
+      "taskGradeCombinations": 10,
+      "passed": 10
+    },
+    {
+      "engine": "area",
+      "name": "Area & perimeter",
+      "taskGradeCombinations": 3,
+      "passed": 3
+    },
+    {
+      "engine": "graph",
+      "name": "Graphs",
+      "taskGradeCombinations": 9,
+      "passed": 9
+    },
+    {
+      "engine": "explain",
+      "name": "Explain your thinking",
+      "taskGradeCombinations": 9,
+      "passed": 9
+    },
+    {
+      "engine": "error",
+      "name": "Error analysis",
+      "taskGradeCombinations": 11,
+      "passed": 11
+    }
+  ],
+  "cases": 141,
+  "generatedQuestions": 8280,
+  "checks": [
+    "operations/add",
+    "operations/subtract",
+    "operations/share",
+    "bar/part",
+    "money/count",
+    "money/convert",
+    "money/convert",
+    "money/make",
+    "money/add",
+    "money/subtract",
+    "money/word",
+    "money/word",
+    "fraction/add",
+    "fraction/subtract",
+    "fraction/compare",
+    "time/later",
+    "time/duration",
+    "place/digit",
+    "fraction/add",
+    "area/compare",
+    "graph/total"
+  ],
+  "failures": []
+}
