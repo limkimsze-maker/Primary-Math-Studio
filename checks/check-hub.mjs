@@ -12,6 +12,7 @@ assert.deepEqual(ids,expected,'The homepage order must contain the 12 shared eng
 assert(html.includes('public/engines.html?engine=${encodeURIComponent(id)}&v=${release}'));
 assert(html.includes("['length','mass','volume'].includes(id)?`public/measurement/${id}.html?v=${release}`"),'Measurement engines must use their standalone pages.');
 assert(html.includes('id="engineFrame"')&&html.includes('id="focusButton"'));
+assert(html.includes('.presentation')&&html.includes("event.data?.type==='primary-maths-pupil-view'"),'Pupil view must expand the teaching engine across the whole Studio.');
 assert(html.includes('Created by Lim Kim Sze'));
 assert(!html.includes('<h2>Development</h2>'),'Development notes must not replace the public studio.');
 

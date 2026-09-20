@@ -190,8 +190,9 @@ body.pupil.hundred-engine #diagram{min-height:355px}.pupil .hundred-workspace h3
 .fraction-learning{width:100%;height:100%;min-height:295px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}.fraction-model-grid{width:min(100%,1050px);display:grid;grid-template-columns:repeat(var(--fraction-models),minmax(0,1fr));gap:10px;align-items:stretch;flex:1;min-height:105px}.fraction-model-card{min-width:0;border:1px solid #c7d8c2;border-radius:9px;background:#fff;padding:7px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}.fraction-model-card>span:first-child{font-size:11px;font-weight:800;color:#627566;text-transform:uppercase;letter-spacing:.45px}.fraction-model-card .fraction-strip{width:100%;max-width:none;min-height:54px}.fraction-model-card .fraction-cell{min-height:54px!important}.fraction-equivalent-card{border-color:#d5b34e;background:#fffaf0}.fraction-result-card{border:3px solid #5e9b67;background:#f1faef}
 .fraction-symbol{display:inline-grid;grid-template-rows:auto 3px auto;min-width:44px;place-items:center;vertical-align:middle;font-size:21px;font-style:normal;font-weight:900;line-height:1.05;color:#183c35;font-variant-numeric:tabular-nums}.fraction-symbol i{display:block;width:100%;height:3px;background:currentColor}.fraction-symbol.answer{color:#24735e}.fraction-symbol.mystery{color:#5e7a70}.fraction-equation{min-height:54px;display:flex;align-items:center;justify-content:center;gap:13px;border:1px solid #cbdac6;border-radius:9px;background:#fff;width:min(100%,760px);padding:6px 18px;flex:none}.fraction-operation,.fraction-relation{font-size:28px;line-height:1}.fraction-relation{min-width:38px;text-align:center;border:2px dashed #79a8bf;border-radius:6px;background:#edf8ff;color:#0a5d86}.fraction-order-answer{font-size:18px;font-weight:800;color:#5e7a70}.fraction-order-answer.revealed{color:#24735e}
 .fraction-step-card{width:min(100%,760px);min-height:72px;border:1px solid #b6cfae;border-left:6px solid #24735e;border-radius:8px;background:#f4faf2;padding:7px 12px;flex:none}.fraction-step-card>span{display:block;font-size:9px;font-weight:900;letter-spacing:.8px;color:#4f7d5f}.fraction-step-card strong{display:block;font-size:16px;margin:1px 0}.fraction-step-card p{font-size:13px;line-height:1.3;margin:2px 0;color:#405b4a}.fraction-step-controls{display:flex;align-items:center;justify-content:center;gap:7px;flex:none}.diagram .fraction-step-controls button{min-height:32px;font-size:12px;padding:5px 10px}.fraction-engine #answerFields .choice{font-size:16px;min-width:70px}.fraction-engine .numberline-caption{font-size:11px}
+.fraction-answer-entry{width:104px;display:grid;grid-template-rows:auto 42px 4px 42px;place-items:center}.fraction-answer-title{font-size:11px;font-weight:800;margin-bottom:3px}.fraction-answer-entry label{display:block;height:42px}.fraction-answer-entry .answer-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.fraction-answer-entry .answer-input{width:82px;min-height:42px;height:42px;padding:3px 8px;border-color:#86a88b;border-radius:7px;font-size:25px}.fraction-answer-line{display:block;width:104px;height:4px;border-radius:999px;background:#183c35}.fraction-engine #answerForm:has(.fraction-answer-entry){display:grid;grid-template-columns:auto auto;align-items:center;justify-content:center;column-gap:24px;padding:5px 20px}.fraction-engine #answerForm:has(.fraction-answer-entry) #answerFields{margin:0}.fraction-engine #answerForm:has(.fraction-answer-entry) #feedback,.fraction-engine #answerForm:has(.fraction-answer-entry) #hint{grid-column:1/-1}.pupil .fraction-answer-entry{width:122px;grid-template-rows:auto 48px 5px 48px}.pupil .fraction-answer-entry label{height:48px}.pupil .fraction-answer-entry .answer-input{width:96px;min-height:48px;height:48px;font-size:30px}.pupil .fraction-answer-line{width:122px;height:5px}.pupil .fraction-answer-title{font-size:13px}
 .pupil.fraction-engine #diagram{min-height:405px;padding:12px 22px}.pupil .fraction-learning{min-height:370px;gap:9px}.pupil .fraction-model-grid{min-height:140px;gap:14px}.pupil .fraction-model-card{padding:9px 12px}.pupil .fraction-model-card .fraction-strip,.pupil .fraction-model-card .fraction-cell{min-height:75px!important}.pupil .fraction-model-card>span:first-child{font-size:14px}.pupil .fraction-symbol{font-size:27px;min-width:54px}.pupil .fraction-equation{min-height:66px}.pupil .fraction-operation,.pupil .fraction-relation{font-size:34px}.pupil .fraction-order-answer{font-size:23px}.pupil .fraction-step-card{min-height:87px;padding:9px 15px}.pupil .fraction-step-card strong{font-size:20px}.pupil .fraction-step-card p{font-size:17px}.pupil .diagram .fraction-step-controls button{font-size:15px;min-height:38px}.pupil.fraction-engine #answerFields .choice{font-size:20px;min-height:48px}.pupil.fraction-engine .numberline-caption{font-size:14px}
-@media(max-width:700px){.fraction-engine #diagram,.pupil.fraction-engine #diagram{min-height:680px;max-height:none;overflow:visible}.fraction-learning,.pupil .fraction-learning{height:auto;min-height:650px}.fraction-model-grid{grid-template-columns:1fr;min-height:330px}.fraction-model-card .fraction-strip,.pupil .fraction-model-card .fraction-strip{min-height:52px!important}.fraction-model-card .fraction-cell,.pupil .fraction-model-card .fraction-cell{min-height:52px!important}.fraction-step-card p{font-size:14px}}
+@media(max-width:700px){.fraction-engine #diagram,.pupil.fraction-engine #diagram{min-height:680px;max-height:none;overflow:visible}.fraction-learning,.pupil .fraction-learning{height:auto;min-height:650px}.fraction-model-grid{grid-template-columns:1fr;min-height:330px}.fraction-model-card .fraction-strip,.pupil .fraction-model-card .fraction-strip{min-height:52px!important}.fraction-model-card .fraction-cell,.pupil .fraction-model-card .fraction-cell{min-height:52px!important}.fraction-step-card p{font-size:14px}.fraction-engine #answerForm:has(.fraction-answer-entry){grid-template-columns:1fr;justify-items:center;row-gap:8px}.fraction-engine #answerForm:has(.fraction-answer-entry) #feedback,.fraction-engine #answerForm:has(.fraction-answer-entry) #hint{grid-column:1}}
 
 /* Number-line marker and number-train patterns, adapted from P3 Number Pattern. */
 .numberline-engine #diagram{min-height:275px;justify-content:center;padding:12px 18px;overflow:hidden}
@@ -332,4 +333,49 @@ body.pupil.hundred-engine #diagram{min-height:355px}.pupil .hundred-workspace h3
 }
 @media(prefers-reduced-motion:reduce){
  .addsub-regrouped-glow,.counting-new,.money-regrouped-glow,.money-carry-token,.money-borrow-new-token{animation:none}
+}
+
+/* Full-screen classroom presentation and a stationary fractions control dock. */
+body.pupil{grid-template-rows:minmax(0,1fr);background:#fff}
+body.pupil header{position:fixed;z-index:50;top:8px;right:8px;width:auto;padding:0;border:0;background:transparent;pointer-events:none}
+body.pupil header>div:first-child,body.pupil #guideButton,body.pupil #downloadButton{display:none!important}
+body.pupil .header-buttons{display:block}
+body.pupil #viewButton{pointer-events:auto;min-width:104px;background:#fffffff2;box-shadow:0 2px 10px #183c3524}
+body.pupil main{display:block;height:100dvh;padding:0}
+body.pupil .activity{position:relative;width:100%;height:100dvh;max-width:none;margin:0;border:0;border-radius:0}
+body.pupil .activity-bar{position:absolute;z-index:20;top:8px;left:10px;padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:#fffffff2}
+body.pupil #previewLabel{display:none}
+body.pupil #questionView{height:100%;overflow:auto}
+body.pupil .question-block{padding:12px 130px 6px;text-align:center}
+body.pupil .activity-bottom,body.pupil footer{display:none}
+
+.fraction-engine #answerForm:has(.fraction-step-controls){display:grid;grid-template-columns:230px minmax(180px,1fr) 300px;grid-template-areas:"steps answers actions" "feedback feedback feedback" "hint hint hint";align-items:center;justify-content:stretch;column-gap:18px;padding:6px 18px 5px}
+.fraction-engine #answerForm:has(.fraction-step-controls) .fraction-step-controls{grid-area:steps;display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
+.fraction-engine #answerForm:has(.fraction-step-controls) .fraction-step-controls button{width:100%;min-height:42px;padding:6px 8px;font-size:12px}
+.fraction-engine #answerForm:has(.fraction-step-controls) #answerFields{grid-area:answers;align-self:center;min-height:98px;margin:0}
+.fraction-engine #answerForm:has(.fraction-step-controls) .answer-actions{grid-area:actions;display:grid;grid-template-columns:minmax(145px,1fr) 100px;grid-template-areas:"advance help";gap:8px;align-items:center}
+.fraction-engine #answerForm:has(.fraction-step-controls) #checkButton,.fraction-engine #answerForm:has(.fraction-step-controls) #nextButton{grid-area:advance;width:100%;min-height:42px}
+.fraction-engine #answerForm:has(.fraction-step-controls) #hintButton{grid-area:help;width:100%;min-height:42px}
+.fraction-engine #answerForm:has(.fraction-step-controls) #feedback{grid-area:feedback;margin-top:3px}
+.fraction-engine #answerForm:has(.fraction-step-controls) #hint{grid-area:hint;margin-top:4px}
+.fraction-engine .fraction-learning>.fraction-step-controls{display:none}
+
+body.pupil.fraction-engine #questionView{overflow:hidden}
+body.pupil.fraction-engine #diagram{flex:1;min-height:0;margin:4px 12px;padding:9px 18px}
+body.pupil.fraction-engine #answerForm:has(.fraction-step-controls){grid-template-columns:260px minmax(200px,1fr) 330px;column-gap:24px;padding:6px 24px}
+body.pupil.fraction-engine #answerForm:has(.fraction-step-controls) .fraction-step-controls button,body.pupil.fraction-engine #answerForm:has(.fraction-step-controls) .answer-actions button{min-height:48px;font-size:15px}
+body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
+
+@media(max-width:1050px) and (min-width:701px){
+ .fraction-engine #answerForm:has(.fraction-step-controls),body.pupil.fraction-engine #answerForm:has(.fraction-step-controls){grid-template-columns:200px minmax(150px,1fr) 245px;column-gap:10px;padding-left:10px;padding-right:10px}
+ .fraction-engine #answerForm:has(.fraction-step-controls) .answer-actions{grid-template-columns:minmax(128px,1fr) 88px}
+ .fraction-engine #answerForm:has(.fraction-step-controls) .fraction-step-controls button{font-size:11px}
+}
+@media(max-width:700px){
+ body.pupil .question-block{padding:48px 12px 6px}
+ .fraction-engine #answerForm:has(.fraction-step-controls),body.pupil.fraction-engine #answerForm:has(.fraction-step-controls){grid-template-columns:1fr;grid-template-areas:"answers" "steps" "actions" "feedback" "hint";row-gap:7px;padding:8px 12px}
+ .fraction-engine #answerForm:has(.fraction-step-controls) #answerFields{min-height:0}
+ .fraction-engine #answerForm:has(.fraction-step-controls) .fraction-step-controls,.fraction-engine #answerForm:has(.fraction-step-controls) .answer-actions{width:min(100%,360px);justify-self:center}
+ body.pupil.fraction-engine #questionView{overflow:auto}
+ body.pupil.fraction-engine #diagram{min-height:620px;margin:4px 8px}
 }

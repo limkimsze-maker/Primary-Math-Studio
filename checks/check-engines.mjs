@@ -71,5 +71,6 @@ assert.throws(()=>validate({...defaults('area',3,'compare'),cols2:3,rows2:3}));
 assert.throws(()=>validate({engine:'unknown',grade:3,task:'read'}));
 const html=await readFile(new URL('../public/engines.html',import.meta.url),'utf8');assert(!html.includes('/*SCRIPT*/'));assert(!html.includes('/*STYLE*/'));assert(!/<script\b[^>]*\bsrc=/.test(html));assert(html.includes('Created by Lim Kim Sze'));
 assert(html.includes('money-answer-symbol'));assert(html.includes('money-answer-dot'));assert(html.includes('money-decimal-point'));assert(html.includes('money-coin-art'));assert(html.includes('money-note-art'));assert(html.includes('dollar sign comes before the dollar digits'));
+assert(html.includes('fraction-answer-entry'));assert(html.includes('fraction-answer-line'));assert(html.includes('Enter the numerator above the fraction line'));assert(html.includes('aria-keyshortcuts="ArrowLeft"'));assert(html.includes('aria-keyshortcuts="ArrowRight"'));assert(html.includes('primary-maths-pupil-view'));
 await writeFile(new URL('validation.json',import.meta.url),JSON.stringify(report,null,2));
 console.log(JSON.stringify(report,null,2));if(report.failures.length)process.exitCode=1;
