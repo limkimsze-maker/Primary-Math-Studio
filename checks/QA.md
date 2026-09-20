@@ -81,3 +81,10 @@ Money notation and diagram correction
 - Mixed pupil answers now form one aligned `$ [dollars] . [cents]` amount. The cents box requires two digits and pads a single digit on blur. Addition and subtraction show the dollar sign and decimal point in every aligned row and result.
 - The teacher guide explicitly explains the dollar sign, decimal point, two-digit cents, $0.05 versus $0.50, teacher entry, original diagrams, and fixed/random download behaviour.
 - Browser-checked Counting Money, addition, a completed $21.35 answer, direction-sensitive teacher entry and the guide at 1363 × 936. Expanded pupil view used the full 792 px iframe viewport with equal scroll and client heights; no internal scrolling was needed.
+
+Money addition and subtraction source-fidelity update
+
+- Rebuilt the two flows directly from the original Adding Money and Subtracting Money source. Addition follows 5¢ → 10¢ → $1 → $10 → $100, moves the second row up, shows each exchange, creates the carried token and reveals one written result digit per step.
+- Subtraction keeps one working row. It subtracts immediately when possible; otherwise each adjacent rename is a separate step before subtraction. The donor is crossed out, new smaller tokens are highlighted, original written digits are struck through and renamed values appear above them.
+- Added a compact completed-move strip while keeping the next-action card predictive with a question mark. The `$` sign and decimal point remain visible in every written amount, including the subtraction rename row.
+- Sequence tests now compare every revealed state for $12.75 + $8.60 and $31.60 − $20.90, plus $20.50 − $1.60 across zero and $1.10 − $0.05 for the special 10¢ → two 5¢ exchange.

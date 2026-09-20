@@ -511,30 +511,36 @@ const MONEY_ASC=[...MONEY_DESC].reverse();
 const MONEY_BASE={c5:2,c10:10,d1:10,d10:10,d100:10};
 const MONEY_LABEL={d100:'$100',d10:'$10',d1:'$1',c10:'10¢',c5:'5¢'};
 const MONEY_PLACE_WORD={d100:'$100 place',d10:'$10 place',d1:'$1 place',c10:'10¢ place',c5:'5¢ place'};
+const MONEY_ADD_TITLE={c5:'Add the ones of cents (0 or 5).',c10:'Add the tens of cents.',d1:'Add the dollars (ones).',d10:'Add the dollars (tens).',d100:'Add the dollars (hundreds).'};
 const moneyCopy=o=>Object.fromEntries(MONEY_DESC.map(p=>[p,o[p]??null]));
 const moneyShownDigit=(place,count)=>place==='c5'?count*5:count;
+const moneyPlanAmount=value=>`$${Math.floor(value/100)}.${String(value%100).padStart(2,'0')}`;
 function moneyMatToken(place,extra=''){
  const kind=place==='d1'?'one':place.startsWith('d')?'note':'cent';
  return `<span class="strict-money-token strict-money-${kind} strict-money-${place} ${extra}" aria-hidden="true"><b>${MONEY_LABEL[place]}</b></span>`;
 }
-function moneyMatPile(place,count,removed=0){
+function moneyMatPile(place,count,{marked=0,markClass='',ghosts=[]}={}){
  const label=place==='d100'?'hundred-dollar notes':place==='d10'?'ten-dollar notes':place==='d1'?'one-dollar coins':place==='c10'?'ten-cent coins':'five-cent coins';
- return `<span class="strict-money-pile" role="img" aria-label="${count} ${label}">${Array.from({length:count},()=>moneyMatToken(place)).join('')}${Array.from({length:removed},()=>moneyMatToken(place,'removed-token')).join('')}${count+removed===0?'<i class="strict-money-empty">0</i>':''}</span>`;
+ const safeCount=Math.max(0,count|0),markedCount=Math.min(safeCount,Math.max(0,marked|0)),plainCount=safeCount-markedCount;
+ const tokens=Array.from({length:plainCount},()=>moneyMatToken(place)).join('')+Array.from({length:markedCount},()=>moneyMatToken(place,markClass)).join('');
+ const ghostTokens=ghosts.map(ghost=>Array.from({length:Math.max(0,ghost.count|0)},()=>moneyMatToken(place,ghost.className||'')).join('')).join('');
+ return `<span class="strict-money-pile" role="img" aria-label="${safeCount} ${label}">${tokens}${safeCount===0?'<i class="strict-money-empty">0</i>':''}${ghostTokens?`<span class="strict-money-ghost-stack" aria-hidden="true">${ghostTokens}</span>`:''}</span>`;
 }
 function moneyAdditionPlan(c){
  const originalTop=moneyPlaceCounts(c.a),originalBottom=moneyPlaceCounts(c.b),top={...originalTop},bottom={...originalBottom};
  const result=Object.fromEntries(MONEY_DESC.map(p=>[p,null])),carries=Object.fromEntries(MONEY_DESC.map(p=>[p,0])),actions=[];
  for(let i=0;i<MONEY_ASC.length;i++){
   const place=MONEY_ASC[i],next=MONEY_ASC[i+1],first=originalTop[place],second=originalBottom[place],incoming=carries[place]||0,total=first+second+incoming,base=MONEY_BASE[place],carry=next?Math.floor(total/base):0,remainder=next?total%base:total;
+  const beforeTop={...top},beforeBottom={...bottom},beforeResult={...result},beforeCarries={...carries};
   bottom[place]=0;top[place]=remainder;result[place]=remainder;
   if(next&&carry){top[next]+=carry;carries[next]=carry;}
-  const title=`Add the ${place==='c5'?'ones of cents (0 or 5)':place==='c10'?'tens of cents':place==='d1'?'dollars (ones)':place==='d10'?'tens of dollars':'hundreds of dollars'}.`;
-  let detail;
-  if(place==='c5')detail=`${first*5}¢ + ${second*5}¢${incoming?' + '+incoming*5+'¢':''} = ${total*5}¢.${carry?' Regroup two 5¢ coins as one 10¢ coin.':''}`;
-  else detail=`${first} + ${second}${incoming?' + '+incoming:''} = ${total}.${carry?` Regroup ${base} × ${MONEY_LABEL[place]} as one ${MONEY_LABEL[next]}; ${remainder} remain${remainder===1?'s':''}.`:` Record ${moneyShownDigit(place,remainder)}.`}`;
-  actions.push({type:'add',place,next,carry,remainder,title,detail,top:{...top},bottom:{...bottom},result:{...result},carries:{...carries}});
+  const equationLeft=place==='c5'?`${first*5}¢ + ${second*5}¢${incoming?' + '+incoming*5+'¢':''}`:place==='c10'?`${first} tens + ${second} tens${incoming?' + '+incoming+' ten':''}`:`${first} + ${second}${incoming?' + '+incoming:''}`;
+  const equation=`${equationLeft} = ${place==='c5'?total*5+'¢':total}`;
+  const exchange=carry?(place==='c5'?'2 × 5¢ → 1 × 10¢':`${base} × ${MONEY_LABEL[place]} → 1 × ${MONEY_LABEL[next]}`):'';
+  const detail=carry?`${equation}. Regroup ${exchange}; record ${moneyShownDigit(place,remainder)} in this place.`:`${equation}. Record ${moneyShownDigit(place,remainder)} in this place.`;
+  actions.push({type:'add',place,next,first,second,incoming,total,base,carry,remainder,title:MONEY_ADD_TITLE[place],equationLeft,equation,exchange,detail,beforeTop,beforeBottom,beforeResult,beforeCarries,top:{...top},bottom:{...bottom},result:{...result},carries:{...carries}});
  }
- return {adding:true,actions,initial:{top:{...originalTop},bottom:{...originalBottom},result:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),carries:Object.fromEntries(MONEY_DESC.map(p=>[p,0]))}};
+ return {adding:true,answer:c.a+c.b,actions,initial:{top:{...originalTop},bottom:{...originalBottom},result:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),carries:Object.fromEntries(MONEY_DESC.map(p=>[p,0]))}};
 }
 function moneySubtractionPlan(c){
  const original=moneyPlaceCounts(c.a),lower=moneyPlaceCounts(c.b),work={...original},revised=Object.fromEntries(MONEY_DESC.map(p=>[p,null])),result=Object.fromEntries(MONEY_DESC.map(p=>[p,null])),actions=[];
@@ -544,24 +550,45 @@ function moneySubtractionPlan(c){
   if(work[place]<lower[place]){
    let donor=i+1;while(donor<MONEY_ASC.length&&work[MONEY_ASC[donor]]===0)donor++;
    for(let k=donor;k>i;k--){
-    const from=MONEY_ASC[k],to=MONEY_ASC[k-1],factor=MONEY_BASE[to];work[from]-=1;work[to]+=factor;revised[from]=work[from];revised[to]=work[to];
-    actions.push(snap({type:'borrow',place,from,to,title:`Rename (borrow) from ${MONEY_LABEL[from]} to ${MONEY_LABEL[to]}.`,detail:`One ${MONEY_LABEL[from]} becomes ${factor} ${MONEY_LABEL[to]} ${factor===1?'piece':'pieces'}. The value stays the same.`}));
+    const from=MONEY_ASC[k],to=MONEY_ASC[k-1],factor=MONEY_BASE[to],beforeWork={...work},highBefore=work[from],lowBefore=work[to];work[from]-=1;work[to]+=factor;revised[from]=work[from];revised[to]=work[to];
+    const highAfter=work[from],lowAfter=work[to],equation=`${moneyShownDigit(from,highBefore)} (${MONEY_LABEL[from]}) → ${moneyShownDigit(from,highAfter)} and ${moneyShownDigit(to,lowBefore)} (${MONEY_LABEL[to]}) → ${moneyShownDigit(to,lowAfter)}`;
+    actions.push(snap({type:'borrow',place,from,to,factor,highBefore,lowBefore,highAfter,lowAfter,beforeWork,title:`Rename (borrow) from ${MONEY_LABEL[from]} to ${MONEY_LABEL[to]}.`,equation,detail:`One ${MONEY_LABEL[from]} becomes ${factor} ${MONEY_LABEL[to]} ${factor===1?'piece':'pieces'}. The value stays the same.`}));
    }
   }
-  const available=work[place],remove=lower[place];work[place]-=remove;result[place]=work[place];
-  actions.push(snap({type:'subtract',place,remove,title:`Subtract in the ${MONEY_PLACE_WORD[place]}.`,detail:`${moneyShownDigit(place,available)} − ${moneyShownDigit(place,remove)} = ${moneyShownDigit(place,work[place])} in the ${MONEY_PLACE_WORD[place]}.`}));
+  const beforeWork={...work},available=work[place],remove=lower[place];work[place]-=remove;result[place]=work[place];
+  const equationLeft=`${moneyShownDigit(place,available)} − ${moneyShownDigit(place,remove)}`,equation=`${equationLeft} = ${moneyShownDigit(place,work[place])}`;
+  actions.push(snap({type:'subtract',place,available,remove,beforeWork,title:`Subtract in the ${MONEY_PLACE_WORD[place]}.`,equationLeft,equation,detail:`${equation} in the ${MONEY_PLACE_WORD[place]}.`}));
  }
- return {adding:false,actions,lower,original,initial:{work:{...original},revised:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),result:Object.fromEntries(MONEY_DESC.map(p=>[p,null]))}};
+ return {adding:false,answer:c.a-c.b,actions,lower,original,initial:{work:{...original},revised:Object.fromEntries(MONEY_DESC.map(p=>[p,null])),result:Object.fromEntries(MONEY_DESC.map(p=>[p,null]))}};
 }
 function moneyPlanState(plan,step){return step?plan.actions[Math.min(step,plan.actions.length)-1]:plan.initial;}
+function moneyTransitionStrip(plan,last){
+ if(!last)return `<div class="strict-money-process ready" data-transition="ready"><b>Start</b><span>${plan.adding?'Align the decimal dots. Begin with 5¢.':'Begin with 5¢. Subtract if possible; otherwise rename first.'}</span></div>`;
+ if(last.type==='add')return `<div class="strict-money-process" data-transition="${last.carry?'regroup':'combine'}"><b>Moved together</b><span>${E(last.equation)}</span><b>${last.carry?`Regroup ${E(last.exchange)}`:'No regrouping'}</b><span>Record ${moneyShownDigit(last.place,last.remainder)}.</span></div>`;
+ if(last.type==='borrow')return `<div class="strict-money-process" data-transition="borrow"><b>Renamed</b><span>1 × ${E(MONEY_LABEL[last.from])} → ${last.factor} × ${E(MONEY_LABEL[last.to])}</span><b>Same value</b></div>`;
+ return `<div class="strict-money-process" data-transition="subtract"><b>Crossed out</b><span>${E(last.equation)}</span><b>Record ${moneyShownDigit(last.place,last.work[last.place])}.</b></div>`;
+}
 function moneyOperationMat(plan,state,step){
  const next=plan.actions[step],last=step?plan.actions[step-1]:null,active=new Set(next?.type==='borrow'?[next.from,next.to]:next?[next.place]:[]),removed=last?.type==='subtract'?last.remove:0,removedPlace=last?.type==='subtract'?last.place:'';
- const columns=MONEY_DESC.map(place=>`<section class="strict-money-column strict-money-col-${place} ${active.has(place)?'active':''}"><strong>${MONEY_LABEL[place]}</strong><div class="strict-money-zone strict-money-top">${moneyMatPile(place,plan.adding?state.top[place]:state.work[place],!plan.adding&&removedPlace===place?removed:0)}</div>${plan.adding?`<div class="strict-money-zone strict-money-bottom">${moneyMatPile(place,state.bottom[place])}</div>`:''}</section>`).join('');
+ const recent=new Set(last?.type==='borrow'?[last.from,last.to]:last?[last.place]:[]);
+ const columns=MONEY_DESC.map(place=>{
+  const topOptions={};
+  if(plan.adding&&last?.type==='add'){
+   if(place===last.place){topOptions.marked=state.top[place];topOptions.markClass='moved-token';if(last.carry)topOptions.ghosts=[{count:last.base*last.carry,className:'exchange-token'}];}
+   if(place===last.next&&last.carry){topOptions.marked=last.carry;topOptions.markClass='renamed-token';}
+  }
+  if(!plan.adding&&last?.type==='borrow'){
+   if(place===last.from)topOptions.ghosts=[{count:1,className:'borrowed-token'}];
+   if(place===last.to){topOptions.marked=last.factor;topOptions.markClass='renamed-token';}
+  }
+  if(!plan.adding&&removedPlace===place)topOptions.ghosts=[{count:removed,className:'removed-token'}];
+  return `<section class="strict-money-column strict-money-col-${place} ${active.has(place)?'active':''} ${recent.has(place)?'recent':''}"><strong>${MONEY_LABEL[place]}</strong><div class="strict-money-zone strict-money-top">${moneyMatPile(place,plan.adding?state.top[place]:state.work[place],topOptions)}</div>${plan.adding?`<div class="strict-money-zone strict-money-bottom">${moneyMatPile(place,state.bottom[place])}</div>`:''}</section>`;
+ }).join('');
  const complete=step>=plan.actions.length;
- return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div><p class="strict-money-status">${E(complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):next.title)}</p></div>`;
+ return `<div class="strict-money-model"><div class="strict-money-bands"><b>Dollars</b><b>Cents</b></div><div class="strict-money-mat ${plan.adding?'adding':'subtracting'} ${complete?'combined':''}" aria-label="${plan.adding?'Two-row addition':'One-row subtraction'} money place-value mat"><div class="strict-money-columns">${columns}</div><span class="strict-money-dot" aria-hidden="true">•</span></div>${moneyTransitionStrip(plan,last)}<p class="strict-money-status">${E(complete?(plan.adding?'The two amounts are together.':'The tokens left show the difference.'):`Next: ${next.title}`)}</p></div>`;
 }
 function moneyOriginalDigits(value){const counts=moneyPlaceCounts(value),dollars=Math.floor(value/100);return {...counts,d100:dollars>=100?counts.d100:'',d10:dollars>=10?counts.d10:'',d1:counts.d1,c10:counts.c10,c5:counts.c5*5};}
-function moneyAlgorithmCell(place,value,classes=''){return `<span class="strict-money-algo-cell ${classes}" data-place="${place}">${value===null?'':E(value)}</span>`;}
+function moneyAlgorithmCell(place,value,classes=''){return `<span class="strict-money-algo-cell ${classes}" data-place="${place}">${value===null?(classes.includes('result-cell')?'?':''):E(value)}</span>`;}
 function moneyAlgorithmRow(values,{sign='',cls='',active=[],crossed=[],result=false}={}){
  return `<div class="strict-money-algo-row ${cls}"><i>${E(sign)}</i><b class="strict-money-dollar">$</b>${MONEY_DESC.slice(0,3).map(p=>moneyAlgorithmCell(p,values[p],`${active.includes(p)?'active':''} ${crossed.includes(p)?'crossed-digit':''} ${result?'result-cell':''}`)).join('')}<b class="strict-money-decimal">.</b>${MONEY_DESC.slice(3).map(p=>moneyAlgorithmCell(p,values[p],`${active.includes(p)?'active':''} ${crossed.includes(p)?'crossed-digit':''} ${result?'result-cell':''}`)).join('')}</div>`;
 }
@@ -575,7 +602,10 @@ function moneyWrittenAlgorithm(c,plan,state,step){
 }
 function moneyOperationStepPanel(plan,step){
  const action=plan.actions[step],complete=!action;
- return `<div class="strict-money-step-card ${complete?'complete':''}"><span>${complete?'COMPLETE':`STEP ${step+1} OF ${plan.actions.length}`}</span><strong>${E(complete?'All places are complete.':action.title)}</strong><p>${E(complete?'Read the tokens and the written answer.':action.detail)}</p></div><div class="diagram-toolbar">${complete?'':`<button type="button" data-money-next>Next step →</button>`}${step?'<button type="button" data-money-restart>Restart steps</button>':''}</div>`;
+ const equation=complete?moneyPlanAmount(plan.answer):action.type==='borrow'?action.equation:`${action.equationLeft} = ?`;
+ const instruction=complete?'Read the tokens and the written answer.':action.type==='add'?'Move the lower-row tokens up. Regroup if needed, then record this place.':action.type==='borrow'?'Rename one adjacent larger token before subtracting. The value stays the same.':'Cross out and remove the tokens, then record this place.';
+ const marker=complete||action.type==='borrow'?'<b>✓</b>':'<b>?</b>';
+ return `<div class="strict-money-step-card ${complete?'complete':''}"><span>${complete?'COMPLETE':`STEP ${step+1} OF ${plan.actions.length}`}</span><strong>${E(complete?'All places are complete.':action.title)}</strong><div class="strict-money-step-equation ${action?.type||''}">${E(equation)}${marker}</div><p>${E(instruction)}</p></div><div class="diagram-toolbar">${complete?'':`<button type="button" data-money-next>Next step →</button>`}${step?'<button type="button" data-money-restart>Restart steps</button>':''}</div>`;
 }
 function wireMoneySteps(host,max,label='Next step'){
  const next=host.querySelector('[data-money-next]'),restart=host.querySelector('[data-money-restart]');
@@ -595,7 +625,7 @@ function drawMoneyConversion(c,host){
 }
 function drawMoneyAlgorithm(c,host){
  const plan=c.task==='add'?moneyAdditionPlan(c):moneySubtractionPlan(c),step=Math.min(interaction.moneyStep,plan.actions.length),state=moneyPlanState(plan,step);
- host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationStepPanel(plan,step)}</div></div>${caption(c.task==='add'?'Follow the 5¢, 10¢, $1, $10 and $100 places. Combine and regroup the actual tokens.':'Use one working amount. Rename a larger token before taking tokens away.')}`;
+ host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationStepPanel(plan,step)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
  wireMoneySteps(host,plan.actions.length);
 }
 function moneyPartWhole(c){
@@ -648,9 +678,9 @@ Saving Quest · Make $1, $10 or $100 lets the teacher select one target. Pupils 
 
 The written money format is always explicit: the dollar sign comes before the dollar digits, the decimal point separates dollars from cents, and the cents are shown with two digits. For example, five cents is written $0.05, while fifty cents is written $0.50. The pupil answer box is one aligned amount: $ [dollars] . [cents].
 
-Add money · Step by step follows the Adding Money interactive. The concrete mat has five columns ($100, $10, $1, 10¢ and 5¢) and two rows. Every note or coin token is drawn separately. Press Next step in this order: 5¢, 10¢, $1, $10, $100. The second row’s tokens join the first row in the active column. When a column reaches its exchange value, the tokens regroup into one token in the next column: two 5¢ become one 10¢; ten 10¢ become one $1; then groups of ten continue through $10 and $100. The written calculation reveals the matching result digit and carry at the same time.
+Add money · Step by step follows the Adding Money interactive. The concrete mat has five columns ($100, $10, $1, 10¢ and 5¢) and two rows. Every note or coin token is drawn separately. Before each click, the teaching card shows the active place and leaves its answer as ?. Press Next step in this order: 5¢, 10¢, $1, $10, $100. The second row’s tokens join the first row in the active column. When a column reaches its exchange value, the outlined group disappears and a highlighted token appears in the next column: two 5¢ become one 10¢; ten 10¢ become one $1; then groups of ten continue through $10 and $100. The completed-move strip states what moved, whether it regrouped and what digit was recorded. The written calculation reveals the matching result digit and carry at the same time.
 
-Subtract money · Step by step follows the Subtracting Money interactive. It uses one working row showing only the first amount; it does not place a second “take away” row underneath. Work from 5¢ to $100. If there are not enough tokens, Next step first renames one adjacent larger token: 10¢ becomes two 5¢, $1 becomes ten 10¢, $10 becomes ten $1, or $100 becomes ten $10. Borrowing across zero is shown one adjacent column at a time. The written calculation crosses out the old digit and records the renamed amount above it. The next step crosses out and removes the required tokens, then reveals that result digit.
+Subtract money · Step by step follows the Subtracting Money interactive. It uses one working row showing only the first amount; it does not place a second “take away” row underneath. Work from 5¢ to $100. If a place can subtract, the next click subtracts immediately. If there are not enough tokens, Next step first renames one adjacent larger token: 10¢ becomes two 5¢, $1 becomes ten 10¢, $10 becomes ten $1, or $100 becomes ten $10. Borrowing across zero is shown one adjacent column at a time, never skipped. The donor is crossed out while the new smaller tokens appear highlighted. The written calculation crosses out the old digit and records the renamed amount above it. Only the following step crosses out and removes the required tokens, then reveals that result digit.
 
 Pause before every Next step and ask pupils to predict the move. Keep the concrete mat and written calculation in view together. After all places are complete, pupils enter the whole answer and check it. They may also solve directly without revealing every step.
 

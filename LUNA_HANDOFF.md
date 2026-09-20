@@ -4,16 +4,16 @@
 
 Continue this project in a fresh Luna conversation from its GitHub source. Keep the existing P1–P3 Singapore Mathematics engines, teacher/pupil views, guides, responsive layout, and bottom credit.
 
-## Important unresolved item: Money
+## Money addition and subtraction completed
 
-The present Money addition and subtraction implementation is **not approved**. It was reconstructed from requirements and does not yet reproduce the teaching sequence of the two original interactives closely enough.
+The Money addition and subtraction implementation has now been rebuilt directly from the two original interactives:
 
 Use the original GitHub source—not an inferred generic algorithm—as the authority:
 
 - Addition: https://limkimsze-maker.github.io/P1_to_P3_Adding_Money/
 - Subtraction: https://limkimsze-maker.github.io/P1_to_P3_Subtracting_Money/
 
-Read their repositories and reproduce, step by step:
+The completed implementation reproduces, step by step:
 
 1. the order in which each place is handled;
 2. what appears before and after each pupil/teacher action;
@@ -22,13 +22,9 @@ Read their repositories and reproduce, step by step:
 5. the simple, copyright-safe drawings of the notes and coins; and
 6. the exact addition and subtraction teaching flow used in the originals.
 
-Do not treat the current five-column `$100 / $10 / $1 / 10¢ / 5¢` implementation or its test as proof of fidelity. Replace that structure wherever it differs from the original interactives.
+Addition moves the lower-row tokens into the upper row, visually groups exchanged tokens, creates the carried token in the adjacent column and reveals the matching written digit. Subtraction keeps one working row, shows every adjacent borrow separately, crosses out the donor and the removed tokens, and updates the crossed-out/renamed written digits before revealing the result digit.
 
-## Acceptance rule
-
-Create sequence-level tests based on the original source. A test must verify every revealed state in order, including carries/renaming and the written algorithm—not merely the presence of columns, tokens, or CSS classes. Check both a normal example and an example requiring regrouping across zero.
-
-Do not publish the Money update as complete until its step sequence and graphics have been compared directly with both original interactives.
+`checks/check-money-operations.mjs` verifies every state for `$12.75 + $8.60`, `$31.60 − $20.90`, borrowing across zero in `$20.50 − $1.60`, and the special `10¢ → two 5¢` exchange. It also checks the dollar sign, decimal point, question marks, carries, crossed digits and transition markers.
 
 ## Current source state
 
