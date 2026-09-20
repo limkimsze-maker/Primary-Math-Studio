@@ -490,7 +490,7 @@ function padTime(value){return String(value).padStart(2,'0');}
 function time24Minutes(value){const match=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value??'').trim());return match?Number(match[1])*60+Number(match[2]):null;}
 function formatTime24(total){const minute=((Number(total)%1440)+1440)%1440;return `${padTime(Math.floor(minute/60))}:${padTime(minute%60)}`;}
 function formatDuration(total){const minutes=Math.max(0,Number(total)||0),hours=Math.floor(minutes/60),remaining=minutes%60;return hours&&remaining?`${hours} ${hours===1?'hour':'hours'} ${remaining} ${remaining===1?'minute':'minutes'}`:hours?`${hours} ${hours===1?'hour':'hours'}`:`${remaining} ${remaining===1?'minute':'minutes'}`;}
-function analogueTo24Minutes(hour,minute,sky){const h=Number(hour)%12;const hour24=sky==='morning'?h:sky==='afternoon'?(h||12):(h||0);return hour24*60+Number(minute);}
+function analogueTo24Minutes(hour,minute,sky){const h=Number(hour)%12;const hour24=sky==='morning'?h:sky==='afternoon'?(h===0?12:h+12):h===0?0:h+12;return hour24*60+Number(minute);}
 function formatTime12From24(total){const minute=((Number(total)%1440)+1440)%1440,hour24=Math.floor(minute/60),hour=hour24%12||12;return `${hour}:${padTime(minute%60)} ${hour24<12?'AM':'PM'}`;}
 function validate(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Choose a valid settings file.');
