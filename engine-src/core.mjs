@@ -7,10 +7,10 @@ export function tasks(engine,grade) {
  const all={
  place:[['read','Read blocks or discs'],['hundred','Explore numbers to 100 · Hundred chart & flip chart'],['digit','Value of a digit'],['more','More than a number'],['less','Less than a number']],
  operations:[['add','Add step by step'],['subtract','Subtract step by step'],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
- numberline:[['point','Find the missing number'],['add','Jump forwards'],['subtract','Jump backwards'],['pattern','Complete a number pattern']],
+ numberline:[['point','Find the missing number'],['add','Find a number more'],['subtract','Find a number less'],['pattern','Complete a number pattern']],
  bar:[['whole','Part–whole: find the whole'],['part','Part–whole: find a part'],['compare','Comparison: find the difference'],['change','Change: find what remains'],['groups','Equal groups: find the total']],
  money:[['count','Count money · Big to small'],['convert','Convert cents ↔ dollars'],['make','Saving Quest · $1 / $10 / $100'],['add','Add money · Step by step'],['subtract','Subtract money · Step by step'],['word','Money word problems · Model']],
- fraction:[['read','Read a shaded fraction'],['shade','Shade a fraction'],['compare','Compare fractions'],['add',grade===3?'Add related fractions':'Add like fractions'],['subtract',grade===3?'Subtract related fractions':'Subtract like fractions'],...(grade===3?[['equivalent','Equivalent fractions']]:[])],
+ fraction:[['write','1 · Writing Fractions'],['unit-compare','2 · Comparing Unit Fractions'],['like-compare','3 · Comparing Like Fractions'],['like-add','4 · Adding Like Fractions'],['like-subtract','5 · Subtracting Like Fractions'],...(grade===3?[['equivalent','6 · Equivalent Fractions'],['simplify','7 · Simplifying Fractions'],['unlike-compare','8 · Comparing & Ordering Unlike Fractions'],['unlike-add','9 · Adding Unlike Fractions'],['unlike-subtract','10 · Subtracting Unlike Fractions']]:[])],
  time:[['read','Read the clock'],['set','Set the clock'],['duration','Find the duration'],...(grade>=2?[['later','Find the later time']]:[])],
  geometry:[['shape','Name a 2D shape'],['sides','Count sides'],...(grade>=2?[['solid','Name a 3D shape']]:[]),...(grade===3?[['angle','Compare with a right angle'],['lines','Parallel or perpendicular']]:[])],
  area:[['area','Area of a rectangle'],['perimeter','Perimeter of a rectangle'],['compare','Same area, different perimeter']],
@@ -35,7 +35,16 @@ export function fields(c) {
   if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
   return [pair('a','Amount to show',5,moneyMax,5),format];
  }
- case 'fraction':return [pair('den','Number of equal parts',2,12),pair('a',c.task==='subtract'?'Starting numerator':'First / shaded numerator',0,12),...(c.task==='compare'||c.task==='add'||c.task==='subtract'?[pair('b','Second numerator',0,12)]:[]),...((c.task==='compare'||c.grade===3&&['add','subtract'].includes(c.task))?[pair('den2','Second denominator',2,12)]:[]),...(c.task==='equivalent'?[pair('factor','Multiply equal parts by',2,4)]:[])];
+ case 'fraction':{
+  const ordering=['unit-compare','like-compare','unlike-compare'].includes(c.task),three=ordering&&c.orderMode!=='compare';
+  if(c.task==='write')return [pair('den','Total equal parts',2,12),pair('a','Shaded parts',1,12)];
+  if(c.task==='unit-compare')return [pair('den','First denominator',2,12),pair('den2','Second denominator',2,12),select('orderMode','Question form',[['compare','Compare two'],['ascending','Order least to greatest'],['descending','Order greatest to least']]),...(three?[pair('den3','Third denominator',2,12)]:[])];
+  if(c.task==='like-compare')return [pair('den','Common denominator',2,12),pair('a','First numerator',1,12),pair('b','Second numerator',1,12),select('orderMode','Question form',[['compare','Compare two'],['ascending','Order least to greatest'],['descending','Order greatest to least']]),...(three?[pair('cnum','Third numerator',1,12)]:[])];
+  if(c.task==='unlike-compare')return [pair('den','First denominator',2,12),pair('a','First numerator',1,12),pair('den2','Second denominator',2,12),pair('b','Second numerator',1,12),select('orderMode','Question form',[['compare','Compare two'],['ascending','Order least to greatest'],['descending','Order greatest to least']]),...(three?[pair('den3','Third denominator',2,12),pair('cnum','Third numerator',1,12)]:[])];
+  if(c.task==='equivalent')return [pair('den','Starting denominator',2,6),pair('a','Starting numerator',1,5),pair('factor','Split each part into',2,4)];
+  if(c.task==='simplify')return [pair('den','Denominator',2,12),pair('a','Numerator',1,11)];
+  return [pair('den','First denominator',2,12),pair('a',c.task.includes('subtract')?'Starting numerator':'First numerator',1,12),pair('b','Second numerator',1,12),...(['unlike-add','unlike-subtract'].includes(c.task)?[pair('den2','Second denominator',2,12)]:[])];
+ }
  case 'time':return [pair('a','Hour (1–12)',1,12),pair('b','Minute',0,59),...(['later','duration'].includes(c.task)?[pair('duration','Minutes later',1,c.grade===1?60:c.grade===2?120:300)]:[])];
  case 'geometry':return [...(['shape','sides'].includes(c.task)?[select('shape','2D shape',[['square','Square'],['rectangle','Rectangle'],['triangle','Triangle'],['circle','Circle'],['semicircle','Semicircle'],['quarter','Quarter-circle']])]:[]),...(c.task==='solid'?[select('solid','3D shape',[['cube','Cube'],['cuboid','Cuboid'],['cone','Cone'],['cylinder','Cylinder'],['sphere','Sphere']])]:[]),...(c.task==='angle'?[select('angle','Angle type',[['less','Less than a right angle'],['right','Right angle'],['greater','Greater than a right angle']])]:[]),...(c.task==='lines'?[select('lines','Line relationship',[['parallel','Parallel'],['perpendicular','Perpendicular'],['neither','Neither']])]:[])];
  case 'area':return [pair('a','Length (cm)',1,12),pair('b','Width (cm)',1,10),...(c.task==='compare'?[pair('cols2','Second rectangle length (cm)',1,12),pair('rows2','Second rectangle width (cm)',1,10)]:[])];
@@ -48,7 +57,7 @@ export function fields(c) {
 export function defaults(engine,grade=3,task){
  if(engine==='fraction'&&grade===1)grade=2;if(engine==='area')grade=3;
  const t=task||tasks(engine,grade)[0][0];
- let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:8,factor:2,format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
+ let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
  if(engine==='place'){c.a=t==='more'?grade===1?29:grade===2?199:999:t==='less'?grade===1?30:grade===2?200:1000:grade===1?34:grade===2?234:2034;c.b=1;}
  if(engine==='place'&&t==='hundred'){c.a=50;c.leftAmount=10;c.rightAmount=1;}
  if(engine==='operations'){c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}}
@@ -62,13 +71,26 @@ export function defaults(engine,grade=3,task){
   if(t==='word'){c.a=grade===1?75:1275;c.b=grade===1?20:860;c.wordType='compare';}
   if(t==='count'&&grade===1)c.format='cents';
  }
- if(engine==='fraction'){c.a=t==='subtract'?5:3;c.b=2;}
+ if(engine==='fraction'){
+  c.a=3;c.b=2;c.den=8;c.den2=4;c.den3=8;c.cnum=7;c.factor=2;c.orderMode='compare';
+  if(t==='unit-compare'){c.a=1;c.b=1;c.den=3;c.den2=5;c.den3=8;}
+  if(t==='like-compare'){c.a=3;c.b=5;c.cnum=7;c.den=8;c.den2=8;c.den3=8;}
+  if(t==='like-subtract'){c.a=5;c.b=2;c.den=8;}
+  if(t==='equivalent'){c.a=2;c.den=3;c.factor=2;}
+  if(t==='simplify'){c.a=4;c.den=8;}
+  if(t==='unlike-compare'){c.a=1;c.den=2;c.b=3;c.den2=4;c.cnum=5;c.den3=8;}
+  if(t==='unlike-add'){c.a=1;c.den=2;c.b=1;c.den2=4;}
+  if(t==='unlike-subtract'){c.a=3;c.den=4;c.b=1;c.den2=2;}
+ }
  if(engine==='time'){c.a=3;c.b=grade===1?30:25;c.duration=grade===1?30:45;}
  if(engine==='area'){c.a=6;c.b=4;}if(engine==='graph'&&grade===1)c.key=1;
  if(engine==='explain'){c.a=t==='fraction'?3:t==='perimeter'?6:t==='groups'?4:12;c.b=t==='perimeter'?4:t==='groups'?6:8;}
  if(engine==='error'){c.a=t==='fraction'?3:t==='time'?3:t==='perimeter'?6:t==='place'?34:28;c.b=t==='time'?25:t==='perimeter'?4:17;}
  c.representation=engine==='place'?'blocks':'discs';return c;
 }
+export function fractionGcd(a,b){a=Math.abs(Number(a));b=Math.abs(Number(b));while(b)[a,b]=[b,a%b];return a||1;}
+export function fractionLcm(a,b){return Math.abs(a*b)/fractionGcd(a,b);}
+export function simplestFraction(n,d){const factor=fractionGcd(n,d);return [n/factor,d/factor];}
 export function validate(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Choose a valid settings file.');
  if(!Object.hasOwn(ENGINE_NAMES,raw.engine))throw Error('Unknown engine.');
@@ -119,10 +141,25 @@ export function validate(raw){
   if(c.task==='word'&&c.wordType==='total'&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the total within ${g===1?'$100.00':'$999.95'}.`);
  }
  if(c.engine==='fraction'||(['explain','error'].includes(c.engine)&&c.task==='fraction')){
-  if(c.a>c.den)throw Error('The numerator cannot exceed the denominator.');
+  if(c.a>c.den)throw Error('The numerator cannot exceed its denominator.');
   if(c.engine==='error'&&(c.a===0||c.a===c.den||c.a===c.den-c.a))throw Error('Choose a fraction with some shaded and unshaded parts; avoid exactly half for this error.');
-  if(c.task==='compare'&&(c.b>c.den2||g===2&&(c.a!==1||c.b!==1)&&c.den!==c.den2))throw Error('Compare like fractions or unit fractions (both numerators 1).');
-  if(['add','subtract'].includes(c.task)){const d2=g===2?c.den:c.den2;if(c.b>d2||c.den%d2&&d2%c.den)throw Error('Use related denominators and valid numerators.');if(c.task==='add'&&c.a/c.den+c.b/d2>1)throw Error('Keep the sum at or below one whole.');if(c.task==='subtract'&&c.b/d2>c.a/c.den)throw Error('The second fraction must not exceed the first.');}
+  if(c.engine==='fraction'){
+   const compare=['unit-compare','like-compare','unlike-compare'].includes(c.task),ordering=compare&&c.orderMode!=='compare';
+   if(c.task==='unit-compare'){c.a=1;c.b=1;c.cnum=1;}
+   if(['like-compare','like-add','like-subtract'].includes(c.task)){c.den2=c.den;c.den3=c.den;}
+   if(compare&&c.b>c.den2||ordering&&c.cnum>c.den3)throw Error('Each numerator must not exceed its denominator.');
+   if(c.task==='unlike-compare'&&c.den===c.den2)throw Error('Choose different denominators for unlike fractions.');
+   if(ordering&&c.task==='unlike-compare'&&new Set([c.den,c.den2,c.den3]).size<3)throw Error('Use three different denominators for unlike-fraction ordering.');
+   if(ordering){const values=[[c.a,c.den],[c.b,c.den2],[c.cnum,c.den3]];if(new Set(values.map(([n,d])=>n/d)).size<3)throw Error('Use three fractions with different values for ordering.');}
+   if(c.task==='simplify'&&fractionGcd(c.a,c.den)===1)throw Error('Choose a fraction that can be simplified.');
+   if(c.task==='equivalent'&&c.a>=c.den)throw Error('Use a proper starting fraction.');
+   if(['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task)){
+    const d2=c.task.startsWith('like-')?c.den:c.den2;if(c.b>d2)throw Error('The second numerator cannot exceed its denominator.');
+    if(c.task.startsWith('unlike-')&&c.den%d2&&d2%c.den)throw Error('Use related denominators so only one fraction needs to change.');
+    if(c.task.endsWith('add')&&c.a/c.den+c.b/d2>1)throw Error('Keep the sum at or below one whole.');
+    if(c.task.endsWith('subtract')&&c.b/d2>c.a/c.den)throw Error('The second fraction must not exceed the first.');
+   }
+  }
  }
  if(c.engine==='time'&&g===1&&c.b%5!==0)throw Error('P1 presets use five-minute intervals.');
  if(c.engine==='time'&&g===1&&c.task==='duration'&&![30,60].includes(c.duration))throw Error('P1 duration presets use half an hour or one hour.');
@@ -162,7 +199,31 @@ export function generatedConfig(c,r=Math.random){
   else{p.a=amount(moneyCap);p.b=amount(p.a);}
   break;
  }
- case 'fraction':p.den=int(r,2,c.task==='equivalent'?6:12);p.a=int(r,1,p.den-1);p.b=int(r,1,c.task==='subtract'?p.a:c.task==='add'?p.den-p.a:p.den-1);p.den2=p.den;break;
+ case 'fraction':{
+  if(c.task==='write'){p.den=int(r,2,12);p.a=int(r,1,p.den);break;}
+  if(c.task==='unit-compare'){
+   const ds=[2,3,4,5,6,8,10,12],pick=()=>choose(r,ds);p.a=p.b=p.cnum=1;p.den=pick();do p.den2=pick();while(p.den2===p.den);do p.den3=pick();while([p.den,p.den2].includes(p.den3));break;
+  }
+  if(c.task==='like-compare'){
+   p.den=int(r,3,12);const values=Array.from({length:p.den},(_,i)=>i+1);p.a=choose(r,values);do p.b=choose(r,values);while(p.b===p.a);do p.cnum=choose(r,values);while([p.a,p.b].includes(p.cnum));p.den2=p.den3=p.den;break;
+  }
+  if(c.task==='like-add'){p.den=int(r,3,12);p.a=int(r,1,p.den-1);p.b=int(r,1,p.den-p.a);p.den2=p.den;break;}
+  if(c.task==='like-subtract'){p.den=int(r,3,12);p.a=int(r,2,p.den);p.b=int(r,1,p.a-1);p.den2=p.den;break;}
+  if(c.task==='equivalent'){p.den=int(r,2,6);p.a=int(r,1,p.den-1);p.factor=c.factor;break;}
+  if(c.task==='simplify'){
+   const baseDen=int(r,2,6),validFactors=Array.from({length:4},(_,i)=>i+2).filter(f=>baseDen*f<=12),factor=choose(r,validFactors),validNums=Array.from({length:baseDen-1},(_,i)=>i+1).filter(n=>fractionGcd(n,baseDen)===1),baseNum=choose(r,validNums);p.a=baseNum*factor;p.den=baseDen*factor;break;
+  }
+  if(c.task==='unlike-compare'){
+   const ordering=c.orderMode!=='compare',common=choose(r,ordering?[6,8,12]:[4,6,8,10,12]),divisors=Array.from({length:common-1},(_,i)=>i+2).filter(d=>common%d===0),pickDen=()=>choose(r,divisors);p.den=pickDen();do p.den2=pickDen();while(p.den2===p.den);p.a=int(r,1,p.den);p.b=int(r,1,p.den2);
+   if(ordering){do p.den3=pickDen();while([p.den,p.den2].includes(p.den3));p.cnum=int(r,1,p.den3);let guard=0;while(new Set([p.a/p.den,p.b/p.den2,p.cnum/p.den3]).size<3&&guard++<30){p.a=int(r,1,p.den);p.b=int(r,1,p.den2);p.cnum=int(r,1,p.den3);}}
+   else{p.den3=p.den;p.cnum=1;}
+   break;
+  }
+  const small=choose(r,[2,3,4,5,6]),factor=choose(r,[2,3].filter(f=>small*f<=12));p.den=small;p.den2=small*factor;
+  if(c.task==='unlike-add'){p.a=int(r,1,p.den-1);const max=Math.max(1,Math.floor((1-p.a/p.den)*p.den2));p.b=int(r,1,max);}
+  else{p.a=int(r,1,p.den);const max=Math.max(1,Math.floor(p.a/p.den*p.den2));p.b=int(r,1,max);if(p.b/p.den2>p.a/p.den)p.b=Math.max(1,p.b-1);}
+  break;
+ }
  case 'time':p.a=int(r,1,12);p.b=g===1?int(r,0,11)*5:int(r,0,59);p.duration=g===1?choose(r,[30,60]):int(r,1,g===2?120:300);break;
  case 'geometry':for(const f of fields(c).filter(f=>f.type==='select'))p[f.key]=choose(r,f.options)[0];break;
  case 'area':if(c.task==='compare'){const dims=choose(r,[[6,4,8,3],[6,2,4,3],[8,2,4,4],[10,2,5,4]]);[p.a,p.b,p.cols2,p.rows2]=dims;}else{p.a=int(r,1,12);p.b=int(r,1,10);}break;
@@ -173,6 +234,11 @@ export function generatedConfig(c,r=Math.random){
  return p;
 }
 export const formatTime=(h,m)=>`${h||12}:${String(m).padStart(2,'0')}`;
+export const wholeNumberText=value=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+export function numberlineQuestion(task,start,change){
+ if(task==='point')return 'Fill in the missing number on the number line.';
+ return `What is ${wholeNumberText(change)} ${task==='add'?'more':'less'} than ${wholeNumberText(start)}?`;
+}
 export function sequenceValues(c){
  const values=[Number(c.a)];
  for(let i=1;i<9;i++)values.push(values[i-1]+(c.patternType==='alternating'&&i%2===0?Number(c.b2):Number(c.b)));
@@ -299,7 +365,7 @@ export function lesson(config,r=Math.random){
   hint=div?'Start at the largest place. Share, record the quotient digit, then exchange any leftover discs into the next smaller place.':t==='add'||t==='subtract'||mult?'Work on the highlighted place. Make the exchange shown, then record its digit.':'Count equal groups. Follow the model one step at a time.';
   explanation=div?`${a} ÷ ${b} = ${answer[0]}${answer[1]?' remainder '+answer[1]:''}. Check: ${answer[0]} × ${b} + ${answer[1]} = ${a}.`:`${a} ${t==='add'?'+':t==='subtract'?'−':mult?'×':'÷'} ${b} = ${answer}.`;break;
  }
- case 'numberline':if(t==='pattern'){const seq=sequenceValues(c),blanks=sequenceBlankIndices(c.missing),signed=n=>n>0?`+${n}`:String(n);type='sequence';answer=seq;d.sequence=seq;d.blanks=blanks;d.ruleText=c.patternType==='alternating'?`Alternate ${signed(c.b)}, then ${signed(c.b2)}.`:`${signed(c.b)} each time.`;question='Complete the number pattern.';hint=c.patternType==='alternating'?'The changes alternate. Compare the first pair, then the second pair.':'Find the change between neighbouring numbers.';explanation=`Rule: ${d.ruleText}`;}else{answer=t==='point'?a:t==='add'?a+b:a-b;question=t==='point'?'What number is at the highlighted tick?':`Start at ${a}. Jump ${b} ${t==='add'?'forwards':'backwards'}. Where do you land?`;hint=t==='point'?`Each tick increases by ${b}.`:'Count one jump from the starting marker, then place the blue marker and write the number.';explanation=`The marked position is ${answer}.`;}break;
+ case 'numberline':if(t==='pattern'){const seq=sequenceValues(c),blanks=sequenceBlankIndices(c.missing),signed=n=>n>0?`+${n}`:String(n);type='sequence';answer=seq;d.sequence=seq;d.blanks=blanks;d.ruleText=c.patternType==='alternating'?`Alternate ${signed(c.b)}, then ${signed(c.b2)}.`:`${signed(c.b)} each time.`;question='Complete the number pattern.';hint=c.patternType==='alternating'?'The changes alternate. Compare the first pair, then the second pair.':'Find the change between neighbouring numbers.';explanation=`Rule: ${d.ruleText}`;}else{answer=t==='point'?a:t==='add'?a+b:a-b;question=numberlineQuestion(t,a,b);hint=t==='point'?`Each space increases by ${wholeNumberText(b)}.`:`Start at ${wholeNumberText(a)}. Follow one jump of ${wholeNumberText(b)} ${t==='add'?'more':'less'}, then move the blue marker and write the landing number.`;explanation=t==='point'?`The missing number is ${wholeNumberText(answer)}.`:`${wholeNumberText(a)} ${t==='add'?'+':'−'} ${wholeNumberText(b)} = ${wholeNumberText(answer)}.`;}break;
  case 'bar':answer=t==='whole'?a+b:t==='groups'?a*b:a-b;question=t==='whole'?`A box has ${a} red ${c.context} and ${b} blue ${c.context}. How many ${c.context} altogether?`:t==='part'?`There are ${a} ${c.context}. ${b} are red. How many are blue?`:t==='compare'?`Aisha has ${a} ${c.context}. Ben has ${b}. How many more does Aisha have?`:t==='change'?`Aisha has ${a} ${c.context} and gives away ${b}. How many remain?`:`There are ${a} bags with ${b} ${c.context} in each bag. How many altogether?`;hint=t==='whole'||t==='groups'?'The whole is made of all the parts.':'The missing part is the whole / longer bar minus the known part / shorter bar.';explanation=t==='whole'?`${a} + ${b} = ${answer}.`:t==='groups'?`${a} × ${b} = ${answer}.`:`${a} − ${b} = ${answer}.`;break;
  case 'money':{
   const money=n=>`$${Math.floor(n/100)}.${String(n%100).padStart(2,'0')}`;
@@ -324,7 +390,38 @@ export function lesson(config,r=Math.random){
   }
   break;
  }
- case 'fraction':type=t==='compare'?'choice':'fraction';answer=t==='compare'?(a*c.den2===b*c.den?'Equal':a*c.den2>b*c.den?'First is greater':'Second is greater'):t==='equivalent'?[a*c.factor,c.den*c.factor]:['add','subtract'].includes(t)?(()=>{const d2=c.grade===2?c.den:c.den2,common=Math.max(c.den,d2);return [a*(common/c.den)+(t==='add'?1:-1)*b*(common/d2),common];})():[a,c.den];question=t==='read'?'What fraction of the strip is shaded?':t==='shade'?`Shade ${a} of the ${c.den} equal parts, then write the fraction.`:t==='equivalent'?`Complete the equivalent fraction: ${a}/${c.den} = ?/${c.den*c.factor}`:t==='compare'?'Compare the two fractions.':`${a}/${c.den} ${t==='add'?'+':'−'} ${b}/${c.grade===2?c.den:c.den2} = ?`;choices=t==='compare'?['First is greater','Equal','Second is greater']:null;hint='The denominator counts equal parts in one whole. The numerator counts selected parts.';explanation=t==='compare'?`${a}/${c.den} and ${b}/${c.den2}: ${answer.toLowerCase()}.`:t==='equivalent'?`Split every part into ${c.factor} equal pieces: ${a*c.factor}/${c.den*c.factor}.`:`The answer is ${answer[0]}/${answer[1]}. Equivalent fractions are accepted.`;break;
+ case 'fraction':{
+  const f=([n,dn])=>`${n}/${dn}`,compareTasks=['unit-compare','like-compare','unlike-compare'],operationTasks=['like-add','like-subtract','unlike-add','unlike-subtract'];
+  if(t==='write'){
+   type='fraction';answer=[a,c.den];question='What fraction of the whole is shaded?';d.fractions=[[a,c.den]];d.steps=[
+    {title:'Check the whole',text:'The whole must be divided into equal parts.'},
+    {title:'Find the denominator',text:`Count all ${c.den} equal parts. Write ${c.den} below the fraction line.`},
+    {title:'Find the numerator',text:`Count the ${a} shaded ${a===1?'part':'parts'}. Write ${a} above the fraction line.`},
+    {title:'Write the fraction',text:`${a} shaded parts out of ${c.den} equal parts is ${a}/${c.den}.`}
+   ];hint='Count all equal parts for the denominator, then count shaded parts for the numerator.';explanation=`${a} of ${c.den} equal parts are shaded, so the fraction is ${a}/${c.den}.`;
+  }else if(compareTasks.includes(t)){
+   type='choice';const fractions=t==='unit-compare'?[[1,c.den],[1,c.den2],...(c.orderMode==='compare'?[]:[[1,c.den3]])]:[[a,c.den],[b,c.den2],...(c.orderMode==='compare'?[]:[[c.cnum,c.den3]])];d.fractions=fractions;
+   const relation=(x,y)=>x[0]*y[1]===y[0]*x[1]?'=':x[0]*y[1]>y[0]*x[1]?'>':'<';
+   if(c.orderMode==='compare'){
+    answer=relation(fractions[0],fractions[1]);choices=['<','=','>'];question=`Compare ${f(fractions[0])} and ${f(fractions[1])}. Choose <, > or =.`;
+   }else{
+    const descending=c.orderMode==='descending',sorted=[...fractions].sort((x,y)=>(x[0]*y[1]-y[0]*x[1])*(descending?-1:1)),joiner=descending?' > ':' < ';answer=sorted.map(f).join(joiner);
+    const permutations=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]].map(order=>order.map(i=>f(fractions[i])).join(joiner));choices=[answer,...permutations.filter(value=>value!==answer)].slice(0,4);question=descending?'Order the fractions from greatest to least.':'Order the fractions from least to greatest.';
+   }
+   if(t==='unit-compare')d.steps=[{title:'Notice the numerators',text:'Each numerator is 1, so these are unit fractions.'},{title:'Compare the denominators',text:'More equal parts means each single part is smaller.'},{title:'Decide the order',text:`The correct comparison or order is ${answer}.`}];
+   else if(t==='like-compare')d.steps=[{title:'Check the denominators',text:`All denominators are ${c.den}, so the parts are the same size.`},{title:'Compare the numerators',text:'More equal parts selected means a greater fraction.'},{title:'Decide the order',text:`The correct comparison or order is ${answer}.`}];
+   else{const common=fractions.reduce((value,item)=>fractionLcm(value,item[1]),1),changed=fractions.map(([n,dn])=>[n*(common/dn),common]);d.commonDen=common;d.changedFractions=changed;d.steps=[{title:'Find a common denominator',text:`Use ${common} so every strip has equal-sized parts.`},{title:'Change each fraction',text:`${fractions.map((item,i)=>`${f(item)} = ${f(changed[i])}`).join('; ')}.`},{title:'Compare the numerators',text:'With equal denominators, compare or order the numerators.'},{title:'Decide the order',text:`The correct comparison or order is ${answer}.`}];}
+   hint='Show one teaching step at a time, then compare equal-sized parts.';explanation=`The correct comparison or order is ${answer}.`;
+  }else if(t==='equivalent'){
+   type='fraction';answer=[a*c.factor,c.den*c.factor];d.fractions=[[a,c.den]];d.changedFractions=[answer];d.factor=c.factor;question=`Complete the equivalent fraction: ${a}/${c.den} = ?/${answer[1]}.`;d.steps=[{title:'Keep the same amount',text:`Split every original part into ${c.factor} equal smaller parts.`},{title:'Multiply both numbers',text:`Multiply the numerator and denominator by ${c.factor}.`},{title:'Write the equivalent fraction',text:`${a}/${c.den} = ${answer[0]}/${answer[1]}. The shaded amount is unchanged.`}];hint='Whatever you do to the denominator, do the same to the numerator.';explanation=`${a} × ${c.factor} over ${c.den} × ${c.factor} gives ${answer[0]}/${answer[1]}.`;
+  }else if(t==='simplify'){
+   type='fraction';const factor=fractionGcd(a,c.den);answer=simplestFraction(a,c.den);d.fractions=[[a,c.den]];d.changedFractions=[answer];d.factor=factor;question=`Simplify ${a}/${c.den} to its simplest form.`;d.steps=[{title:'Find a common factor',text:`${a} and ${c.den} can both be divided by ${factor}.`},{title:'Divide both numbers',text:`${a} ÷ ${factor} = ${answer[0]} and ${c.den} ÷ ${factor} = ${answer[1]}.`},{title:'Write the simplest form',text:`${a}/${c.den} = ${answer[0]}/${answer[1]}. The value is unchanged.`}];hint='Divide the numerator and denominator by the same greatest common factor.';explanation=`Dividing both numbers by ${factor} gives ${answer[0]}/${answer[1]}.`;
+  }else if(operationTasks.includes(t)){
+   type='fraction';const adding=t.endsWith('add'),unlike=t.startsWith('unlike-'),d2=unlike?c.den2:c.den,common=fractionLcm(c.den,d2),n1=a*(common/c.den),n2=b*(common/d2),raw=[n1+(adding?1:-1)*n2,common],reduced=simplestFraction(...raw);answer=reduced;d.fractions=[[a,c.den],[b,d2]];d.changedFractions=[[n1,common],[n2,common]];d.rawResult=raw;d.resultFraction=reduced;d.commonDen=common;d.operation=adding?'+':'−';question=`${a}/${c.den} ${d.operation} ${b}/${d2} = ?`;
+   d.steps=unlike?[{title:'Look at the denominators',text:`The denominators ${c.den} and ${d2} are different.`},{title:'Change to like fractions',text:`Use denominator ${common}: ${a}/${c.den} = ${n1}/${common} and ${b}/${d2} = ${n2}/${common}.`},{title:`${adding?'Add':'Subtract'} the numerators`,text:`${n1} ${d.operation} ${n2} = ${raw[0]}. Keep denominator ${common}.`},{title:'Write the simplest form',text:raw[0]===reduced[0]&&common===reduced[1]?`${raw[0]}/${common} is already in simplest form.`:`${raw[0]}/${common} simplifies to ${reduced[0]}/${reduced[1]}.`}]:[{title:'Check the denominators',text:`Both denominators are ${c.den}, so the parts are the same size.`},{title:`${adding?'Add':'Subtract'} the numerators`,text:`${a} ${d.operation} ${b} = ${raw[0]}.`},{title:'Keep the denominator',text:`The denominator stays ${common}: ${raw[0]}/${common}.`},{title:'Write the simplest form',text:raw[0]===reduced[0]&&common===reduced[1]?`${raw[0]}/${common} is already in simplest form.`:`${raw[0]}/${common} simplifies to ${reduced[0]}/${reduced[1]}.`}];hint='Make equal-sized parts first. Then work with the numerators and keep the common denominator.';explanation=`${a}/${c.den} ${d.operation} ${b}/${d2} = ${reduced[0]}/${reduced[1]}.`;
+  }
+  break;
+ }
  case 'time':type=t==='duration'?'number':'time';answer=t==='duration'?c.duration:[t==='later'?Math.floor(((a%12*60+b+c.duration)%720)/60)||12:a,t==='later'?(b+c.duration)%60:b];unit=t==='duration'?'minutes':'';d.end=[Math.floor(((a%12*60+b+c.duration)%720)/60)||12,(b+c.duration)%60];question=t==='read'?'What time does this clock show?':t==='set'?`Set the clock to ${formatTime(a,b)}. Then enter that time.`:t==='later'?`It is ${formatTime(a,b)}. What time will it be ${c.duration} minutes later?`:'How many minutes pass from the first clock to the second?';hint='The short hand shows the hour. The long hand shows the minutes. Each numbered space is 5 minutes.';explanation=t==='duration'?`${formatTime(a,b)} to ${formatTime(...d.end)} takes ${c.duration} minutes (moving forwards within one 12-hour cycle).`:`The time is ${formatTime(...answer)}.`;break;
  case 'geometry':type='choice';answer=t==='shape'?c.shape==='quarter'?'Quarter-circle':c.shape==='semicircle'?'Semicircle':c.shape[0].toUpperCase()+c.shape.slice(1):t==='solid'?c.solid[0].toUpperCase()+c.solid.slice(1):t==='sides'?c.shape==='circle'?'0':c.shape==='triangle'?'3':c.shape==='quarter'?'2':c.shape==='semicircle'?'1':'4':t==='angle'?c.angle==='right'?'Right angle':c.angle==='less'?'Less than a right angle':'Greater than a right angle':c.lines[0].toUpperCase()+c.lines.slice(1);question=t==='shape'?'Name the shape.':t==='sides'?'How many straight sides does this shape have?':t==='solid'?'Name this 3D shape.':t==='angle'?'Compare the marked angle with a right angle.':'How are the two lines related?';choices=t==='shape'?fields(c)[0].options.map(o=>o[1]):t==='solid'?['Cube','Cuboid','Cone','Cylinder','Sphere']:t==='sides'?['0','1','2','3','4']:t==='angle'?['Less than a right angle','Right angle','Greater than a right angle']:['Parallel','Perpendicular','Neither'];hint=t==='sides'?'Count only the straight edges.':t==='lines'?'Parallel lines keep the same distance apart. Perpendicular lines meet at a right angle.':t==='angle'?'Use the right-angle corner as a reference.':'Look at the sides, corners and faces.';explanation=`${answer}.`;break;
  case 'area':type=t==='compare'?'choice':'number';answer=t==='area'?a*b:t==='perimeter'?2*(a+b):2*(a+b)===2*(c.cols2+c.rows2)?'Same perimeter':2*(a+b)>2*(c.cols2+c.rows2)?'First is greater':'Second is greater';unit=t==='area'?'cm²':t==='perimeter'?'cm':'';question=t==='area'?'Find the area. Each small square is 1 cm².':t==='perimeter'?'Find the distance all the way around the rectangle.':'These rectangles have the same area. Compare their perimeters.';choices=t==='compare'?['First is greater','Same perimeter','Second is greater']:null;hint=t==='area'?'Count rows × columns.':`Add all four sides. The opposite sides are equal.`;explanation=t==='area'?`${a} × ${b} = ${answer} cm².`:t==='perimeter'?`${a} + ${b} + ${a} + ${b} = ${answer} cm.`:`Both areas are ${a*b} cm². Their perimeters are ${2*(a+b)} cm and ${2*(c.cols2+c.rows2)} cm.`;break;
@@ -350,10 +447,10 @@ export function checkAnswer(l,input,interaction={}){
  if(l.type==='reason')ok=Array.isArray(input)&&input.length===3&&input.every((v,i)=>v===l.data.reasons[i]);
  if(l.type==='sequence')ok=Array.isArray(input)&&input.length===l.answer.length&&l.data.blanks.every(i=>whole(input[i])&&Number(input[i])===l.answer[i]);
  const c=l.data;
+ if(c.engine==='fraction'&&l.type==='fraction')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
  if(c.engine==='operations')ok=ok&&interaction.operationComplete===true;
  if(c.engine==='money'&&c.task==='make')ok=ok&&interaction.money===l.answer;
  if(c.engine==='money'&&c.task==='word')ok=ok&&interaction.moneyModel===c.correctModel;
- if(c.engine==='fraction'&&c.task==='shade')ok=ok&&interaction.shaded===c.a;
  if(c.engine==='time'&&c.task==='set')ok=ok&&Array.isArray(interaction.clock)&&interaction.clock[0]===c.a&&interaction.clock[1]===c.b;
  if(c.engine==='numberline'&&['add','subtract'].includes(c.task))ok=ok&&interaction.numberlineMarker===l.answer;
  if(c.engine==='error')ok=ok&&interaction.errorReason===c.errorReason;

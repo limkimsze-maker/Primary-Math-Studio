@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
-import {LIMITS,tasks,defaults,validate,generatedConfig,lesson,checkAnswer,sequenceValues,sequenceBlankIndices} from '../engine-src/core.mjs';
+import {readFile} from 'node:fs/promises';
+import {LIMITS,tasks,defaults,validate,generatedConfig,lesson,checkAnswer,sequenceValues,sequenceBlankIndices,wholeNumberText,numberlineQuestion} from '../engine-src/core.mjs';
 
 assert.equal(tasks('place',1)[1][0],'hundred');
 assert.equal(tasks('place',1)[1][1],'Explore numbers to 100 · Hundred chart & flip chart');
+assert.equal(tasks('numberline',3)[1][1],'Find a number more');
+assert.equal(tasks('numberline',3)[2][1],'Find a number less');
+assert.equal(wholeNumberText(5941),'5 941');
+assert.equal(numberlineQuestion('add',5941,200),'What is 200 more than 5 941?');
+assert.equal(numberlineQuestion('subtract',5941,200),'What is 200 less than 5 941?');
 assert.deepEqual(sequenceValues({...defaults('numberline',3,'pattern'),a:2400,b:100,patternType:'constant'}),[2400,2500,2600,2700,2800,2900,3000,3100,3200]);
 assert.deepEqual(sequenceValues({...defaults('numberline',3,'pattern'),a:2400,b:100,b2:10,patternType:'alternating'}),[2400,2500,2510,2610,2620,2720,2730,2830,2840]);
 assert.deepEqual(sequenceValues({...defaults('numberline',3,'pattern'),a:900,b:-100,patternType:'constant'}),[900,800,700,600,500,400,300,200,100]);
@@ -27,6 +33,9 @@ for(const grade of [1,2,3]){
 
 for(const task of ['add','subtract']){
  const c=validate({...defaults('numberline',3,task),a:task==='add'?2400:2600,b:200}),l=lesson(c);
+ assert.equal(l.question,task==='add'?'What is 200 more than 2 400?':'What is 200 less than 2 600?');
  assert(checkAnswer(l,l.answer,{numberlineMarker:l.answer}));assert(!checkAnswer(l,l.answer,{numberlineMarker:c.a}));assert(!checkAnswer(l,c.a,{numberlineMarker:l.answer}));
 }
-console.log('Passed Place Value ordering, constant/decreasing/alternating patterns, 300 random valid patterns and linked number-line marker checks.');
+const [runtime,css]=await Promise.all([readFile(new URL('../engine-src/runtime.js',import.meta.url),'utf8'),readFile(new URL('../engine-src/theme.css',import.meta.url),'utf8')]);
+assert.match(runtime,/class="numberline-jump-arc"/);assert.match(runtime,/class="numberline-jump-arrowhead"/);assert.doesNotMatch(css,/\.numberline-jump path\{/);assert.match(css,/\.numberline-jump \.numberline-jump-arrowhead\{/);
+console.log('Passed practice-book number-line wording, clean arrow styling, constant/decreasing/alternating patterns, 300 random valid patterns and linked marker checks.');

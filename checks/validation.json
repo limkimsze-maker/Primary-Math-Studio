@@ -33,8 +33,8 @@
     {
       "engine": "fraction",
       "name": "Fractions",
-      "taskGradeCombinations": 11,
-      "passed": 11
+      "taskGradeCombinations": 15,
+      "passed": 15
     },
     {
       "engine": "time",
@@ -73,8 +73,8 @@
       "passed": 11
     }
   ],
-  "cases": 141,
-  "generatedQuestions": 8280,
+  "cases": 145,
+  "generatedQuestions": 8520,
   "checks": [
     "operations/add",
     "operations/subtract",
@@ -88,13 +88,15 @@
     "money/subtract",
     "money/word",
     "money/word",
-    "fraction/add",
-    "fraction/subtract",
-    "fraction/compare",
+    "fraction/write",
+    "fraction/like-add",
+    "fraction/like-subtract",
+    "fraction/unit-compare",
     "time/later",
     "time/duration",
     "place/digit",
-    "fraction/add",
+    "fraction/unlike-add",
+    "fraction/simplify",
     "area/compare",
     "graph/total"
   ],
