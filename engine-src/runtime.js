@@ -586,7 +586,7 @@ function moneyAnimationText(action,phase){
   if(phase==='exchange')return {title:`Rename it as ${action.factor} × ${MONEY_LABEL[action.to]}.`,detail:`Move the equal-value smaller tokens one column to the right.`};
   return {title:'Update the renamed numbers.',detail:`${action.equation}. The total value has not changed.`};
  }
- if(phase==='remove')return {title:`Cross out ${moneyShownDigit(action.place,action.remove)} in the ${MONEY_PLACE_WORD[action.place]}.`,detail:'Watch the tokens being taken away before writing the answer digit.'};
+ if(phase==='remove')return action.remove?{title:`Take away ${moneyShownDigit(action.place,action.remove)} in the ${MONEY_PLACE_WORD[action.place]}.`,detail:'Temporary crosses identify the tokens being removed. They clear before the answer digit is written.'}:{title:`No tokens to take away in the ${MONEY_PLACE_WORD[action.place]}.`,detail:`${action.equation}. Nothing moves in this place.`};
  return {title:`Write ${moneyShownDigit(action.place,action.work[action.place])} in the answer.`,detail:`${action.equation}.`};
 }
 function moneyTransitionStrip(plan,last,animation){
@@ -594,7 +594,7 @@ function moneyTransitionStrip(plan,last,animation){
  if(!last)return `<div class="strict-money-process ready" data-transition="ready"><b>Start</b><span>${plan.adding?'Align the decimal dots. Begin with 5¢.':'Begin with 5¢. Subtract if possible; otherwise rename first.'}</span></div>`;
  if(last.type==='add')return `<div class="strict-money-process" data-transition="${last.carry?'regroup':'combine'}"><b>Moved together</b><span>${E(last.equation)}</span><b>${last.carry?`Regroup ${E(last.exchange)}`:'No regrouping'}</b><span>Record ${moneyShownDigit(last.place,last.remainder)}.</span></div>`;
  if(last.type==='borrow')return `<div class="strict-money-process" data-transition="borrow"><b>Renamed</b><span>1 × ${E(MONEY_LABEL[last.from])} → ${last.factor} × ${E(MONEY_LABEL[last.to])}</span><b>Same value</b></div>`;
- return `<div class="strict-money-process" data-transition="subtract"><b>Crossed out</b><span>${E(last.equation)}</span><b>Record ${moneyShownDigit(last.place,last.work[last.place])}.</b></div>`;
+ return `<div class="strict-money-process" data-transition="subtract"><b>Subtracted</b><span>${E(last.equation)}</span><b>Record ${moneyShownDigit(last.place,last.work[last.place])}.</b></div>`;
 }
 function moneyOperationMat(plan,state,step,animation=null,settled=false){
  const next=plan.actions[step],last=!animation&&step?plan.actions[step-1]:null,activeAction=animation?plan.actions[animation.step]:next,active=new Set(activeAction?.type==='borrow'?[activeAction.from,activeAction.to]:activeAction?[activeAction.place]:[]),removed=!settled&&last?.type==='subtract'?last.remove:0,removedPlace=!settled&&last?.type==='subtract'?last.place:'';
@@ -642,7 +642,7 @@ function moneyWrittenAlgorithm(c,plan,state,step){
 function moneyOperationStepPanel(plan,step){
  const action=plan.actions[step],complete=!action;
  const equation=complete?moneyPlanAmount(plan.answer):action.type==='borrow'?action.equation:`${action.equationLeft} = ?`;
- const instruction=complete?'Read the tokens and the written answer.':action.type==='add'?'Move the lower-row tokens up. Regroup if needed, then record this place.':action.type==='borrow'?'Rename one adjacent larger token before subtracting. The value stays the same.':'Cross out and remove the tokens, then record this place.';
+ const instruction=complete?'Read the tokens and the written answer.':action.type==='add'?'Move the lower-row tokens up. Regroup if needed, then record this place.':action.type==='borrow'?'Rename one adjacent larger token before subtracting. The value stays the same.':'Take away the tokens, then record this place.';
  const marker=complete||action.type==='borrow'?'<b>✓</b>':'<b>?</b>';
  return `<div class="strict-money-step-card ${complete?'complete':''}"><span>${complete?'COMPLETE':`STEP ${step+1} OF ${plan.actions.length}`}</span><strong>${E(complete?'All places are complete.':action.title)}</strong><div class="strict-money-step-equation ${action?.type||''}">${E(equation)}${marker}</div><p>${E(instruction)}</p></div><div class="diagram-toolbar">${complete?'':`<button type="button" data-money-next>Next step →</button>`}${step?'<button type="button" data-money-restart>Restart steps</button>':''}</div>`;
 }
