@@ -35,7 +35,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 <div class="field"><label for="support">Support</label><select id="support"><option value="progressive">Progressive · Easy → Guided → Independent</option><option value="easy">Easy · helper steps</option><option value="guided">Guided · one conversion line</option><option value="independent">Independent · no helper</option></select></div>
 <div class="field"><label for="count">Questions</label><select id="count"><option>5</option><option selected>8</option><option>10</option></select></div>
 <button class="new" id="generate" type="button">Generate activity</button>
-<div class="level-note"><strong>P3 conversion facts</strong><br>1 km = 1000 m<br>1 m = 100 cm<br>1 kg = 1000 g<br>1 ℓ = 1000 mℓ</div></aside>
+<div class="level-note"><strong>P3 conversion facts</strong><br>1 km = 1000 m<br>1 m = 100 cm<br>1 kg = 1000 g<br>1 ℓ = 1000 ml</div></aside>
 <section class="activity"><div class="bar"><strong>P3 · Measurement Conversion</strong><span id="meta"></span></div><div class="body">
 <div class="chips"><span class="chip">Primary 3</span><span class="chip" id="familyChip"></span><span class="chip" id="phaseChip"></span></div>
 <h2 id="question"></h2><p class="instruction" id="instruction"></p>
@@ -46,7 +46,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 <footer>Created by Lim Kim Sze</footer>
 <dialog id="guide"><div class="ghead"><h2>Teacher guide</h2><button id="closeGuide" type="button">×</button></div><div class="gbody">
 <h3>Teaching sequence</h3><p>This engine follows the gradual support idea used in the Sports Fiesta measurement practices: <strong>Easy</strong> shows helper steps, <strong>Guided</strong> shows one conversion line, and <strong>Independent</strong> removes the scaffold.</p>
-<h3>Conversion relationships</h3><ul><li>1 km = 1000 m</li><li>1 m = 100 cm</li><li>1 kg = 1000 g</li><li>1 ℓ = 1000 mℓ</li></ul>
+<h3>Conversion relationships</h3><ul><li>1 km = 1000 m</li><li>1 m = 100 cm</li><li>1 kg = 1000 g</li><li>1 ℓ = 1000 ml</li></ul>
 <h3>Suggested language</h3><p>When changing from a larger unit to a smaller unit, ask pupils how many small units make one large unit. For mixed units, convert the large-unit part first, then add the remaining small units. In the reverse direction, find complete groups of 1000 (or 100 for m and cm); the remainder stays in the smaller unit.</p>
 <h3>Watch for</h3><p>Common errors include changing the unit label without changing the number, adding 1000 instead of multiplying, and losing the zero in examples such as 3 kg 50 g = 3050 g.</p>
 </div></dialog>
@@ -57,7 +57,7 @@ const FAMILIES={
  km_m:{kind:'length',label:'Length · km ↔ m',large:'km',small:'m',factor:1000,icon:'🏃',object:'cross-country route',wholeNoun:'kilometres',smallNoun:'metres'},
  m_cm:{kind:'length',label:'Length · m ↔ cm',large:'m',small:'cm',factor:100,icon:'🏁',object:'finish-line ribbon',wholeNoun:'metres',smallNoun:'centimetres'},
  kg_g:{kind:'mass',label:'Mass · kg ↔ g',large:'kg',small:'g',factor:1000,icon:'🏀',object:'sports equipment bag',wholeNoun:'kilograms',smallNoun:'grams'},
- l_ml:{kind:'volume',label:'Volume · ℓ ↔ mℓ',large:'ℓ',small:'mℓ',factor:1000,icon:'🥤',object:'team drink cooler',wholeNoun:'litres',smallNoun:'millilitres'}
+ l_ml:{kind:'volume',label:'Volume · ℓ ↔ ml',large:'ℓ',small:'ml',factor:1000,icon:'🥤',object:'team drink cooler',wholeNoun:'litres',smallNoun:'millilitres'}
 };
 const FAMILY_KEYS=Object.keys(FAMILIES);
 let questions=[],index=0,solved=false,results=[];
@@ -115,7 +115,7 @@ function show(){
  const q=questions[index],f=FAMILIES[q.familyKey];solved=false;$('meta').textContent='Question '+(index+1)+' of '+questions.length;$('familyChip').textContent=f.label;const pc=$('phaseChip');pc.textContent=q.phase[0].toUpperCase()+q.phase.slice(1);pc.className='chip phase-'+q.phase;$('question').textContent=q.question;$('instruction').textContent=q.instruction;renderFacts(q.familyKey,q.phase);$('stage').innerHTML=sportCard(q)+(q.phase==='independent'?'':renderBridge(q))+renderScaffold(q);renderAnswer(q);$('feedback').className='feedback hidden';$('hint').className='hint hidden';$('check').classList.remove('hidden');$('next').classList.add('hidden');$('help').classList.remove('hidden');renderProgress()
 }
 function renderProgress(){$('progress').innerHTML=questions.map((_,i)=>`<i class="${i<results.length?'done':i===index?'current':''}"></i>`).join('')}
-function values(){const a=Number($('ans1')?.value),b=$('ans2')?Number($('ans2').value):null;return[a,b]}
+function values(){const v1=$('ans1')?.value??'',v2=$('ans2')?.value??null;return[v1.trim()===''?NaN:Number(v1),v2===null?null:v2.trim()===''?NaN:Number(v2)]}
 function check(){
  const q=questions[index],[a,b]=values();if(!Number.isFinite(a)||($('ans2')&&!Number.isFinite(b))){$('feedback').className='feedback bad';$('feedback').textContent='Enter your answer first.';return}
  const ok=q.answer.length===1?a===q.answer[0]:a===q.answer[0]&&b===q.answer[1];
