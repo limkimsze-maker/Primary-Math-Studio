@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#183c35">
+<title>P3 Measurement Conversion</title>
+<script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
+<style>
+:root{--ink:#183c35;--green:#24735e;--green2:#e8f3ec;--gold:#efc66d;--line:#d7e1d6;--muted:#63766a;--bg:#eef3ed;--paper:#fff;--blue:#2f72b8;--red:#b33f3f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font:16px/1.4 Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}button,select,input{font:inherit;color:inherit}button{cursor:pointer}.hidden,[hidden]{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;background:var(--ink);color:#fff}.brand{display:flex;gap:10px;align-items:center}.mark{width:40px;height:40px;border-radius:11px;background:var(--gold);display:grid;place-items:center;color:var(--ink);font-weight:900;font-size:18px}.brand p{margin:0;font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.8px;font-weight:800}.brand h1{margin:1px 0 0;font-size:20px}.head-actions{display:flex;gap:7px}.head-actions button{min-height:36px;border:1px solid #ffffff55;border-radius:9px;background:#ffffff12;color:#fff;padding:6px 10px;font-weight:800}
+main{max-width:1500px;margin:auto;padding:12px}.layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px}.panel,.activity{background:#fff;border:1px solid var(--line);border-radius:14px}.panel{padding:14px;position:sticky;top:8px}.panel h2{margin:0 0 3px;font-size:18px}.sub{font-size:12px;color:var(--muted);margin:0 0 12px}.field{margin-bottom:10px}.field label{display:block;font-weight:800;font-size:13px;margin-bottom:4px}.field select{width:100%;min-height:40px;border:1px solid #bfd0c0;border-radius:8px;background:#fff;padding:7px}.new{width:100%;min-height:44px;border:0;border-radius:9px;background:var(--green);color:#fff;font-weight:900}.level-note{font-size:12px;line-height:1.45;background:#f7faf6;border:1px solid var(--line);border-radius:9px;padding:9px;margin-top:10px}
+.activity{overflow:hidden}.bar{display:flex;justify-content:space-between;gap:8px;padding:9px 13px;background:#f8fbf7;border-bottom:1px solid var(--line);font-size:13px}.bar strong{font-weight:900}.bar span{color:var(--muted)}
+.body{padding:12px;display:grid;gap:10px}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:4px 8px;border-radius:999px;background:var(--green2);color:var(--green);font-size:12px;font-weight:900}.chip.phase-easy{background:#eaf4ff;color:#2f72b8}.chip.phase-guided{background:#fff6dd;color:#805e13}.chip.phase-independent{background:#f1ecf8;color:#65478d}.body h2{margin:0;font-size:27px;line-height:1.15}.instruction{margin:0;color:var(--muted)}
+.work{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px}.visual{background:#f7faf6;border:1px solid var(--line);border-radius:13px;padding:10px}.stage{min-height:420px;border:1px solid #cfddce;border-radius:12px;background:#fff;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:hidden}
+.sport-card{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;align-items:center;border:1px solid #d8e2d7;border-radius:13px;background:#fbfcfa;padding:11px}.sport-icon{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eaf4ff;border:2px solid #b6d3ec;font-size:34px}.sport-card strong{display:block;font-size:17px}.sport-card p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.bridge{border:2px solid #c8d9c6;border-radius:14px;padding:12px;background:#f8fbf7}.bridge-title{text-align:center;font-size:12px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}.bridge-row{display:grid;grid-template-columns:minmax(90px,1fr) 130px minmax(90px,1fr);align-items:center;gap:8px}.unit-box{min-height:78px;border:2px solid #8db49f;border-radius:12px;background:#fff;display:grid;place-items:center;text-align:center;padding:8px}.unit-box b{display:block;font-size:25px}.unit-box small{color:var(--muted)}.arrow{display:grid;gap:3px;text-align:center;font-weight:900;color:var(--blue)}.arrow .shaft{font-size:27px;line-height:1}.arrow small{font-size:11px;color:var(--muted)}
+.scaffold{border-radius:12px;border:1px solid #ead9a5;background:#fff9e9;padding:11px}.scaffold h3{font-size:13px;margin:0 0 7px;color:#6e5318}.steps{display:grid;gap:7px}.step{display:flex;align-items:flex-start;gap:8px;border-radius:9px;background:#fff;padding:8px;border:1px solid #eee3c6;font-size:14px}.step b{width:24px;height:24px;border-radius:50%;background:var(--gold);display:grid;place-items:center;flex:none}.independent-note{border:1px dashed #b8cbb7;border-radius:12px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
+.answer{border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:9px;position:sticky;top:8px}.answer-title{font-weight:900}.answer-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.answer-row input{width:112px;min-height:52px;border:2px solid #9bb9a5;border-radius:10px;text-align:center;font-size:23px;font-weight:900;background:#fff}.answer-row .unit{font-size:18px;font-weight:900;min-width:30px}.check,.next{min-height:44px;border:0;border-radius:9px;font-weight:900}.check{background:var(--green);color:#fff}.next{background:var(--ink);color:#fff}.help{min-height:42px;border:1px solid #cbd8c9;border-radius:9px;background:#fff;font-weight:800}.feedback,.hint{padding:9px 10px;border-radius:9px;font-size:13px}.feedback.good{background:#e7f5e9;color:#245f32}.feedback.bad{background:#fff0ea;color:#8c3d24}.hint{background:#fff8e8;border-left:4px solid var(--gold)}.progress{display:flex;gap:5px;flex-wrap:wrap}.progress i{width:9px;height:9px;border-radius:50%;background:#d9e2d8}.progress i.done{background:var(--green)}.progress i.current{background:var(--gold)}
+.fact-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.fact{border:1px solid #d1ddd0;border-radius:9px;background:#fff;padding:7px;text-align:center;font-size:11px;font-weight:800}.fact.active{background:#e8f3ec;border-color:#7fae94;color:#1d624f}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:7px 12px}
+dialog{width:min(780px,94vw);border:1px solid var(--line);border-radius:14px;padding:0;max-height:85dvh}.ghead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.ghead h2{margin:0}.ghead button{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff}.gbody{padding:16px 20px;line-height:1.55}.gbody p,.gbody li{font-size:14px}
+body.pupil .teacher{display:none!important}body.pupil main{max-width:none;padding:6px}body.pupil .layout{grid-template-columns:1fr}body.pupil .stage{min-height:500px}body.pupil .body h2{font-size:30px}
+@media(max-width:900px){.layout{grid-template-columns:250px minmax(0,1fr)}.work{grid-template-columns:minmax(0,1fr) 275px}.bridge-row{grid-template-columns:1fr 100px 1fr}}
+@media(max-width:700px){html,body{overflow-x:hidden}.layout,.work,body.pupil .layout{grid-template-columns:1fr}.panel{position:relative;top:auto;order:2}.activity{order:1}.body{padding:9px}.body h2,body.pupil .body h2{font-size:22px}.stage,body.pupil .stage{min-height:0;padding:9px}.answer{position:relative;top:auto}.bridge-row{grid-template-columns:1fr 84px 1fr}.unit-box{min-height:64px}.unit-box b{font-size:20px}.fact-strip{grid-template-columns:repeat(2,1fr)}.head-actions{flex-wrap:wrap;justify-content:flex-end}.brand h1{font-size:17px}.sport-card{grid-template-columns:58px 1fr}.sport-icon{width:56px;height:56px;font-size:28px}.answer-row input{flex:1;min-width:90px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="mark">↔</div><div><p>Sports Fiesta-inspired teaching engine</p><h1>P3 Measurement Conversion</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
+<main><div class="layout">
+<aside class="panel teacher"><h2>Activity builder</h2><p class="sub">Convert length, mass and volume units.</p>
+<div class="field"><label for="measurement">Measurement</label><select id="measurement"><option value="mixed">Mixed · all measurements</option><option value="length">Length</option><option value="mass">Mass</option><option value="volume">Volume</option></select></div>
+<div class="field"><label for="task">Conversion type</label><select id="task"><option value="mixed">Mixed conversion types</option><option value="whole-small">Large unit → small unit</option><option value="compound-small">Mixed units → small unit</option><option value="small-compound">Small unit → mixed units</option></select></div>
+<div class="field"><label for="support">Support</label><select id="support"><option value="progressive">Progressive · Easy → Guided → Independent</option><option value="easy">Easy · helper steps</option><option value="guided">Guided · one conversion line</option><option value="independent">Independent · no helper</option></select></div>
+<div class="field"><label for="count">Questions</label><select id="count"><option>5</option><option selected>8</option><option>10</option></select></div>
+<button class="new" id="generate" type="button">Generate activity</button>
+<div class="level-note"><strong>P3 conversion facts</strong><br>1 km = 1000 m<br>1 m = 100 cm<br>1 kg = 1000 g<br>1 ℓ = 1000 mℓ</div></aside>
+<section class="activity"><div class="bar"><strong>P3 · Measurement Conversion</strong><span id="meta"></span></div><div class="body">
+<div class="chips"><span class="chip">Primary 3</span><span class="chip" id="familyChip"></span><span class="chip" id="phaseChip"></span></div>
+<h2 id="question"></h2><p class="instruction" id="instruction"></p>
+<div class="fact-strip" id="factStrip"></div>
+<div class="work"><div class="visual"><div class="stage" id="stage"></div></div>
+<aside class="answer"><div class="answer-title">Your answer</div><div class="answer-row" id="answerRow"></div><button class="check" id="check" type="button">Check answer</button><button class="help" id="help" type="button">Help me</button><div class="feedback hidden" id="feedback"></div><div class="hint hidden" id="hint"></div><button class="next hidden" id="next" type="button">Next question →</button><div class="progress" id="progress"></div></aside></div>
+</div></section></div></main>
+<footer>Created by Lim Kim Sze</footer>
+<dialog id="guide"><div class="ghead"><h2>Teacher guide</h2><button id="closeGuide" type="button">×</button></div><div class="gbody">
+<h3>Teaching sequence</h3><p>This engine follows the gradual support idea used in the Sports Fiesta measurement practices: <strong>Easy</strong> shows helper steps, <strong>Guided</strong> shows one conversion line, and <strong>Independent</strong> removes the scaffold.</p>
+<h3>Conversion relationships</h3><ul><li>1 km = 1000 m</li><li>1 m = 100 cm</li><li>1 kg = 1000 g</li><li>1 ℓ = 1000 mℓ</li></ul>
+<h3>Suggested language</h3><p>When changing from a larger unit to a smaller unit, ask pupils how many small units make one large unit. For mixed units, convert the large-unit part first, then add the remaining small units. In the reverse direction, find complete groups of 1000 (or 100 for m and cm); the remainder stays in the smaller unit.</p>
+<h3>Watch for</h3><p>Common errors include changing the unit label without changing the number, adding 1000 instead of multiplying, and losing the zero in examples such as 3 kg 50 g = 3050 g.</p>
+</div></dialog>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const FAMILIES={
+ km_m:{kind:'length',label:'Length · km ↔ m',large:'km',small:'m',factor:1000,icon:'🏃',object:'cross-country route',wholeNoun:'kilometres',smallNoun:'metres'},
+ m_cm:{kind:'length',label:'Length · m ↔ cm',large:'m',small:'cm',factor:100,icon:'🏁',object:'finish-line ribbon',wholeNoun:'metres',smallNoun:'centimetres'},
+ kg_g:{kind:'mass',label:'Mass · kg ↔ g',large:'kg',small:'g',factor:1000,icon:'🏀',object:'sports equipment bag',wholeNoun:'kilograms',smallNoun:'grams'},
+ l_ml:{kind:'volume',label:'Volume · ℓ ↔ mℓ',large:'ℓ',small:'mℓ',factor:1000,icon:'🥤',object:'team drink cooler',wholeNoun:'litres',smallNoun:'millilitres'}
+};
+const FAMILY_KEYS=Object.keys(FAMILIES);
+let questions=[],index=0,solved=false,results=[];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function phaseFor(i,n,support){if(support!=='progressive')return support;const third=Math.ceil(n/3);return i<third?'easy':i<third*2?'guided':'independent'}
+function allowedFamilies(measurement){return measurement==='mixed'?FAMILY_KEYS:FAMILY_KEYS.filter(k=>FAMILIES[k].kind===measurement)}
+function remainderFor(f){if(f.factor===100)return pick([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]);return pick([25,50,75,100,125,150,175,200,225,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950])}
+function makeQuestion(familyKey,type,phase){
+ const f=FAMILIES[familyKey],large=pick([2,3,4,5,6,7,8,9]),rem=remainderFor(f);
+ let total,question,instruction,answer,hint,steps;
+ if(type==='whole-small'){
+   total=large*f.factor;question=`A ${f.object} measures ${large} ${f.large}. Convert it to ${f.small}.`;instruction=`Express ${large} ${f.large} using only ${f.small}.`;answer=[total];hint=`One ${f.large} is ${f.factor} ${f.small}. Multiply ${large} by ${f.factor}.`;steps=[`1 ${f.large} = ${f.factor} ${f.small}`,`${large} ${f.large} means ${large} groups of ${f.factor} ${f.small}.`,`Calculate ${large} × ${f.factor}.`];
+ }else if(type==='compound-small'){
+   total=large*f.factor+rem;question=`A ${f.object} measures ${large} ${f.large} ${rem} ${f.small}. Convert it to ${f.small}.`;instruction=`Express the whole measurement using only ${f.small}.`;answer=[total];hint=`First change ${large} ${f.large} into ${f.small}, then add ${rem} ${f.small}.`;steps=[`Convert the large-unit part: ${large} × ${f.factor} ${f.small}.`,`Keep the extra ${rem} ${f.small}.`,`Add the two amounts in ${f.small}.`];
+ }else{
+   total=large*f.factor+rem;question=`A ${f.object} measures ${total} ${f.small}. Express it in ${f.large} and ${f.small}.`;instruction=`Split ${total} ${f.small} into complete ${f.large} and the remaining ${f.small}.`;answer=[large,rem];hint=`Find how many complete groups of ${f.factor} fit into ${total}. The remainder stays as ${f.small}.`;steps=[`Each complete group of ${f.factor} ${f.small} makes 1 ${f.large}.`,`Find the number of complete groups of ${f.factor}.`,`The amount left over remains in ${f.small}.`];
+ }
+ return{familyKey,type,phase,large,rem,total,question,instruction,answer,hint,steps,signature:[familyKey,type,large,rem].join('|')}
+}
+function generate(){
+ const measurement=$('measurement').value,task=$('task').value,support=$('support').value,n=Number($('count').value),families=allowedFamilies(measurement),types=task==='mixed'?['whole-small','compound-small','small-compound']:[task];
+ questions=[];const used=new Set();let tries=0;
+ while(questions.length<n&&tries<500){tries++;const i=questions.length,fk=pick(families),type=pick(types),q=makeQuestion(fk,type,phaseFor(i,n,support));if(used.has(q.signature))continue;used.add(q.signature);questions.push(q)}
+ // Ensure mixed sets sample all selected conversion families where possible.
+ if(measurement==='mixed'&&n>=4){const required=shuffle(FAMILY_KEYS);required.forEach((fk,i)=>{const type=types[i%types.length],q=makeQuestion(fk,type,phaseFor(i,n,support));questions[i]=q})}
+ index=0;results=[];show()
+ try{localStorage.setItem('p3-measurement-conversion-settings',JSON.stringify({measurement,task,support,count:String(n)}))}catch(e){}
+}
+function factText(k){const f=FAMILIES[k];return `1 ${f.large} = ${f.factor} ${f.small}`}
+function renderFacts(active,phase){$('factStrip').innerHTML=FAMILY_KEYS.map(k=>`<div class="fact ${k===active&&phase!=='independent'?'active':''}">${factText(k)}</div>`).join('');$('factStrip').classList.toggle('hidden',phase==='independent')}
+function renderBridge(q){
+ const f=FAMILIES[q.familyKey],reverse=q.type==='small-compound';
+ const left=reverse?`${q.total} <small>${f.small}</small>`:q.type==='whole-small'?`${q.large} <small>${f.large}</small>`:`${q.large} <small>${f.large}</small> + ${q.rem} <small>${f.small}</small>`;
+ const right=reverse?`? <small>${f.large}</small> + ? <small>${f.small}</small>`:`? <small>${f.small}</small>`;
+ const operation=reverse?`÷ ${f.factor}<br><small>complete groups + remainder</small>`:q.type==='whole-small'?`× ${f.factor}<br><small>large → small</small>`:`× ${f.factor}, then + ${q.rem}<br><small>convert then add</small>`;
+ return `<div class="bridge"><div class="bridge-title">Conversion bridge</div><div class="bridge-row"><div class="unit-box"><b>${left}</b><small>given measurement</small></div><div class="arrow"><div>${operation}</div><div class="shaft">→</div></div><div class="unit-box"><b>${right}</b><small>target form</small></div></div></div>`
+}
+function renderScaffold(q){
+ if(q.phase==='independent')return '<div class="independent-note"><strong>Independent</strong><br>No conversion helper is shown. Use the relationship you know.</div>';
+ if(q.phase==='guided'){
+   const f=FAMILIES[q.familyKey],line=q.type==='whole-small'?`${q.large} × ${f.factor} = ?`:q.type==='compound-small'?`(${q.large} × ${f.factor}) + ${q.rem} = ?`:`${q.total} ÷ ${f.factor} → whole ${f.large} + remainder ${f.small}`;
+   return `<div class="scaffold"><h3>GUIDED · One conversion line</h3><div class="step"><b>→</b><span>${line}</span></div></div>`;
+ }
+ return `<div class="scaffold"><h3>EASY · Sports Fiesta helper steps</h3><div class="steps">${q.steps.map((s,i)=>`<div class="step"><b>${i+1}</b><span>${s}</span></div>`).join('')}</div></div>`
+}
+function sportCard(q){const f=FAMILIES[q.familyKey];return `<div class="sport-card"><div class="sport-icon">${f.icon}</div><div><strong>Sports Fiesta measurement</strong><p>${q.type==='whole-small'?'Change a large unit to a smaller unit.':q.type==='compound-small'?'Combine the large-unit and small-unit parts.':'Regroup small units into large units and a remainder.'}</p></div></div>`}
+function renderAnswer(q){
+ const f=FAMILIES[q.familyKey],row=$('answerRow');
+ if(q.answer.length===1)row.innerHTML=`<input id="ans1" type="number" min="0" step="1" inputmode="numeric" aria-label="Answer"><span class="unit">${f.small}</span>`;
+ else row.innerHTML=`<input id="ans1" type="number" min="0" step="1" inputmode="numeric" aria-label="${f.large} answer"><span class="unit">${f.large}</span><input id="ans2" type="number" min="0" step="1" inputmode="numeric" aria-label="${f.small} answer"><span class="unit">${f.small}</span>`;
+ setTimeout(()=>$('ans1')?.focus(),0)
+}
+function show(){
+ const q=questions[index],f=FAMILIES[q.familyKey];solved=false;$('meta').textContent='Question '+(index+1)+' of '+questions.length;$('familyChip').textContent=f.label;const pc=$('phaseChip');pc.textContent=q.phase[0].toUpperCase()+q.phase.slice(1);pc.className='chip phase-'+q.phase;$('question').textContent=q.question;$('instruction').textContent=q.instruction;renderFacts(q.familyKey,q.phase);$('stage').innerHTML=sportCard(q)+(q.phase==='independent'?'':renderBridge(q))+renderScaffold(q);renderAnswer(q);$('feedback').className='feedback hidden';$('hint').className='hint hidden';$('check').classList.remove('hidden');$('next').classList.add('hidden');$('help').classList.remove('hidden');renderProgress()
+}
+function renderProgress(){$('progress').innerHTML=questions.map((_,i)=>`<i class="${i<results.length?'done':i===index?'current':''}"></i>`).join('')}
+function values(){const a=Number($('ans1')?.value),b=$('ans2')?Number($('ans2').value):null;return[a,b]}
+function check(){
+ const q=questions[index],[a,b]=values();if(!Number.isFinite(a)||($('ans2')&&!Number.isFinite(b))){$('feedback').className='feedback bad';$('feedback').textContent='Enter your answer first.';return}
+ const ok=q.answer.length===1?a===q.answer[0]:a===q.answer[0]&&b===q.answer[1];
+ if(ok){solved=true;results.push(true);$('feedback').className='feedback good';$('feedback').textContent='Correct. The units and values match.';$('check').classList.add('hidden');$('next').classList.remove('hidden');$('next').textContent=index===questions.length-1?'Finish activity →':'Next question →';renderProgress()}
+ else{$('feedback').className='feedback bad';$('feedback').textContent='Try again. Check the conversion factor and the unit you need.'}
+}
+$('check').onclick=check;$('help').onclick=()=>{const q=questions[index],h=$('hint');h.className='hint';h.textContent=q.hint};
+$('next').onclick=()=>{if(!solved)return;if(index<questions.length-1){index++;show();document.querySelector('.activity').scrollIntoView({block:'start'})}else{$('question').textContent='Activity complete!';$('instruction').textContent='You completed '+questions.length+' P3 measurement conversions.';$('stage').innerHTML='<div style="display:grid;place-items:center;text-align:center;min-height:300px"><div><div style="font-size:72px">🏅</div><h2 style="margin:0">Sports Fiesta conversion complete</h2></div></div>';$('answerRow').innerHTML='';$('check').classList.add('hidden');$('help').classList.add('hidden');$('next').classList.add('hidden')}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('check').classList.contains('hidden'))check()});
+for(const id of ['measurement','task','support','count'])$(id).onchange=()=>{};
+$('generate').onclick=generate;
+$('viewBtn').onclick=()=>{const on=!document.body.classList.contains('pupil');document.body.classList.toggle('pupil',on);$('viewBtn').textContent=on?'Teacher view':'Pupil view ↗';try{parent.postMessage({type:'primary-maths-pupil-view',on},'*')}catch(e){}};
+const guide=$('guide');$('guideBtn').onclick=()=>guide.showModal();$('closeGuide').onclick=()=>guide.close();
+try{const s=JSON.parse(localStorage.getItem('p3-measurement-conversion-settings')||'null');if(s){for(const id of ['measurement','task','support','count'])if(s[id]&&[...$(id).options].some(o=>o.value===String(s[id])))$(id).value=String(s[id])}}catch(e){}
+generate();
+</script>
+</body></html>
