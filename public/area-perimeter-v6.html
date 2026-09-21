@@ -62,7 +62,7 @@ body.pupil .teacher-only{display:none!important}body.pupil main{padding:6px;max-
     <aside class="settings teacher-only">
       <h2>Activity builder</h2><p class="sub">Inspired by your hands-on Area & Perimeter mission.</p>
       <form id="settingsForm">
-        <div class="field"><label for="task">What will pupils learn?</label><select id="task"><option value="area">Area of a rectangle</option><option value="perimeter">Perimeter of a rectangle</option><option value="mixed">Area then perimeter</option></select></div>
+        <div class="field"><label for="task">What will pupils learn?</label><select id="task"><option value="area">Area of a rectangle</option><option value="perimeter">Perimeter of a rectangle</option><option value="rectilinear">Perimeter of a rectilinear figure</option><option value="mixed">Area then perimeter</option></select></div>
         <div class="field"><label for="phase">Teaching support</label><select id="phase"><option value="progressive">Progressive · Build → Guided → Independent</option><option value="build">Build it with units</option><option value="guided">Think & calculate</option><option value="independent">Show what you know</option></select><p class="helper">Progressive gives pupils concrete experience first, then removes the scaffold.</p></div>
         <div class="row"><div class="field"><label for="unit">Length unit</label><select id="unit"><option value="cm">cm</option><option value="m">m</option></select></div><div class="field"><label for="count">Questions</label><select id="count"><option>5</option><option selected>8</option><option>10</option></select></div></div>
         <div class="field"><label for="numbers">Dimensions</label><select id="numbers"><option value="random">Random rectangles</option><option value="fixed">Use one rectangle</option></select></div>
@@ -90,8 +90,8 @@ body.pupil .teacher-only{display:none!important}body.pupil main{padding:6px;max-
 <dialog id="guide"><div class="guide-head"><h2>Teacher guide · Area & Perimeter</h2><button id="closeGuide" type="button" aria-label="Close teacher guide">×</button></div><div class="guide-body">
 <h3>Teaching sequence</h3><p>This engine follows the same learning progression as the hands-on Singapore Measurement Mission: begin by building the measurement with concrete unit tools, move to guided calculation, then remove the scaffold for independent practice.</p>
 <h3>Area</h3><p><strong>Build it:</strong> pupils cover the rectangle with 1 cm² or 1 m² tiles, according to the selected unit. <strong>Guided:</strong> they see rows and columns and connect repeated addition to multiplication. <strong>Independent:</strong> they receive only the rectangle dimensions.</p>
-<h3>Perimeter</h3><p><strong>Build it:</strong> pupils place 1-unit ruler segments around the outside. <strong>Guided:</strong> all four side lengths and the addition sentence are shown. <strong>Independent:</strong> only length and breadth are labelled.</p>
-<h3>Classroom language</h3><ul><li>Area is the amount of surface covered by square units.</li><li>Perimeter is the total distance around the outside of a shape.</li><li>Area uses square units such as cm² or m². Perimeter uses length units such as cm or m.</li></ul>
+<h3>Perimeter</h3><p><strong>Build it:</strong> pupils place 1-unit ruler segments around the outside. <strong>Guided:</strong> all four side lengths and the addition sentence are shown. <strong>Independent:</strong> only length and breadth are labelled.</p><h3>Rectilinear perimeter</h3><p><strong>Build it:</strong> pupils trace the complete L-shaped boundary with 1-unit ruler segments. <strong>Guided:</strong> two missing sides are worked out from aligned horizontal and vertical lengths before all six sides are added. <strong>Independent:</strong> the missing sides remain marked <strong>?</strong> and pupils find them before calculating the perimeter.</p>
+<h3>Classroom language</h3><ul><li>Area is the amount of surface covered by square units.</li><li>Perimeter is the total distance around the outside of a shape.</li><li>For a rectilinear figure, aligned horizontal lengths and aligned vertical lengths can be used to find missing sides.</li><li>Area uses square units such as cm² or m². Perimeter uses length units such as cm or m.</li></ul>
 </div></dialog>
 <script>
 'use strict';
@@ -105,11 +105,33 @@ function load(){try{const s=JSON.parse(localStorage.getItem('area-perimeter-engi
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
 function phaseFor(i){if(config.phase!=='progressive')return config.phase;let local=i,total=config.count;if(config.task==='mixed'){const areaCount=Math.ceil(config.count/2);if(i<areaCount){local=i;total=areaCount}else{local=i-areaCount;total=config.count-areaCount}}if(total<=1)return'independent';if(total===2)return local===0?'build':'independent';if(total===3)return local===0?'build':local===1?'guided':'independent';if(total===4)return local===0?'build':local<3?'guided':'independent';const p=local%5;return p<2?'build':p<4?'guided':'independent'}
 function typeFor(i){if(config.task!=='mixed')return config.task;const areaCount=Math.ceil(config.count/2);return i<areaCount?'area':'perimeter'}
-function generate(){const out=[];for(let i=0;i<config.count;i++){let w=config.numbers==='fixed'?config.length:rand(3,10),h=config.numbers==='fixed'?config.breadth:rand(2,8);if(w===h&&config.numbers==='random'&&Math.random()>.5)w=Math.min(12,w+1);out.push({type:typeFor(i),phase:phaseFor(i),w,h})}return out}
-function answerFor(q){return q.type==='area'?q.w*q.h:2*(q.w+q.h)}
+function generate(){
+ const out=[],used=new Set();
+ for(let i=0;i<config.count;i++){
+   const type=typeFor(i);let tries=0,q;
+   do{
+     let w=config.numbers==='fixed'?config.length:rand(3,10),h=config.numbers==='fixed'?config.breadth:rand(2,8);
+     if(w===h&&config.numbers==='random'&&Math.random()>.5)w=Math.min(12,w+1);
+     if(type==='rectilinear'){
+       w=Math.max(4,w);h=Math.max(4,h);
+       const cutW=config.numbers==='fixed'?Math.max(1,Math.min(w-2,Math.floor(w/2))):rand(1,w-2);
+       const cutH=config.numbers==='fixed'?Math.max(1,Math.min(h-2,Math.floor(h/2))):rand(1,h-2);
+       q={type,phase:phaseFor(i),w,h,cutW,cutH,bottomW:w-cutW,rightH:h-cutH};
+     }else q={type,phase:phaseFor(i),w,h};
+     tries++;
+   }while(used.has([q.type,q.w,q.h,q.cutW||0,q.cutH||0].join('|'))&&tries<100);
+   used.add([q.type,q.w,q.h,q.cutW||0,q.cutH||0].join('|'));out.push(q);
+ }
+ return out
+}
+function answerFor(q){return q.type==='area'?q.w*q.h:q.type==='rectilinear'?q.w+q.rightH+q.cutW+q.cutH+q.bottomW+q.h:2*(q.w+q.h)}
 function unitFor(q){return q.type==='area'?config.unit+'²':config.unit}
 function phaseName(p){return p==='build'?'BUILD IT':p==='guided'?'THINK & CALCULATE':'SHOW WHAT YOU KNOW'}
-function phaseInstruction(q){if(q.phase==='build')return q.type==='area'?`Take the 1 ${config.unit}² tile, then tap every square to cover the rectangle.`:`Take the 1 ${config.unit} ruler, then tap each segment around the outside of the rectangle.`;if(q.phase==='guided')return q.type==='area'?'Use the rows and columns to find how many square units cover the rectangle.':'Add the four side lengths to find the total distance around the rectangle.';return q.type==='area'?'Use the length and breadth to find the area.':'Use the length and breadth to find the perimeter.'}
+function phaseInstruction(q){
+ if(q.phase==='build')return q.type==='area'?`Take the 1 ${config.unit}² tile, then tap every square to cover the rectangle.`:q.type==='rectilinear'?`Take the 1 ${config.unit} ruler, then tap each unit segment around the complete outside boundary.`:`Take the 1 ${config.unit} ruler, then tap each segment around the outside of the rectangle.`;
+ if(q.phase==='guided')return q.type==='area'?'Use the rows and columns to find how many square units cover the rectangle.':q.type==='rectilinear'?'Find the two missing side lengths first. Then add all six outside sides.':'Add the four side lengths to find the total distance around the rectangle.';
+ return q.type==='area'?'Use the length and breadth to find the area.':q.type==='rectilinear'?'Work out the missing sides, then find the total distance around the rectilinear figure.':'Use the length and breadth to find the perimeter.'
+}
 function makeSvg(tag,attrs,text){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const k in attrs)e.setAttribute(k,String(attrs[k]));if(text!==undefined)e.textContent=text;return e}
 function modelSize(q){const maxW=680,maxH=350,pad=55,cell=Math.max(24,Math.min(54,Math.floor(Math.min((maxW-pad*2)/q.w,(maxH-pad*2)/q.h))));return{cell,w:q.w*cell,h:q.h*cell,pad}}
 function addText(svg,x,y,text,size,weight,fill,anchor){svg.append(makeSvg('text',{x,y,'font-family':'Arial,Helvetica,sans-serif','font-size':size,'font-weight':weight||700,fill:fill||'#183c35','text-anchor':anchor||'middle'},text))}
@@ -151,22 +173,55 @@ function renderPerimeter(q){const s=modelSize(q),vw=s.w+s.pad*2,vh=s.h+s.pad*2,s
  if(q.phase==='guided'){addText(svg,x+s.w/2,y+s.h+31,q.w+' + '+q.h+' + '+q.w+' + '+q.h,15,900,'#496454')}
  $('modelWrap').replaceChildren(svg)
 }
+function rectilinearSegments(q,s){
+ const x=s.pad,y=s.pad,c=s.cell,pts=[[0,0],[q.w,0],[q.w,q.rightH],[q.bottomW,q.rightH],[q.bottomW,q.h],[0,q.h]],arr=[];
+ for(let i=0;i<pts.length;i++){
+   const a=pts[i],b=pts[(i+1)%pts.length],dx=Math.sign(b[0]-a[0]),dy=Math.sign(b[1]-a[1]),steps=Math.abs(b[0]-a[0])+Math.abs(b[1]-a[1]);
+   for(let n=0;n<steps;n++)arr.push({x1:x+(a[0]+dx*n)*c,y1:y+(a[1]+dy*n)*c,x2:x+(a[0]+dx*(n+1))*c,y2:y+(a[1]+dy*(n+1))*c});
+ }
+ return arr
+}
+function renderRectilinear(q){
+ const s=modelSize(q),vw=s.w+s.pad*2,vh=s.h+s.pad*2,svg=makeSvg('svg',{viewBox:'0 0 '+vw+' '+vh,'aria-label':'Rectilinear figure with missing side lengths'}),x=s.pad,y=s.pad,c=s.cell;
+ const pts=[[x,y],[x+s.w,y],[x+s.w,y+q.rightH*c],[x+q.bottomW*c,y+q.rightH*c],[x+q.bottomW*c,y+s.h],[x,y+s.h]];
+ const path='M '+pts.map(p=>p[0]+' '+p[1]).join(' L ')+' Z';
+ svg.append(makeSvg('path',{d:path,fill:'#e8f3ec',stroke:'#53645b','stroke-width':4,'stroke-linejoin':'round'}));
+ if(q.phase==='build'){
+   rectilinearSegments(q,s).forEach((g,idx)=>{
+     const hit=makeSvg('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,stroke:placed.has(idx)?'#d92d20':'#bd8b1f','stroke-width':placed.has(idx)?12:9,'stroke-linecap':'butt','stroke-dasharray':placed.has(idx)?'0':'5 5','data-index':idx,tabindex:0,role:'button','aria-label':'Rectilinear perimeter unit '+(idx+1)});
+     hit.addEventListener('click',()=>fillUnit(idx));hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fillUnit(idx)}});svg.append(hit);
+     const cap=Math.max(5,Math.min(8,c*.14)),horizontal=Math.abs(g.y2-g.y1)<1;
+     const addCap=(cx,cy)=>svg.append(horizontal?makeSvg('line',{x1:cx,y1:cy-cap,x2:cx,y2:cy+cap,stroke:'#2f72b8','stroke-width':3,'stroke-linecap':'round','pointer-events':'none'}):makeSvg('line',{x1:cx-cap,y1:cy,x2:cx+cap,y2:cy,stroke:'#2f72b8','stroke-width':3,'stroke-linecap':'round','pointer-events':'none'}));
+     addCap(g.x1,g.y1);addCap(g.x2,g.y2);
+   });
+ }else{
+   svg.append(makeSvg('path',{d:path,fill:'none',stroke:'#efc66d','stroke-width':q.phase==='guided'?7:4,'stroke-linejoin':'round','stroke-dasharray':q.phase==='guided'?'0':'8 6'}));
+ }
+ addText(svg,x+s.w/2,y-18,q.w+' '+config.unit,16,900);
+ addText(svg,x-18,y+s.h/2,q.h+' '+config.unit,16,900);const left=svg.lastChild;left.setAttribute('transform','rotate(-90 '+(x-18)+' '+(y+s.h/2)+')');
+ addText(svg,x+s.w+22,y+q.rightH*c/2,q.rightH+' '+config.unit,14,850);const right=svg.lastChild;right.setAttribute('transform','rotate(90 '+(x+s.w+22)+' '+(y+q.rightH*c/2)+')');
+ addText(svg,x+q.bottomW*c/2,y+s.h+28,q.bottomW+' '+config.unit,14,850);
+ const reveal=q.phase==='guided';
+ addText(svg,x+(q.bottomW+q.cutW/2)*c,y+q.rightH*c-12,reveal?q.cutW+' '+config.unit:'?',15,900,reveal?'#24735e':'#b33f3f');
+ addText(svg,x+q.bottomW*c-18,y+(q.rightH+q.cutH/2)*c,reveal?q.cutH+' '+config.unit:'?',15,900,reveal?'#24735e':'#b33f3f');const inner=svg.lastChild;inner.setAttribute('transform','rotate(-90 '+(x+q.bottomW*c-18)+' '+(y+(q.rightH+q.cutH/2)*c)+')');
+ $('modelWrap').replaceChildren(svg)
+}
 function fillUnit(idx){const q=questions[index];if(q.phase!=='build'||!toolSelected||placed.has(idx))return;placed.add(idx);renderModel();if(placed.size===requiredUnits(q)){toolSelected=false;$('toolButton').classList.remove('selected');showFeedback('Great building! Now enter the measurement.','success')}}
-function requiredUnits(q){return q.type==='area'?q.w*q.h:2*(q.w+q.h)}
-function renderModel(){const q=questions[index];q.type==='area'?renderArea(q):renderPerimeter(q)}
-function workingText(q){if(q.type==='area')return q.h+' rows of '+q.w+' = '+q.h+' × '+q.w+' = ?';return q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = ?'}
+function requiredUnits(q){return q.type==='area'?q.w*q.h:q.type==='rectilinear'?answerFor(q):2*(q.w+q.h)}
+function renderModel(){const q=questions[index];q.type==='area'?renderArea(q):q.type==='rectilinear'?renderRectilinear(q):renderPerimeter(q)}
+function workingText(q){if(q.type==='area')return q.h+' rows of '+q.w+' = '+q.h+' × '+q.w+' = ?';if(q.type==='rectilinear')return 'Missing horizontal: '+q.w+' − '+q.bottomW+' = '+q.cutW+'; missing vertical: '+q.h+' − '+q.rightH+' = '+q.cutH+'; perimeter: '+q.w+' + '+q.rightH+' + '+q.cutW+' + '+q.cutH+' + '+q.bottomW+' + '+q.h+' = ?';return q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = ?'}
 function showFeedback(text,type){const f=$('feedback');f.textContent=text;f.className='feedback '+type}
 function clearFeedback(){$('feedback').className='feedback hidden';$('feedback').textContent='';$('hint').className='hint hidden'}
 function renderProgress(){const p=$('progress');p.replaceChildren();for(let i=0;i<config.count;i++){const d=document.createElement('span');if(i<results.length)d.className='done';else if(i===index)d.className='current';p.append(d)}}
 function showQuestion(){
  const q=questions[index];solved=false;toolSelected=false;placed=new Set();clearFeedback();$('answer').value='';$('nextButton').classList.add('hidden');$('checkButton').classList.remove('hidden');$('hintButton').disabled=false;
- $('questionMeta').textContent='Question '+(index+1)+' of '+config.count;$('skillChip').textContent=q.type==='area'?'AREA':'PERIMETER';$('phaseChip').textContent=phaseName(q.phase);$('phaseChip').className='chip phase'+(q.phase==='independent'?' independent':'');
- $('questionTitle').textContent=q.type==='area'?'Find the area of the rectangle.':'Find the perimeter of the rectangle.';$('instruction').textContent=phaseInstruction(q);$('answerUnit').textContent=unitFor(q);$('dimensionsLabel').textContent=q.w+' '+config.unit+' × '+q.h+' '+config.unit;$('visualLabel').textContent=q.type==='area'?'Cover the surface':'Measure around the outside';
- const build=q.phase==='build';$('toolPanel').classList.toggle('hidden',!build);$('working').classList.toggle('hidden',q.phase!=='guided');if(build){$('toolButton').textContent=q.type==='area'?`Take 1 ${config.unit}² tile`:'Take 1 '+config.unit+' ruler';$('toolNote').textContent='Tap the tool once. It stays selected while you place every unit.';$('toolButton').classList.remove('selected')}if(q.phase==='guided'){$('workingLine').textContent=workingText(q);$('workingHint').textContent=q.type==='area'?'Rows × columns gives the number of square units.':'Perimeter is the sum of all four sides.'}
+ $('questionMeta').textContent='Question '+(index+1)+' of '+config.count;$('skillChip').textContent=q.type==='area'?'AREA':q.type==='rectilinear'?'RECTILINEAR PERIMETER':'PERIMETER';$('phaseChip').textContent=phaseName(q.phase);$('phaseChip').className='chip phase'+(q.phase==='independent'?' independent':'');
+ $('questionTitle').textContent=q.type==='area'?'Find the area of the rectangle.':q.type==='rectilinear'?'Find the perimeter of the rectilinear figure.':'Find the perimeter of the rectangle.';$('instruction').textContent=phaseInstruction(q);$('answerUnit').textContent=unitFor(q);$('dimensionsLabel').textContent=q.type==='rectilinear'?('Outer width '+q.w+' '+config.unit+' · outer height '+q.h+' '+config.unit):(q.w+' '+config.unit+' × '+q.h+' '+config.unit);$('visualLabel').textContent=q.type==='area'?'Cover the surface':q.type==='rectilinear'?'Trace the complete outside boundary':'Measure around the outside';
+ const build=q.phase==='build';$('toolPanel').classList.toggle('hidden',!build);$('working').classList.toggle('hidden',q.phase!=='guided');if(build){$('toolButton').textContent=q.type==='area'?`Take 1 ${config.unit}² tile`:'Take 1 '+config.unit+' ruler';$('toolNote').textContent='Tap the tool once. It stays selected while you place every unit.';$('toolButton').classList.remove('selected')}if(q.phase==='guided'){$('workingLine').textContent=workingText(q);$('workingHint').textContent=q.type==='area'?'Rows × columns gives the number of square units.':q.type==='rectilinear'?'Aligned horizontal parts make the total width; aligned vertical parts make the total height. Find the missing sides before adding all six sides.':'Perimeter is the sum of all four sides.'}
  renderModel();renderProgress()
 }
-function checkAnswer(){if(solved)return;const q=questions[index];if(q.phase==='build'&&placed.size<requiredUnits(q)){showFeedback('Finish placing all the '+(q.type==='area'?'square tiles':'ruler units')+' first.','error');return}const raw=$('answer').value.trim();if(!/^\d+$/.test(raw)){showFeedback('Enter a whole-number answer.','error');return}const value=Number(raw),ans=answerFor(q);if(value===ans){solved=true;results.push({type:q.type,phase:q.phase,correct:true});showFeedback(q.type==='area'?('Correct. '+q.w+' × '+q.h+' = '+ans+' '+unitFor(q)+'.'):('Correct. '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = '+ans+' '+unitFor(q)+'.'),'success');$('checkButton').classList.add('hidden');$('nextButton').classList.remove('hidden');$('hintButton').disabled=true;$('nextButton').textContent=index===config.count-1?'Finish activity →':'Next question →'}else showFeedback(q.type==='area'?'Try again. Area counts the square units covering the surface.':'Try again. Perimeter is the total distance around all four sides.','error')}
-function showHint(){const q=questions[index],h=$('hint');h.className='hint';h.textContent=q.type==='area'?(q.phase==='build'?'Cover every square exactly once. Then count the tiles.':'Multiply the length by the breadth: '+q.w+' × '+q.h+'.'):(q.phase==='build'?'Place one ruler unit on every part of the outside edge.':'Add all four sides: '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+'.')}
+function checkAnswer(){if(solved)return;const q=questions[index];if(q.phase==='build'&&placed.size<requiredUnits(q)){showFeedback('Finish placing all the '+(q.type==='area'?'square tiles':'ruler units')+' first.','error');return}const raw=$('answer').value.trim();if(!/^\d+$/.test(raw)){showFeedback('Enter a whole-number answer.','error');return}const value=Number(raw),ans=answerFor(q);if(value===ans){solved=true;results.push({type:q.type,phase:q.phase,correct:true});showFeedback(q.type==='area'?('Correct. '+q.w+' × '+q.h+' = '+ans+' '+unitFor(q)+'.'):q.type==='rectilinear'?('Correct. The missing sides are '+q.cutW+' '+config.unit+' and '+q.cutH+' '+config.unit+'. Adding all six sides gives '+ans+' '+unitFor(q)+'.'):('Correct. '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = '+ans+' '+unitFor(q)+'.'),'success');$('checkButton').classList.add('hidden');$('nextButton').classList.remove('hidden');$('hintButton').disabled=true;$('nextButton').textContent=index===config.count-1?'Finish activity →':'Next question →'}else showFeedback(q.type==='area'?'Try again. Area counts the square units covering the surface.':q.type==='rectilinear'?'Try again. Find the missing horizontal and vertical sides, then add all six outside sides.':'Try again. Perimeter is the total distance around all four sides.','error')}
+function showHint(){const q=questions[index],h=$('hint');h.className='hint';h.textContent=q.type==='area'?(q.phase==='build'?'Cover every square exactly once. Then count the tiles.':'Multiply the length by the breadth: '+q.w+' × '+q.h+'.'):q.type==='rectilinear'?(q.phase==='build'?'Follow the boundary without jumping across the notch. Place one ruler unit on every outside segment.':'Missing horizontal = '+q.w+' − '+q.bottomW+'. Missing vertical = '+q.h+' − '+q.rightH+'. Then add all six sides.'):(q.phase==='build'?'Place one ruler unit on every part of the outside edge.':'Add all four sides: '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+'.')}
 function nextQuestion(){if(!solved)return;if(index<config.count-1){index++;showQuestion();$('activity').scrollIntoView({block:'start'})}else showSummary()}
 function showSummary(){$('activity').classList.add('hidden');const s=$('summary');s.classList.remove('hidden');const build=questions.filter(q=>q.phase==='build').length,guided=questions.filter(q=>q.phase==='guided').length,ind=questions.filter(q=>q.phase==='independent').length;$('summaryText').textContent='You completed '+config.count+' questions: '+build+' build-it, '+guided+' guided and '+ind+' independent.'}
 function start(){config=readForm();save();questions=generate();index=0;results=[];$('summary').classList.add('hidden');$('activity').classList.remove('hidden');showQuestion()}
