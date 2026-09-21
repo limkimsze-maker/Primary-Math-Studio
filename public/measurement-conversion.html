@@ -27,7 +27,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">↔</div><div><p>Sports Fiesta-inspired teaching engine</p><h1>P3 Measurement Conversion</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
+<header><div class="brand"><div class="mark">↔</div><div><p>Interactive Teaching Engine</p><h1>P3 Measurement Conversion</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
 <main><div class="layout">
 <aside class="panel teacher"><h2>Activity builder</h2><p class="sub">Convert length, mass and volume units.</p>
 <div class="field"><label for="measurement">Measurement</label><select id="measurement"><option value="mixed">Mixed · all measurements</option><option value="length">Length</option><option value="mass">Mass</option><option value="volume">Volume</option></select></div>
@@ -45,7 +45,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 </div></section></div></main>
 <footer>Created by Lim Kim Sze</footer>
 <dialog id="guide"><div class="ghead"><h2>Teacher guide</h2><button id="closeGuide" type="button">×</button></div><div class="gbody">
-<h3>Teaching sequence</h3><p>This engine follows the gradual support idea used in the Sports Fiesta measurement practices: <strong>Easy</strong> shows helper steps, <strong>Guided</strong> shows one conversion line, and <strong>Independent</strong> removes the scaffold.</p>
+<h3>Teaching sequence</h3><p>This engine follows the gradual support idea used in the Measurement conversion practices: <strong>Easy</strong> shows helper steps, <strong>Guided</strong> shows one conversion line, and <strong>Independent</strong> removes the scaffold.</p>
 <h3>Conversion relationships</h3><ul><li>1 km = 1000 m</li><li>1 m = 100 cm</li><li>1 kg = 1000 g</li><li>1 ℓ = 1000 ml</li></ul>
 <h3>Suggested language</h3><p>When changing from a larger unit to a smaller unit, ask pupils how many small units make one large unit. For mixed units, convert the large-unit part first, then add the remaining small units. In the reverse direction, find complete groups of 1000 (or 100 for m and cm); the remainder stays in the smaller unit.</p>
 <h3>Watch for</h3><p>Common errors include changing the unit label without changing the number, adding 1000 instead of multiplying, and losing the zero in examples such as 3 kg 50 g = 3050 g.</p>
@@ -54,10 +54,10 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 'use strict';
 const $=id=>document.getElementById(id);
 const FAMILIES={
- km_m:{kind:'length',label:'Length · km ↔ m',large:'km',small:'m',factor:1000,icon:'🏃',object:'cross-country route',wholeNoun:'kilometres',smallNoun:'metres'},
- m_cm:{kind:'length',label:'Length · m ↔ cm',large:'m',small:'cm',factor:100,icon:'🏁',object:'finish-line ribbon',wholeNoun:'metres',smallNoun:'centimetres'},
- kg_g:{kind:'mass',label:'Mass · kg ↔ g',large:'kg',small:'g',factor:1000,icon:'🏀',object:'sports equipment bag',wholeNoun:'kilograms',smallNoun:'grams'},
- l_ml:{kind:'volume',label:'Volume · ℓ ↔ ml',large:'ℓ',small:'ml',factor:1000,icon:'🥤',object:'team drink cooler',wholeNoun:'litres',smallNoun:'millilitres'}
+ km_m:{kind:'length',label:'Length · km ↔ m',large:'km',small:'m',factor:1000,icon:'🏃',object:'route',wholeNoun:'kilometres',smallNoun:'metres'},
+ m_cm:{kind:'length',label:'Length · m ↔ cm',large:'m',small:'cm',factor:100,icon:'🏁',object:'ribbon',wholeNoun:'metres',smallNoun:'centimetres'},
+ kg_g:{kind:'mass',label:'Mass · kg ↔ g',large:'kg',small:'g',factor:1000,icon:'🏀',object:'equipment bag',wholeNoun:'kilograms',smallNoun:'grams'},
+ l_ml:{kind:'volume',label:'Volume · ℓ ↔ ml',large:'ℓ',small:'ml',factor:1000,icon:'🥤',object:'drink cooler',wholeNoun:'litres',smallNoun:'millilitres'}
 };
 const FAMILY_KEYS=Object.keys(FAMILIES);
 let questions=[],index=0,solved=false,results=[];
@@ -70,11 +70,11 @@ function makeQuestion(familyKey,type,phase){
  const f=FAMILIES[familyKey],large=pick([2,3,4,5,6,7,8,9]),rem=remainderFor(f);
  let total,question,instruction,answer,hint,steps;
  if(type==='whole-small'){
-   total=large*f.factor;question=`A ${f.object} measures ${large} ${f.large}. Convert it to ${f.small}.`;instruction=`Express ${large} ${f.large} using only ${f.small}.`;answer=[total];hint=`One ${f.large} is ${f.factor} ${f.small}. Multiply ${large} by ${f.factor}.`;steps=[`1 ${f.large} = ${f.factor} ${f.small}`,`${large} ${f.large} means ${large} groups of ${f.factor} ${f.small}.`,`Calculate ${large} × ${f.factor}.`];
+ total=large*f.factor;question=`A ${f.object} measures ${large} ${f.large}. Convert it to ${f.small}.`;instruction=`Express ${large} ${f.large} using only ${f.small}.`;answer=[total];hint=`One ${f.large} is ${f.factor} ${f.small}. Multiply ${large} by ${f.factor}.`;steps=[`1 ${f.large} = ${f.factor} ${f.small}`,`${large} ${f.large} means ${large} groups of ${f.factor} ${f.small}.`,`Calculate ${large} × ${f.factor}.`];
  }else if(type==='compound-small'){
-   total=large*f.factor+rem;question=`A ${f.object} measures ${large} ${f.large} ${rem} ${f.small}. Convert it to ${f.small}.`;instruction=`Express the whole measurement using only ${f.small}.`;answer=[total];hint=`First change ${large} ${f.large} into ${f.small}, then add ${rem} ${f.small}.`;steps=[`Convert the large-unit part: ${large} × ${f.factor} ${f.small}.`,`Keep the extra ${rem} ${f.small}.`,`Add the two amounts in ${f.small}.`];
+ total=large*f.factor+rem;question=`A ${f.object} measures ${large} ${f.large} ${rem} ${f.small}. Convert it to ${f.small}.`;instruction=`Express the whole measurement using only ${f.small}.`;answer=[total];hint=`First change ${large} ${f.large} into ${f.small}, then add ${rem} ${f.small}.`;steps=[`Convert the large-unit part: ${large} × ${f.factor} ${f.small}.`,`Keep the extra ${rem} ${f.small}.`,`Add the two amounts in ${f.small}.`];
  }else{
-   total=large*f.factor+rem;question=`A ${f.object} measures ${total} ${f.small}. Express it in ${f.large} and ${f.small}.`;instruction=`Split ${total} ${f.small} into complete ${f.large} and the remaining ${f.small}.`;answer=[large,rem];hint=`Find how many complete groups of ${f.factor} fit into ${total}. The remainder stays as ${f.small}.`;steps=[`Each complete group of ${f.factor} ${f.small} makes 1 ${f.large}.`,`Find the number of complete groups of ${f.factor}.`,`The amount left over remains in ${f.small}.`];
+ total=large*f.factor+rem;question=`A ${f.object} measures ${total} ${f.small}. Express it in ${f.large} and ${f.small}.`;instruction=`Split ${total} ${f.small} into complete ${f.large} and the remaining ${f.small}.`;answer=[large,rem];hint=`Find how many complete groups of ${f.factor} fit into ${total}. The remainder stays as ${f.small}.`;steps=[`Each complete group of ${f.factor} ${f.small} makes 1 ${f.large}.`,`Find the number of complete groups of ${f.factor}.`,`The amount left over remains in ${f.small}.`];
  }
  return{familyKey,type,phase,large,rem,total,question,instruction,answer,hint,steps,signature:[familyKey,type,large,rem].join('|')}
 }
@@ -99,12 +99,12 @@ function renderBridge(q){
 function renderScaffold(q){
  if(q.phase==='independent')return '<div class="independent-note"><strong>Independent</strong><br>No conversion helper is shown. Use the relationship you know.</div>';
  if(q.phase==='guided'){
-   const f=FAMILIES[q.familyKey],line=q.type==='whole-small'?`${q.large} × ${f.factor} = ?`:q.type==='compound-small'?`(${q.large} × ${f.factor}) + ${q.rem} = ?`:`${q.total} ÷ ${f.factor} → whole ${f.large} + remainder ${f.small}`;
-   return `<div class="scaffold"><h3>GUIDED · One conversion line</h3><div class="step"><b>→</b><span>${line}</span></div></div>`;
+ const f=FAMILIES[q.familyKey],line=q.type==='whole-small'?`${q.large} × ${f.factor} = ?`:q.type==='compound-small'?`(${q.large} × ${f.factor}) + ${q.rem} = ?`:`${q.total} ÷ ${f.factor} → whole ${f.large} + remainder ${f.small}`;
+ return `<div class="scaffold"><h3>GUIDED · One conversion line</h3><div class="step"><b>→</b><span>${line}</span></div></div>`;
  }
- return `<div class="scaffold"><h3>EASY · Sports Fiesta helper steps</h3><div class="steps">${q.steps.map((s,i)=>`<div class="step"><b>${i+1}</b><span>${s}</span></div>`).join('')}</div></div>`
+ return `<div class="scaffold"><h3>EASY · Helper steps</h3><div class="steps">${q.steps.map((s,i)=>`<div class="step"><b>${i+1}</b><span>${s}</span></div>`).join('')}</div></div>`
 }
-function sportCard(q){const f=FAMILIES[q.familyKey];return `<div class="sport-card"><div class="sport-icon">${f.icon}</div><div><strong>Sports Fiesta measurement</strong><p>${q.type==='whole-small'?'Change a large unit to a smaller unit.':q.type==='compound-small'?'Combine the large-unit and small-unit parts.':'Regroup small units into large units and a remainder.'}</p></div></div>`}
+function sportCard(q){const f=FAMILIES[q.familyKey];return `<div class="sport-card"><div class="sport-icon">${f.icon}</div><div><strong>Measurement conversion</strong><p>${q.type==='whole-small'?'Change a large unit to a smaller unit.':q.type==='compound-small'?'Combine the large-unit and small-unit parts.':'Regroup small units into large units and a remainder.'}</p></div></div>`}
 function renderAnswer(q){
  const f=FAMILIES[q.familyKey],row=$('answerRow');
  if(q.answer.length===1)row.innerHTML=`<input id="ans1" type="number" min="0" step="1" inputmode="numeric" aria-label="Answer"><span class="unit">${f.small}</span>`;
@@ -123,7 +123,7 @@ function check(){
  else{$('feedback').className='feedback bad';$('feedback').textContent='Try again. Check the conversion factor and the unit you need.'}
 }
 $('check').onclick=check;$('help').onclick=()=>{const q=questions[index],h=$('hint');h.className='hint';h.textContent=q.hint};
-$('next').onclick=()=>{if(!solved)return;if(index<questions.length-1){index++;show();document.querySelector('.activity').scrollIntoView({block:'start'})}else{$('question').textContent='Activity complete!';$('instruction').textContent='You completed '+questions.length+' P3 measurement conversions.';$('stage').innerHTML='<div style="display:grid;place-items:center;text-align:center;min-height:300px"><div><div style="font-size:72px">🏅</div><h2 style="margin:0">Sports Fiesta conversion complete</h2></div></div>';$('answerRow').innerHTML='';$('check').classList.add('hidden');$('help').classList.add('hidden');$('next').classList.add('hidden')}}
+$('next').onclick=()=>{if(!solved)return;if(index<questions.length-1){index++;show();document.querySelector('.activity').scrollIntoView({block:'start'})}else{$('question').textContent='Activity complete!';$('instruction').textContent='You completed '+questions.length+' P3 measurement conversions.';$('stage').innerHTML='<div style="display:grid;place-items:center;text-align:center;min-height:300px"><div><div style="font-size:72px">🏅</div><h2 style="margin:0">Measurement conversion complete</h2></div></div>';$('answerRow').innerHTML='';$('check').classList.add('hidden');$('help').classList.add('hidden');$('next').classList.add('hidden')}}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('check').classList.contains('hidden'))check()});
 for(const id of ['measurement','task','support','count'])$(id).onchange=()=>{};
 $('generate').onclick=generate;
