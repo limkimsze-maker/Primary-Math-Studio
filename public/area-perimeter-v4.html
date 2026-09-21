@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#183c35">
+<title>Area & Perimeter Teaching Engine · v4</title>
+<style>
+:root{--ink:#183c35;--green:#24735e;--green2:#e8f3ec;--gold:#efc66d;--line:#d7e1d6;--muted:#63766a;--bg:#eef3ed;--paper:#fff;--blue:#d92d20;--blue2:#eaf4ff;--red:#b33f3f}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font:16px/1.4 Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hidden,[hidden]{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;background:var(--ink);color:#fff;position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.brandmark{width:38px;height:38px;border-radius:10px;background:var(--gold);display:grid;place-items:center;color:var(--ink);font-weight:900;font-size:21px}.brand h1{margin:0;font-size:20px;line-height:1.12}.brand p{margin:2px 0 0;font-size:11px;letter-spacing:.8px;opacity:.82;text-transform:uppercase;font-weight:800}
+.header-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.header-actions button{min-height:36px;border:1px solid #ffffff55;border-radius:9px;padding:6px 10px;background:#ffffff12;color:#fff;font-weight:800}.header-actions .accent{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+main{width:100%;max-width:1760px;margin:auto;padding:12px;min-height:0}
+.workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;align-items:start}
+.settings,.activity-shell{background:#fff;border:1px solid var(--line);border-radius:14px;min-width:0}
+.settings{padding:14px;position:sticky;top:8px}.settings h2{font-size:18px;margin:0 0 4px}.settings .sub{font-size:12px;color:var(--muted);margin:0 0 12px}
+.field{margin:0 0 10px}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:4px}.field select,.field input{width:100%;min-height:40px;border:1px solid #bfd0c0;border-radius:8px;background:#fff;padding:7px 9px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.helper{font-size:11px;color:var(--muted);line-height:1.35;margin:4px 0 0}.generate{width:100%;min-height:44px;border:0;border-radius:9px;background:var(--green);color:#fff;font-weight:900;margin-top:4px}
+.activity-shell{overflow:hidden}.activity-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line);background:#f8fbf7}.activity-bar strong{font-size:14px}.activity-bar span{font-size:12px;color:var(--muted)}
+.activity{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:620px}
+.question-head{display:grid;gap:5px}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:4px 8px;border-radius:999px;background:var(--green2);color:var(--green);font-size:12px;font-weight:900}.chip.phase{background:#fff3d4;color:#7d5b13}.chip.independent{background:#eaf0ff;color:#3456a6}
+.question-head h2{margin:0;font-size:27px;line-height:1.15}.question-head p{margin:0;color:var(--muted);font-size:15px}
+.learning-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}
+.visual-card{background:#f7faf6;border:1px solid var(--line);border-radius:13px;padding:10px;min-width:0}
+.visual-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.visual-top strong{font-size:14px}.visual-top span{font-size:12px;color:var(--muted)}
+.stage{min-height:400px;border:1px solid #cfddce;border-radius:12px;background:linear-gradient(#eef9ff 0 20%,#e4f1d8 20% 29%,#faf6ed 29%);position:relative;display:grid;place-items:center;overflow:hidden;padding:54px 66px 42px}.stage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:20%;background:#355a49;opacity:.06;clip-path:polygon(0 60%,8% 60%,8% 24%,17% 24%,17% 50%,28% 50%,28% 10%,38% 10%,38% 58%,50% 58%,50% 30%,62% 30%,62% 0,72% 0,72% 58%,84% 58%,84% 20%,94% 20%,94% 52%,100% 52%,100% 100%,0 100%)}
+.model-wrap{position:relative;z-index:2;display:grid;place-items:center;max-width:100%;max-height:100%}
+.model-wrap svg{display:block;width:min(100%,720px);height:auto;max-height:420px;overflow:visible;touch-action:manipulation}
+.tool-panel{margin-top:9px;padding:9px;border:1px solid #ead292;border-radius:11px;background:#fff9e8}.tool-title{font-size:12px;font-weight:900;color:#735413;margin-bottom:6px}.tool-button{width:100%;min-height:48px;border:2px solid #d19b22;border-radius:10px;background:#fff;color:#62470b;font-weight:900}.tool-button.selected{background:#dfe4e1;border-color:#748177;color:#465149}.tool-button.selected:after{content:" · TAKEN ✓";font-size:11px}.tool-note{font-size:11px;color:#725f2b;margin:5px 0 0}
+.working{margin-top:9px;padding:9px 11px;border-radius:11px;background:#f5f8f4;border:1px dashed #b9cdb8}.working strong{display:block;font-size:12px;color:#536b59;margin-bottom:3px}.working .line{font-size:20px;font-weight:900;letter-spacing:.2px}.working p{font-size:12px;color:var(--muted);margin:3px 0 0}
+.response-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:9px;position:sticky;top:8px}.answer-label{font-size:13px;font-weight:900}.answer-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}.answer-box{display:flex;align-items:center;border:2px solid #bfd0c0;border-radius:10px;overflow:hidden;background:#fff}.answer-box input{width:100%;min-width:0;border:0;outline:0;padding:8px 10px;font-size:28px;font-weight:900;text-align:center;background:#fff}.answer-unit{align-self:stretch;display:grid;place-items:center;padding:0 10px;background:#f4f7f3;border-left:1px solid var(--line);font-weight:900;white-space:nowrap}.check{border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:900;padding:8px 12px;min-width:86px}.help,.next,.restart{min-height:42px;border:1px solid #cbd8c9;border-radius:9px;background:#fff;font-weight:800}.next{background:var(--ink);color:#fff;border-color:var(--ink)}.feedback,.hint{border-radius:10px;padding:9px 10px;font-size:13px;line-height:1.35}.feedback.success{background:#e7f5e9;color:#245f32}.feedback.error{background:#fff0ea;color:#8c3d24}.hint{background:#fff8e8;border-left:4px solid var(--gold)}
+.progress{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.progress span{width:9px;height:9px;border-radius:50%;background:#d9e2d8}.progress .done{background:var(--green)}.progress .current{background:var(--gold);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--gold)}
+.summary{padding:28px;text-align:center;display:grid;place-items:center;gap:12px;min-height:520px}.summary h2{margin:0;font-size:30px}.summary p{margin:0;max-width:620px;color:var(--muted)}.summary button{min-height:44px;border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:900;padding:9px 18px}
+footer{padding:7px 14px;text-align:center;font-size:12px;color:var(--muted)}
+dialog{width:min(780px,94vw);max-height:85dvh;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:0;color:var(--ink);box-shadow:0 24px 70px #183c3540}dialog::backdrop{background:#183c356f}.guide-head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}.guide-head h2{margin:0;font-size:20px}.guide-head button{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff}.guide-body{padding:16px 20px;line-height:1.55}.guide-body h3{margin:10px 0 5px}.guide-body p,.guide-body li{font-size:14px}
+body.pupil .teacher-only{display:none!important}body.pupil main{padding:6px;max-width:none}body.pupil .workspace{grid-template-columns:1fr}body.pupil .activity{min-height:calc(100dvh - 68px)}body.pupil .learning-layout{grid-template-columns:minmax(0,1fr) 320px}body.pupil .stage{min-height:470px}body.pupil .question-head h2{font-size:30px}
+@media(max-width:960px){.workspace{grid-template-columns:250px minmax(0,1fr)}.learning-layout{grid-template-columns:minmax(0,1fr) 260px}.stage{padding-left:50px;padding-right:50px}.answer-row{grid-template-columns:1fr}.check{min-height:44px}}
+@media(max-width:700px){
+ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
+ header{padding:8px 9px;flex-wrap:wrap}.brandmark{width:34px;height:34px}.brand h1{font-size:18px}.brand p{display:none}.header-actions{width:100%;justify-content:flex-end}.header-actions button{font-size:12px;min-height:32px;padding:5px 8px}
+ main{padding:7px}.workspace{grid-template-columns:1fr}.settings{position:relative;top:auto;order:2}.activity-shell{order:1}.activity{min-height:0;height:auto;padding:9px}.activity-bar{padding:7px 9px}.question-head h2,body.pupil .question-head h2{font-size:23px}.question-head p{font-size:14px}
+ .learning-layout,body.pupil .learning-layout{grid-template-columns:1fr;gap:9px}.visual-card{padding:7px}.stage,body.pupil .stage{min-height:330px;height:auto;padding:43px 38px 34px;overflow:visible}.model-wrap svg{max-height:none;width:100%}
+ .response-card{position:relative;top:auto;padding:10px}.answer-row{grid-template-columns:minmax(0,1fr) auto}.check{min-width:94px}.answer-box input{font-size:25px;min-height:48px}.help,.next,.restart{min-height:46px}
+ body.pupil main{padding:4px}.working .line{font-size:18px}
+}
+@media(max-width:390px){.stage,body.pupil .stage{min-height:310px;padding:39px 28px 30px}.answer-row{grid-template-columns:1fr}.check{min-height:46px}.header-actions button{font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brandmark">▦</div><div><p>Interactive Teaching Engine</p><h1>Area & Perimeter</h1></div></div>
+  <div class="header-actions"><button class="teacher-only" id="guideButton" type="button">Teacher guide</button><button id="viewButton" type="button">Pupil view ↗</button><button class="teacher-only accent" id="newButton" type="button">New activity</button></div>
+</header>
+<main>
+  <div class="workspace">
+    <aside class="settings teacher-only">
+      <h2>Activity builder</h2><p class="sub">Inspired by your hands-on Area & Perimeter mission.</p>
+      <form id="settingsForm">
+        <div class="field"><label for="task">What will pupils learn?</label><select id="task"><option value="area">Area of a rectangle</option><option value="perimeter">Perimeter of a rectangle</option><option value="mixed">Area then perimeter</option></select></div>
+        <div class="field"><label for="phase">Teaching support</label><select id="phase"><option value="progressive">Progressive · Build → Guided → Independent</option><option value="build">Build it with units</option><option value="guided">Think & calculate</option><option value="independent">Show what you know</option></select><p class="helper">Progressive gives pupils concrete experience first, then removes the scaffold.</p></div>
+        <div class="row"><div class="field"><label for="unit">Length unit</label><select id="unit"><option value="cm">cm</option><option value="m">m</option></select></div><div class="field"><label for="count">Questions</label><select id="count"><option>5</option><option selected>8</option><option>10</option></select></div></div>
+        <div class="field"><label for="numbers">Dimensions</label><select id="numbers"><option value="random">Random rectangles</option><option value="fixed">Use one rectangle</option></select></div>
+        <div class="row"><div class="field"><label for="length">Length</label><input id="length" type="number" min="2" max="12" value="6" inputmode="numeric"></div><div class="field"><label for="breadth">Breadth</label><input id="breadth" type="number" min="2" max="10" value="4" inputmode="numeric"></div></div>
+        <button class="generate" type="submit">Generate activity</button>
+      </form>
+    </aside>
+    <section class="activity-shell">
+      <div class="activity-bar"><strong id="activityTitle">P3 · Area & Perimeter</strong><span id="questionMeta"></span></div>
+      <div class="activity" id="activity">
+        <div class="question-head"><div class="chips"><span class="chip" id="skillChip"></span><span class="chip phase" id="phaseChip"></span></div><h2 id="questionTitle"></h2><p id="instruction"></p></div>
+        <div class="learning-layout">
+          <div class="visual-card"><div class="visual-top"><strong id="visualLabel">Rectangle model</strong><span id="dimensionsLabel"></span></div><div class="stage"><div class="model-wrap" id="modelWrap"></div></div>
+            <div class="tool-panel hidden" id="toolPanel"><div class="tool-title">Your measuring tool</div><button class="tool-button" id="toolButton" type="button"></button><p class="tool-note" id="toolNote"></p></div>
+            <div class="working hidden" id="working"><strong>Think and calculate</strong><div class="line" id="workingLine"></div><p id="workingHint"></p></div>
+          </div>
+          <aside class="response-card"><label class="answer-label" for="answer">Your answer</label><div class="answer-row"><div class="answer-box"><input id="answer" type="text" inputmode="numeric" autocomplete="off" placeholder="?"><span class="answer-unit" id="answerUnit"></span></div><button class="check" id="checkButton" type="button">Check</button></div><button class="help" id="hintButton" type="button">Help me</button><div class="feedback hidden" id="feedback" role="status" aria-live="polite"></div><div class="hint hidden" id="hint" aria-live="polite"></div><button class="next hidden" id="nextButton" type="button">Next question →</button><button class="restart" id="restartButton" type="button">Start again</button><div class="progress" id="progress" aria-label="Activity progress"></div></aside>
+        </div>
+      </div>
+      <div class="summary hidden" id="summary"><h2>Activity complete!</h2><p id="summaryText"></p><button id="againButton" type="button">Practise again</button></div>
+    </section>
+  </div>
+</main>
+<footer>Created by Lim Kim Sze</footer>
+<dialog id="guide"><div class="guide-head"><h2>Teacher guide · Area & Perimeter</h2><button id="closeGuide" type="button" aria-label="Close teacher guide">×</button></div><div class="guide-body">
+<h3>Teaching sequence</h3><p>This engine follows the same learning progression as the hands-on Singapore Measurement Mission: begin by building the measurement with concrete unit tools, move to guided calculation, then remove the scaffold for independent practice.</p>
+<h3>Area</h3><p><strong>Build it:</strong> pupils cover the rectangle with 1 cm² or 1 m² tiles, according to the selected unit. <strong>Guided:</strong> they see rows and columns and connect repeated addition to multiplication. <strong>Independent:</strong> they receive only the rectangle dimensions.</p>
+<h3>Perimeter</h3><p><strong>Build it:</strong> pupils place 1-unit ruler segments around the outside. <strong>Guided:</strong> all four side lengths and the addition sentence are shown. <strong>Independent:</strong> only length and breadth are labelled.</p>
+<h3>Classroom language</h3><ul><li>Area is the amount of surface covered by square units.</li><li>Perimeter is the total distance around the outside of a shape.</li><li>Area uses square units such as cm² or m². Perimeter uses length units such as cm or m.</li></ul>
+</div></dialog>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const DEFAULT={task:'area',phase:'progressive',unit:'cm',count:8,numbers:'random',length:6,breadth:4};
+let config={...DEFAULT},questions=[],index=0,solved=false,toolSelected=false,placed=new Set(),results=[];
+function clamp(n,min,max,fallback){n=Number(n);return Number.isFinite(n)?Math.max(min,Math.min(max,Math.round(n))):fallback}
+function readForm(){return{task:$('task').value,phase:$('phase').value,unit:$('unit').value,count:Number($('count').value),numbers:$('numbers').value,length:clamp($('length').value,2,12,6),breadth:clamp($('breadth').value,2,10,4)}}
+function save(){try{localStorage.setItem('area-perimeter-engine-v1',JSON.stringify(config))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem('area-perimeter-engine-v1'));if(s)config={...DEFAULT,...s}}catch(e){}for(const k of ['task','phase','unit','count','numbers','length','breadth'])if($(k))$(k).value=String(config[k])}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function phaseFor(i){if(config.phase!=='progressive')return config.phase;let local=i,total=config.count;if(config.task==='mixed'){const areaCount=Math.ceil(config.count/2);if(i<areaCount){local=i;total=areaCount}else{local=i-areaCount;total=config.count-areaCount}}if(total<=1)return'independent';if(total===2)return local===0?'build':'independent';if(total===3)return local===0?'build':local===1?'guided':'independent';if(total===4)return local===0?'build':local<3?'guided':'independent';const p=local%5;return p<2?'build':p<4?'guided':'independent'}
+function typeFor(i){if(config.task!=='mixed')return config.task;const areaCount=Math.ceil(config.count/2);return i<areaCount?'area':'perimeter'}
+function generate(){const out=[];for(let i=0;i<config.count;i++){let w=config.numbers==='fixed'?config.length:rand(3,10),h=config.numbers==='fixed'?config.breadth:rand(2,8);if(w===h&&config.numbers==='random'&&Math.random()>.5)w=Math.min(12,w+1);out.push({type:typeFor(i),phase:phaseFor(i),w,h})}return out}
+function answerFor(q){return q.type==='area'?q.w*q.h:2*(q.w+q.h)}
+function unitFor(q){return q.type==='area'?config.unit+'²':config.unit}
+function phaseName(p){return p==='build'?'BUILD IT':p==='guided'?'THINK & CALCULATE':'SHOW WHAT YOU KNOW'}
+function phaseInstruction(q){if(q.phase==='build')return q.type==='area'?`Take the 1 ${config.unit}² tile, then tap every square to cover the rectangle.`:`Take the 1 ${config.unit} ruler, then tap each segment around the outside of the rectangle.`;if(q.phase==='guided')return q.type==='area'?'Use the rows and columns to find how many square units cover the rectangle.':'Add the four side lengths to find the total distance around the rectangle.';return q.type==='area'?'Use the length and breadth to find the area.':'Use the length and breadth to find the perimeter.'}
+function makeSvg(tag,attrs,text){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const k in attrs)e.setAttribute(k,String(attrs[k]));if(text!==undefined)e.textContent=text;return e}
+function modelSize(q){const maxW=680,maxH=350,pad=55,cell=Math.max(24,Math.min(54,Math.floor(Math.min((maxW-pad*2)/q.w,(maxH-pad*2)/q.h))));return{cell,w:q.w*cell,h:q.h*cell,pad}}
+function addText(svg,x,y,text,size,weight,fill,anchor){svg.append(makeSvg('text',{x,y,'font-family':'Arial,Helvetica,sans-serif','font-size':size,'font-weight':weight||700,fill:fill||'#183c35','text-anchor':anchor||'middle'},text))}
+function renderArea(q){const s=modelSize(q),vw=s.w+s.pad*2,vh=s.h+s.pad*2,svg=makeSvg('svg',{viewBox:'0 0 '+vw+' '+vh,'aria-label':'Rectangle '+q.w+' '+config.unit+' by '+q.h+' '+config.unit});const x=s.pad,y=s.pad;
+ svg.append(makeSvg('rect',{x,y,width:s.w,height:s.h,rx:4,fill:'#fff',stroke:'#2f72b8','stroke-width':4}));
+ if(q.phase!=='independent'){
+   for(let c=1;c<q.w;c++)svg.append(makeSvg('line',{x1:x+c*s.cell,y1:y,x2:x+c*s.cell,y2:y+s.h,stroke:'#82afd6','stroke-width':1.3}));
+   for(let r=1;r<q.h;r++)svg.append(makeSvg('line',{x1:x,y1:y+r*s.cell,x2:x+s.w,y2:y+r*s.cell,stroke:'#82afd6','stroke-width':1.3}));
+ }
+ if(q.phase==='build'){
+   for(let r=0;r<q.h;r++)for(let c=0;c<q.w;c++){const idx=r*q.w+c,cell=makeSvg('rect',{x:x+c*s.cell+2,y:y+r*s.cell+2,width:s.cell-4,height:s.cell-4,rx:3,fill:placed.has(idx)?'#bfe8ff':'#ffffffaa',stroke:placed.has(idx)?'#2f72b8':'#7ba8cc','stroke-width':placed.has(idx)?2:1.5,'stroke-dasharray':placed.has(idx)?'0':'5 4','data-index':idx,tabindex:0,role:'button','aria-label':'Square unit '+(idx+1)});cell.addEventListener('click',()=>fillUnit(idx));cell.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fillUnit(idx)}});svg.append(cell)}
+ }
+ addText(svg,x+s.w/2,y-18,q.w+' '+config.unit,16,900);addText(svg,x-16,y+s.h/2,q.h+' '+config.unit,16,900,'#183c35','middle');const leftText=svg.lastChild;leftText.setAttribute('transform','rotate(-90 '+(x-16)+' '+(y+s.h/2)+')');
+ if(q.phase==='guided'){addText(svg,x+s.w/2,y+s.h+32,q.h+' rows × '+q.w+' squares',15,800,'#496454')}
+ $('modelWrap').replaceChildren(svg)
+}
+function perimeterSegments(q,s){const arr=[],x=s.pad,y=s.pad;for(let c=0;c<q.w;c++){arr.push({x1:x+c*s.cell,y1:y,x2:x+(c+1)*s.cell,y2:y});arr.push({x1:x+c*s.cell,y1:y+s.h,x2:x+(c+1)*s.cell,y2:y+s.h})}for(let r=0;r<q.h;r++){arr.push({x1:x,y1:y+r*s.cell,x2:x,y2:y+(r+1)*s.cell});arr.push({x1:x+s.w,y1:y+r*s.cell,x2:x+s.w,y2:y+(r+1)*s.cell})}return arr}
+function renderPerimeter(q){const s=modelSize(q),vw=s.w+s.pad*2,vh=s.h+s.pad*2,svg=makeSvg('svg',{viewBox:'0 0 '+vw+' '+vh,'aria-label':'Rectangle '+q.w+' '+config.unit+' by '+q.h+' '+config.unit});const x=s.pad,y=s.pad;
+ svg.append(makeSvg('rect',{x,y,width:s.w,height:s.h,rx:5,fill:'#fff',stroke:'#53645b','stroke-width':4}));
+ svg.append(makeSvg('rect',{x:x+8,y:y+8,width:s.w-16,height:s.h-16,rx:4,fill:'#e8f3ec',stroke:'none'}));
+ if(q.phase==='build'){
+   const segs=perimeterSegments(q,s);segs.forEach((g,idx)=>{const hit=makeSvg('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,stroke:placed.has(idx)?'#d92d20':'#bd8b1f','stroke-width':placed.has(idx)?12:9,'stroke-linecap':'round','stroke-dasharray':placed.has(idx)?'0':'5 5','data-index':idx,tabindex:0,role:'button','aria-label':'Perimeter unit '+(idx+1)});hit.addEventListener('click',()=>fillUnit(idx));hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fillUnit(idx)}});svg.append(hit)})
+ }else{
+   svg.append(makeSvg('rect',{x:x+3,y:y+3,width:s.w-6,height:s.h-6,rx:4,fill:'none',stroke:'#efc66d','stroke-width':q.phase==='guided'?7:4,'stroke-dasharray':q.phase==='guided'?'0':'8 6'}));
+ }
+ addText(svg,x+s.w/2,y-18,q.w+' '+config.unit,16,900);addText(svg,x-16,y+s.h/2,q.h+' '+config.unit,16,900,'#183c35');const leftText=svg.lastChild;leftText.setAttribute('transform','rotate(-90 '+(x-16)+' '+(y+s.h/2)+')');
+ if(q.phase==='guided'){addText(svg,x+s.w/2,y+s.h+31,q.w+' + '+q.h+' + '+q.w+' + '+q.h,15,900,'#496454')}
+ $('modelWrap').replaceChildren(svg)
+}
+function fillUnit(idx){const q=questions[index];if(q.phase!=='build'||!toolSelected||placed.has(idx))return;placed.add(idx);renderModel();if(placed.size===requiredUnits(q)){toolSelected=false;$('toolButton').classList.remove('selected');showFeedback('Great building! Now enter the measurement.','success')}}
+function requiredUnits(q){return q.type==='area'?q.w*q.h:2*(q.w+q.h)}
+function renderModel(){const q=questions[index];q.type==='area'?renderArea(q):renderPerimeter(q)}
+function workingText(q){if(q.type==='area')return q.h+' rows of '+q.w+' = '+q.h+' × '+q.w+' = ?';return q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = ?'}
+function showFeedback(text,type){const f=$('feedback');f.textContent=text;f.className='feedback '+type}
+function clearFeedback(){$('feedback').className='feedback hidden';$('feedback').textContent='';$('hint').className='hint hidden'}
+function renderProgress(){const p=$('progress');p.replaceChildren();for(let i=0;i<config.count;i++){const d=document.createElement('span');if(i<results.length)d.className='done';else if(i===index)d.className='current';p.append(d)}}
+function showQuestion(){
+ const q=questions[index];solved=false;toolSelected=false;placed=new Set();clearFeedback();$('answer').value='';$('nextButton').classList.add('hidden');$('checkButton').classList.remove('hidden');$('hintButton').disabled=false;
+ $('questionMeta').textContent='Question '+(index+1)+' of '+config.count;$('skillChip').textContent=q.type==='area'?'AREA':'PERIMETER';$('phaseChip').textContent=phaseName(q.phase);$('phaseChip').className='chip phase'+(q.phase==='independent'?' independent':'');
+ $('questionTitle').textContent=q.type==='area'?'Find the area of the rectangle.':'Find the perimeter of the rectangle.';$('instruction').textContent=phaseInstruction(q);$('answerUnit').textContent=unitFor(q);$('dimensionsLabel').textContent=q.w+' '+config.unit+' × '+q.h+' '+config.unit;$('visualLabel').textContent=q.type==='area'?'Cover the surface':'Measure around the outside';
+ const build=q.phase==='build';$('toolPanel').classList.toggle('hidden',!build);$('working').classList.toggle('hidden',q.phase!=='guided');if(build){$('toolButton').textContent=q.type==='area'?`Take 1 ${config.unit}² tile`:'Take 1 '+config.unit+' ruler';$('toolNote').textContent='Tap the tool once. It stays selected while you place every unit.';$('toolButton').classList.remove('selected')}if(q.phase==='guided'){$('workingLine').textContent=workingText(q);$('workingHint').textContent=q.type==='area'?'Rows × columns gives the number of square units.':'Perimeter is the sum of all four sides.'}
+ renderModel();renderProgress()
+}
+function checkAnswer(){if(solved)return;const q=questions[index];if(q.phase==='build'&&placed.size<requiredUnits(q)){showFeedback('Finish placing all the '+(q.type==='area'?'square tiles':'ruler units')+' first.','error');return}const raw=$('answer').value.trim();if(!/^\d+$/.test(raw)){showFeedback('Enter a whole-number answer.','error');return}const value=Number(raw),ans=answerFor(q);if(value===ans){solved=true;results.push({type:q.type,phase:q.phase,correct:true});showFeedback(q.type==='area'?('Correct. '+q.w+' × '+q.h+' = '+ans+' '+unitFor(q)+'.'):('Correct. '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+' = '+ans+' '+unitFor(q)+'.'),'success');$('checkButton').classList.add('hidden');$('nextButton').classList.remove('hidden');$('hintButton').disabled=true;$('nextButton').textContent=index===config.count-1?'Finish activity →':'Next question →'}else showFeedback(q.type==='area'?'Try again. Area counts the square units covering the surface.':'Try again. Perimeter is the total distance around all four sides.','error')}
+function showHint(){const q=questions[index],h=$('hint');h.className='hint';h.textContent=q.type==='area'?(q.phase==='build'?'Cover every square exactly once. Then count the tiles.':'Multiply the length by the breadth: '+q.w+' × '+q.h+'.'):(q.phase==='build'?'Place one ruler unit on every part of the outside edge.':'Add all four sides: '+q.w+' + '+q.h+' + '+q.w+' + '+q.h+'.')}
+function nextQuestion(){if(!solved)return;if(index<config.count-1){index++;showQuestion();$('activity').scrollIntoView({block:'start'})}else showSummary()}
+function showSummary(){$('activity').classList.add('hidden');const s=$('summary');s.classList.remove('hidden');const build=questions.filter(q=>q.phase==='build').length,guided=questions.filter(q=>q.phase==='guided').length,ind=questions.filter(q=>q.phase==='independent').length;$('summaryText').textContent='You completed '+config.count+' questions: '+build+' build-it, '+guided+' guided and '+ind+' independent.'}
+function start(){config=readForm();save();questions=generate();index=0;results=[];$('summary').classList.add('hidden');$('activity').classList.remove('hidden');showQuestion()}
+$('settingsForm').addEventListener('submit',e=>{e.preventDefault();start()});$('newButton').onclick=start;$('checkButton').onclick=checkAnswer;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer()});$('hintButton').onclick=showHint;$('nextButton').onclick=nextQuestion;$('restartButton').onclick=()=>{index=0;results=[];showQuestion()};$('againButton').onclick=start;
+$('toolButton').onclick=()=>{const q=questions[index];if(q.phase!=='build')return;if(!toolSelected){toolSelected=true;$('toolButton').classList.add('selected');showFeedback('Tool taken. Now tap the empty '+(q.type==='area'?'squares':'edge segments')+' one by one.','success')}else showFeedback('The tool is already selected. Keep placing units.','success')};
+const guide=$('guide');$('guideButton').onclick=()=>guide.showModal();$('closeGuide').onclick=()=>guide.close();guide.addEventListener('click',e=>{if(e.target===guide)guide.close()});
+$('viewButton').onclick=()=>{const on=!document.body.classList.contains('pupil');document.body.classList.toggle('pupil',on);$('viewButton').textContent=on?'Teacher view':'Pupil view ↗';try{parent.postMessage({type:'primary-maths-pupil-view',on},'*')}catch(e){}};
+load();questions=generate();showQuestion();
+</script>
+</body>
+</html>
