@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183c35">
+  <title>Mental sum · Primary Maths Studio</title>
+  <style>
+    :root{--ink:#183c35;--green:#24735e;--green-soft:#e9f1e8;--gold:#efc66d;--line:#d9e3d6;--muted:#627566;--paper:#fff;--bg:#f2f5ef;--p3:#a87816;--addition:#34855f;--subtraction:#8f4d65}*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 Arial,Helvetica,sans-serif}button{font:inherit;cursor:pointer}.page{height:100dvh;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr)}.page-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--paper)}.eyebrow{margin:0 0 4px;color:#6b806f;font-size:10px;font-weight:800;letter-spacing:1.4px}.page-head h1{margin:0;font-size:22px;letter-spacing:-.45px}.page-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.head-badge{flex:none;border:1px solid #d3dfd0;border-radius:999px;padding:6px 10px;background:#f3f7f0;color:#365c49;font-size:11px;font-weight:800}.library{min-height:0;overflow:auto;padding:22px}.intro{max-width:940px;margin:0 auto 18px;padding:20px 22px;border:1px solid #cdddc9;border-radius:13px;background:linear-gradient(115deg,#fff 0%,#f4f8f1 72%,#ebf1e7 100%)}.intro h2{margin:0 0 5px;font-size:clamp(22px,3vw,31px);line-height:1.15;letter-spacing:-.75px}.intro p{max-width:690px;margin:0;color:var(--muted);font-size:14px}.level-list{max-width:940px;margin:0 auto}.level{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--paper);box-shadow:0 1px 0 #183c3505}.level-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line);background:#fbfdf9}.level-title{display:flex;align-items:center;gap:10px;min-width:0}.level-number{display:grid;place-items:center;width:31px;height:31px;flex:none;border-radius:50%;background:var(--p3);color:#fff;font-size:12px;font-weight:800}.level-head h3{margin:0;font-size:17px}.level-head p{margin:1px 0 0;color:var(--muted);font-size:12px}.skill-count{flex:none;border:1px solid #d6e1d1;border-radius:999px;padding:4px 8px;background:#fff;color:#537060;font-size:10px;font-weight:800}.skill-group+.skill-group{border-top:1px solid var(--line)}.group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 0}.group-title{display:flex;align-items:center;gap:8px}.group-dot{width:9px;height:9px;border-radius:50%;background:var(--group)}.group-head h4{margin:0;font-size:14px}.group-head span{color:var(--muted);font-size:11px;font-weight:800}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:12px 13px 13px}.activity-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:193px;padding:15px;border:1px solid #dce6d8;border-radius:10px;background:#fff;box-shadow:0 1px 2px #183c3508}.activity-card:hover{border-color:#9bb79f;box-shadow:0 5px 14px #183c3512}.skill-icon{display:grid;place-items:center;width:38px;height:38px;margin-bottom:11px;border-radius:9px;background:color-mix(in srgb,var(--group) 13%,white);color:var(--group);font-size:17px;font-weight:800}.activity-card h5{margin:0;font-size:16px;line-height:1.2}.activity-card p{margin:5px 0 14px;color:var(--muted);font-size:12px;line-height:1.4}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto}.actions button{border:1px solid var(--ink);border-radius:7px;padding:8px 11px;background:var(--ink);color:#fff;font-size:12px;font-weight:800}.actions button.secondary{border-color:#cbd9c7;background:#fff;color:var(--ink)}.actions button:hover{background:#2c5748}.actions button.secondary:hover{background:#edf4e9}.skill-group[data-group="addition"]{--group:var(--addition)}.skill-group[data-group="subtraction"]{--group:var(--subtraction)}@media(max-width:760px){.library{padding:13px}.page-head{padding:12px 14px}.page-head h1{font-size:19px}.page-head p{display:none}.head-badge{font-size:10px}.intro{padding:16px}.intro h2{font-size:24px}.level-head{padding:11px 12px}.level-head h3{font-size:15px}.level-head p{font-size:11px}.group-head{padding:12px 12px 0}.cards{grid-template-columns:1fr;gap:8px;padding:9px}.activity-card{min-height:0;padding:13px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;column-gap:10px;align-items:center}.skill-icon{grid-column:1;grid-row:1/3;margin:0}.activity-card h5{grid-column:2;grid-row:1;font-size:15px}.activity-card p{grid-column:2;grid-row:2;margin:3px 0 0;font-size:11px}.actions{grid-column:3;grid-row:1/3;margin:0;justify-content:flex-end}.actions button{padding:7px 8px;font-size:11px}}@media(max-width:440px){.activity-card{grid-template-columns:42px minmax(0,1fr)}.actions{grid-column:1/-1;grid-row:3;justify-content:stretch;margin-top:9px}.actions button{flex:1}.activity-card p{padding-right:2px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page-head">
+      <div><p class="eyebrow">NUMBER SENSE · PRIMARY 3</p><h1>Mental sum</h1><p>Choose an addition or subtraction strategy to open its lesson or quiz.</p></div>
+      <span class="head-badge">7 skills</span>
+    </header>
+    <section class="library" aria-label="Mental sum activity menu">
+      <div class="intro"><h2>Build flexible mental calculation strategies</h2><p>Lessons model a clear method first. Then use the matching quiz for quick, focused practice.</p></div>
+      <div class="level-list">
+        <section class="level" aria-labelledby="p3-title">
+          <header class="level-head"><div class="level-title"><span class="level-number">P3</span><div><h3 id="p3-title">Primary 3</h3><p>Use place value, partitioning and compensation to calculate mentally.</p></div></div><span class="skill-count">7 skills</span></header>
+          <section class="skill-group" data-group="addition" aria-labelledby="addition-title">
+            <header class="group-head"><div class="group-title"><span class="group-dot" aria-hidden="true"></span><h4 id="addition-title">Addition strategies</h4></div><span>4 skills</span></header>
+            <div class="cards">
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">+10</span><h5>Add tens, then ones</h5><p>Split the second number and add the tens before the ones.</p><div class="actions"><button type="button" data-activity="add-second-lesson">Lesson</button><button class="secondary" type="button" data-activity="add-second-quiz">Quiz</button></div></article>
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">+ +</span><h5>Split both numbers</h5><p>Add the tens, then add the ones using both numbers’ place values.</p><div class="actions"><button type="button" data-activity="add-both-lesson">Lesson</button><button class="secondary" type="button" data-activity="add-both-quiz">Quiz</button></div></article>
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">100</span><h5>Make 100</h5><p>Use compensation when one addend is close to 100.</p><div class="actions"><button type="button" data-activity="make-100-lesson">Lesson</button><button class="secondary" type="button" data-activity="make-100-quiz">Quiz</button></div></article>
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">100+</span><h5>Add more, subtract extra</h5><p>Use double compensation when both addends are near 100.</p><div class="actions"><button type="button" data-activity="add-more-lesson">Lesson</button><button class="secondary" type="button" data-activity="add-more-quiz">Quiz</button></div></article>
+            </div>
+          </section>
+          <section class="skill-group" data-group="subtraction" aria-labelledby="subtraction-title">
+            <header class="group-head"><div class="group-title"><span class="group-dot" aria-hidden="true"></span><h4 id="subtraction-title">Subtraction strategies</h4></div><span>3 skills</span></header>
+            <div class="cards">
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">−10</span><h5>Subtract tens, then ones</h5><p>Split both numbers and subtract the tens before the ones.</p><div class="actions"><button type="button" data-activity="sub-tens-lesson">Lesson</button><button class="secondary" type="button" data-activity="sub-tens-quiz">Quiz</button></div></article>
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">− +</span><h5>Subtract more, add extra</h5><p>Round a single-digit subtrahend to a ten, then adjust.</p><div class="actions"><button type="button" data-activity="sub-single-lesson">Lesson</button><button class="secondary" type="button" data-activity="sub-single-quiz">Quiz</button></div></article>
+              <article class="activity-card"><span class="skill-icon" aria-hidden="true">−20</span><h5>Subtract more, add extra</h5><p>Round a two-digit subtrahend to a ten, then adjust.</p><div class="actions"><button type="button" data-activity="sub-double-lesson">Lesson</button><button class="secondary" type="button" data-activity="sub-double-quiz">Quiz</button></div></article>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script>
+    const activities={
+      'add-second-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Addition_Skill_Add_the_Tens_Then_the_Ones_Lesson/',
+      'add-second-quiz':'https://limkimsze-maker.github.io/P3_Skill_1_Addition_Skill_Add_the_Tens_Then_the_Ones_Quiz/',
+      'add-both-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Addition_Add_the_Tens_Then_the_Ones_Lesson/',
+      'add-both-quiz':'https://limkimsze-maker.github.io/P3_Skill_2_Addition_Add_the_Tens_Then_the_Ones_Quiz/',
+      'make-100-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Add_by_Making_100_Lesson/',
+      'make-100-quiz':'https://limkimsze-maker.github.io/P3_Skill_3_Add_by_Making_100_Quiz/',
+      'add-more-lesson':'https://limkimsze-maker.github.io/P3_Skill_4_Addition_Add_More_then_Subtract_Extra_Lesson/',
+      'add-more-quiz':'https://limkimsze-maker.github.io/P3_Skill_4_Add_More_then_Subtract_Quiz/',
+      'sub-tens-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Lesson/',
+      'sub-tens-quiz':'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Quiz/',
+      'sub-single-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Lesson/',
+      'sub-single-quiz':'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Quiz/',
+      'sub-double-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_lesson/',
+      'sub-double-quiz':'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_quiz/'
+    };
+    function openActivity(id){const url=activities[id];if(!url)return;if(window.parent&&window.parent!==window){window.parent.postMessage({type:'primary-maths-mental-sum-activity',activity:id},'*');return;}window.location.assign(url);}
+    document.querySelectorAll('[data-activity]').forEach(button=>button.addEventListener('click',()=>openActivity(button.dataset.activity)));
+  </script>
+</body>
+</html>
