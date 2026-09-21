@@ -51,10 +51,10 @@
       'add-more-quiz':{title:'P3 · Add more, subtract extra quiz',url:'https://limkimsze-maker.github.io/P3_Skill_4_Add_More_then_Subtract_Quiz/'},
       'sub-tens-lesson':{title:'P3 · Subtract tens, then ones',url:'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Lesson/'},
       'sub-tens-quiz':{title:'P3 · Subtract tens, then ones quiz',url:'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Quiz/'},
-      'sub-single-lesson':{title:'P3 · Subtract more, add extra',url:'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Lesson/'},
-      'sub-single-quiz':{title:'P3 · Subtract more, add extra quiz',url:'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Quiz/'},
-      'sub-double-lesson':{title:'P3 · Subtract more, add extra',url:'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_lesson/'},
-      'sub-double-quiz':{title:'P3 · Subtract more, add extra quiz',url:'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_quiz/'}
+      'sub-single-lesson':{title:'P3 · Round a single-digit number',url:'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Lesson/'},
+      'sub-single-quiz':{title:'P3 · Round a single-digit number quiz',url:'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Quiz/'},
+      'sub-double-lesson':{title:'P3 · Round a two-digit number',url:'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_lesson/'},
+      'sub-double-quiz':{title:'P3 · Round a two-digit number quiz',url:'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_quiz/'}
     };
     const valid=id=>engines.some(item=>item[0]===id);const saved=new URLSearchParams(location.search).get('engine');let active=valid(saved)?saved:'place';
     const source=id=>id==='compare-order'?`public/compare-order.html?v=${release}`:id==='mental-sum'?`public/mental-sum.html?v=${release}`:['length','mass','volume'].includes(id)?`public/measurement/${id}.html?v=${release}`:`public/engines.html?engine=${encodeURIComponent(id)}&v=${release}`;
