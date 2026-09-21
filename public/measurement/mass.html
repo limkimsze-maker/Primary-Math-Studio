@@ -135,6 +135,199 @@ input[type=range]{width:100%;accent-color:var(--green);height:28px}
   .scale-card{min-height:300px!important}
   .scale-card svg{height:280px!important;min-height:280px!important}
 }
+
+/* MEASUREMENT_LAYOUT_FIX_V2 */
+@media (max-width:799px), (max-height:479px){
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body{display:block!important}
+  main{
+    display:block!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  .workspace,.surface-column,.surface{
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  .activity{
+    display:flex!important;
+    flex:0 0 auto!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding-bottom:14px!important;
+  }
+  .question-head{flex:0 0 auto!important}
+  .activity-workspace{
+    display:flex!important;
+    flex:0 0 auto!important;
+    flex-direction:column!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    gap:12px!important;
+  }
+  .visual-panel{
+    order:1!important;
+    display:flex!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  .response-panel{
+    order:2!important;
+    position:relative!important;
+    z-index:3!important;
+    display:flex!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:12px!important;
+    overflow:visible!important;
+    border:1px solid var(--line)!important;
+    border-radius:12px!important;
+    background:#fff!important;
+  }
+  .response-controls,.answer-area{
+    position:relative!important;
+    z-index:4!important;
+    width:100%!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  .answer-area{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    align-items:stretch!important;
+  }
+  #answerFields{
+    width:100%!important;
+    max-width:none!important;
+  }
+  .answer-inputs{
+    display:flex!important;
+    align-items:center!important;
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  .answer-inputs input{
+    position:relative!important;
+    z-index:5!important;
+    width:min(150px,44vw)!important;
+    min-width:110px!important;
+    min-height:52px!important;
+    padding:9px 12px!important;
+    font-size:26px!important;
+    background:#fff!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  .primary-action{
+    display:flex!important;
+    width:100%!important;
+  }
+  .primary-action button,#hintBtn{
+    min-height:48px!important;
+    width:100%!important;
+    max-width:none!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  .response-support{
+    flex:0 0 auto!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  .activity-footer{
+    position:relative!important;
+    z-index:2!important;
+    flex:0 0 auto!important;
+    margin-top:0!important;
+  }
+  .scale-stage{
+    position:relative!important;
+    z-index:1!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:hidden!important;
+  }
+  .scale-card{
+    position:relative!important;
+    z-index:1!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    overflow:hidden!important;
+  }
+}
+@media (max-width:480px){
+  header{padding:8px 10px!important}
+  .header-actions{gap:6px!important}
+  .header-actions button{padding:7px 8px!important;font-size:12px!important}
+  main{padding:6px!important}
+  .surface-bar{padding:7px 10px!important}
+  .activity{padding:9px!important;gap:9px!important}
+  .question-title,.pupil-mode .question-title{font-size:22px!important;line-height:1.16!important}
+  .instruction{font-size:15px!important}
+  .response-panel{padding:10px!important}
+}
+
+@media (min-width:800px) and (min-height:480px){
+  .activity{overflow:auto!important}
+  .activity-workspace{
+    display:grid!important;
+    grid-template-columns:minmax(360px,1fr) minmax(260px,320px)!important;
+    grid-template-rows:auto!important;
+    gap:14px!important;
+    min-height:430px!important;
+    flex:0 0 auto!important;
+    align-items:start!important;
+  }
+  .visual-panel{min-height:400px!important}
+  .scale-stage{height:400px!important;min-height:400px!important;overflow:hidden!important}
+  .scale-card svg{height:360px!important;min-height:360px!important}
+  .response-panel{
+    position:relative!important;
+    z-index:2!important;
+    padding:12px!important;
+    border:1px solid var(--line)!important;
+    border-radius:12px!important;
+    background:#fff!important;
+  }
+  .answer-area{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  .primary-action,.primary-action button,#hintBtn{width:100%!important;max-width:none!important}
+}
+
+@media (max-width:799px), (max-height:479px){
+  .scale-stage{min-height:330px!important;padding:5px!important}
+  .scale-card{min-height:320px!important}
+  .scale-card svg{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:1/1!important;
+    max-height:none!important;
+    flex:0 0 auto!important;
+  }
+  .is-compare .scale-stage{display:flex!important;flex-direction:column!important;gap:10px!important}
+  .is-compare .scale-card{min-height:300px!important}
+}
+
 </style></head><body><script id="lesson-config" type="application/json">null</script>
 <header><div class="brand"><div class="brandmark"><svg width="27" height="27" viewBox="0 0 28 28" aria-hidden="true"><path d="M4 4h20M14 4v5" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="18" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 18l4-4" stroke="currentColor" stroke-width="2.5"/></svg></div><div><div class="eyebrow">Interactive Teaching Engines</div><h1>Mass Measurement Engine</h1></div></div><div class="header-actions"><button class="teacher-only" id="guideButton" type="button">Teacher guide</button><button id="viewToggle">Pupil view ↗</button><button class="primary teacher-only" id="download">Download activity ↓</button></div></header>
 <main><div class="intro"><div><h2 id="lessonTitle">Make sense of every mark.</h2><p id="introText">Choose your settings, then generate a mass activity.</p></div><span class="badge" id="modeBadge">Mass · Primary Mathematics</span></div><div class="workspace">
