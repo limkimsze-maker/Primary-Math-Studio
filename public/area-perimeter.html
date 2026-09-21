@@ -102,7 +102,7 @@ function readForm(){return{task:$('task').value,phase:$('phase').value,unit:$('u
 function save(){try{localStorage.setItem('area-perimeter-engine-v1',JSON.stringify(config))}catch(e){}}
 function load(){try{const s=JSON.parse(localStorage.getItem('area-perimeter-engine-v1'));if(s)config={...DEFAULT,...s}}catch(e){}for(const k of ['task','phase','unit','count','numbers','length','breadth'])if($(k))$(k).value=String(config[k])}
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-function phaseFor(i){if(config.phase!=='progressive')return config.phase;const p=i%5;return p<2?'build':p<4?'guided':'independent'}
+function phaseFor(i){if(config.phase!=='progressive')return config.phase;let local=i,total=config.count;if(config.task==='mixed'){const areaCount=Math.ceil(config.count/2);if(i<areaCount){local=i;total=areaCount}else{local=i-areaCount;total=config.count-areaCount}}if(total<=1)return'independent';if(total===2)return local===0?'build':'independent';if(total===3)return local===0?'build':local===1?'guided':'independent';if(total===4)return local===0?'build':local<3?'guided':'independent';const p=local%5;return p<2?'build':p<4?'guided':'independent'}
 function typeFor(i){if(config.task!=='mixed')return config.task;const areaCount=Math.ceil(config.count/2);return i<areaCount?'area':'perimeter'}
 function generate(){const out=[];for(let i=0;i<config.count;i++){let w=config.numbers==='fixed'?config.length:rand(3,10),h=config.numbers==='fixed'?config.breadth:rand(2,8);if(w===h&&config.numbers==='random'&&Math.random()>.5)w=Math.min(12,w+1);out.push({type:typeFor(i),phase:phaseFor(i),w,h})}return out}
 function answerFor(q){return q.type==='area'?q.w*q.h:2*(q.w+q.h)}
