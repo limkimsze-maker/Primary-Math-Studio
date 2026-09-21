@@ -927,7 +927,7 @@ function lesson(config,r=Math.random){
    const total=time24Minutes(c.clockTime),time12=clockPartsFrom24(total),meridiem=total<720?'a.m.':'p.m.';type='timeampm';answer=[time12[0],time12[1],meridiem];d.time24=total;d.source24=total;d.sky=skyFor24(total);d.time12=time12;d.meridiem=meridiem;
    question=`Write ${formatTime24H(total)} in 12-hour notation and choose a.m. or p.m.`;
    hint='For 0000 h to 1159 h, use a.m. For 1200 h to 2359 h, use p.m. Then change the hour to the 12-hour clock.';
-   explanation=`${formatTime24H(total)} is ${formatTime(...time12)} ${meridiem}. 0000 h is 12:00 a.m. and 1200 h is 12:00 p.m.`;
+   explanation=`${formatTime24H(total)} is ${formatTime(...time12)} ${meridiem} In the 24-hour system, 0000 h is 12:00 a.m. and 1200 h is 12:00 p.m.`;
   }else if(c.grade===3&&t==='twentyfour'){
    const value=analogueTo24Minutes(a,b,c.sky);type='time24four';answer=formatTime24Digits(value);d.time24=value;d.sky=c.sky;
    question='Look at the analogue clock and the sky clue. Write the time in 24-hour notation.';
@@ -937,7 +937,7 @@ function lesson(config,r=Math.random){
    const value=analogueTo24Minutes(a,b,c.sky),meridiem=c.sky==='morning'||c.sky==='overnight'?'a.m.':'p.m.';type='timeampm';answer=[a,b,meridiem];d.time24=value;d.sky=c.sky;d.meridiem=meridiem;d.time12=[a,b];
    question='Look at the analogue clock and the forest sky clue. Write the time in 12-hour notation and choose a.m. or p.m.';
    hint=c.grade===1?'Read the clock in five-minute steps, then use the clear forest sky clue to choose a.m. or p.m.':'Write the hour and minute with a colon. Then use the forest sky clue to choose a.m. or p.m.';
-   explanation=`The clock shows ${formatTime(a,b)}. ${c.sky==='morning'?'The morning sun means a.m.':c.sky==='afternoon'?'The afternoon sun means p.m.':c.sky==='night'?'The night moon means p.m.':'The moon and owl show early morning, so it is a.m.'} So the time is ${formatTime(a,b)} ${meridiem}.`;
+   explanation=`The clock shows ${formatTime(a,b)}. ${c.sky==='morning'?'The morning sun means a.m.':c.sky==='afternoon'?'The afternoon sun means p.m.':c.sky==='night'?'The night moon means p.m.':'The moon and owl show early morning, so it is a.m.'} So the time is ${formatTime(a,b)} ${meridiem}`;
   }else if(['read','set','later'].includes(t)){
    const end=[Math.floor(((a%12*60+b+c.duration)%720)/60)||12,(b+c.duration)%60];d.end=end;
    type='time';answer=t==='later'?end:[a,b];
