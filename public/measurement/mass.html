@@ -99,6 +99,42 @@ input[type=range]{width:100%;accent-color:var(--green);height:28px}
  .is-compare .activity-workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) 156px}
  .is-total .activity-workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) 156px}
 }
+
+/* DISPLAY_VISIBILITY_FIX_V1 */
+@media (min-width:800px) and (min-height:480px){
+  .surface{overflow:hidden}
+  .activity{overflow:auto!important;overscroll-behavior:contain;padding-bottom:14px}
+  .activity-workspace{min-height:410px;flex:0 0 auto}
+  .visual-panel{min-height:330px}
+  .scale-stage{height:330px!important;min-height:330px!important;flex:0 0 auto!important;overflow:visible!important}
+  .scale-card{min-height:0}
+  .scale-card svg{min-height:270px!important;height:100%!important;max-height:none!important}
+  .pupil-mode .activity-workspace{min-height:440px}
+  .pupil-mode .scale-stage{height:380px!important;min-height:380px!important}
+  .pupil-mode .scale-card svg{min-height:320px!important}
+}
+@media (max-width:799px), (max-height:479px){
+  html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important}
+  main,.workspace,.surface-column,.surface,.activity{height:auto!important;min-height:0!important;overflow:visible!important}
+  .activity{padding-bottom:18px}
+  .activity-workspace{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;height:auto!important;min-height:0!important;overflow:visible!important}
+  .visual-panel{height:auto!important;min-height:0!important;overflow:visible!important}
+  .scale-stage{height:auto!important;min-height:340px!important;overflow:visible!important;flex:none!important}
+  .scale-card{min-height:320px!important;height:auto!important}
+  .scale-card svg{height:300px!important;min-height:300px!important;max-height:none!important;flex:none!important;touch-action:pan-y}
+  .response-panel{margin-top:8px}
+  .is-compare .scale-stage{height:auto!important;min-height:0!important}
+  .is-compare .scale-card{min-height:300px!important}
+  .is-compare .scale-card svg{height:280px!important;min-height:280px!important}
+}
+@media (max-width:480px){
+  main{padding:8px!important}
+  .activity{padding:10px!important}
+  .question-title,.pupil-mode .question-title{font-size:22px!important}
+  .scale-stage{min-height:320px!important;padding:4px!important}
+  .scale-card{min-height:300px!important}
+  .scale-card svg{height:280px!important;min-height:280px!important}
+}
 </style></head><body><script id="lesson-config" type="application/json">null</script>
 <header><div class="brand"><div class="brandmark"><svg width="27" height="27" viewBox="0 0 28 28" aria-hidden="true"><path d="M4 4h20M14 4v5" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="18" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 18l4-4" stroke="currentColor" stroke-width="2.5"/></svg></div><div><div class="eyebrow">Interactive Teaching Engines</div><h1>Mass Measurement Engine</h1></div></div><div class="header-actions"><button class="teacher-only" id="guideButton" type="button">Teacher guide</button><button id="viewToggle">Pupil view ↗</button><button class="primary teacher-only" id="download">Download activity ↓</button></div></header>
 <main><div class="intro"><div><h2 id="lessonTitle">Make sense of every mark.</h2><p id="introText">Choose your settings, then generate a mass activity.</p></div><span class="badge" id="modeBadge">Mass · Primary Mathematics</span></div><div class="workspace">
