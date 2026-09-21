@@ -43,19 +43,19 @@
   </main>
   <script>
     const activities={
-      'add-second-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Addition_Skill_Add_the_Tens_Then_the_Ones_Lesson/',
+      'add-second-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Addition_Skill_Add_the_Tens_Then_the_Ones_Lesson/?v=20260921-lesson-layout-1',
       'add-second-quiz':'https://limkimsze-maker.github.io/P3_Skill_1_Addition_Skill_Add_the_Tens_Then_the_Ones_Quiz/',
-      'add-both-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Addition_Add_the_Tens_Then_the_Ones_Lesson/',
+      'add-both-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Addition_Add_the_Tens_Then_the_Ones_Lesson/?v=20260921-lesson-layout-1',
       'add-both-quiz':'https://limkimsze-maker.github.io/P3_Skill_2_Addition_Add_the_Tens_Then_the_Ones_Quiz/',
-      'make-100-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Add_by_Making_100_Lesson/',
+      'make-100-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Add_by_Making_100_Lesson/?v=20260921-lesson-layout-1',
       'make-100-quiz':'https://limkimsze-maker.github.io/P3_Skill_3_Add_by_Making_100_Quiz/',
-      'add-more-lesson':'https://limkimsze-maker.github.io/P3_Skill_4_Addition_Add_More_then_Subtract_Extra_Lesson/',
+      'add-more-lesson':'https://limkimsze-maker.github.io/P3_Skill_4_Addition_Add_More_then_Subtract_Extra_Lesson/?v=20260921-lesson-layout-1',
       'add-more-quiz':'https://limkimsze-maker.github.io/P3_Skill_4_Add_More_then_Subtract_Quiz/',
-      'sub-tens-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Lesson/',
+      'sub-tens-lesson':'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Lesson/?v=20260921-lesson-layout-1',
       'sub-tens-quiz':'https://limkimsze-maker.github.io/P3_Skill_1_Sub_Tens_Then_Ones_Quiz/',
-      'sub-single-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Lesson/',
+      'sub-single-lesson':'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Lesson/?v=20260921-lesson-layout-1',
       'sub-single-quiz':'https://limkimsze-maker.github.io/P3_Skill_2_Sub_More_then_Add_Extra_Quiz/',
-      'sub-double-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_lesson/',
+      'sub-double-lesson':'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_lesson/?v=20260921-lesson-layout-1',
       'sub-double-quiz':'https://limkimsze-maker.github.io/P3_Skill_3_Sub_from_tens_then_add_extra_quiz/'
     };
     function openActivity(id){const url=activities[id];if(!url)return;if(window.parent&&window.parent!==window){window.parent.postMessage({type:'primary-maths-mental-sum-activity',activity:id},'*');return;}window.location.assign(url);}
