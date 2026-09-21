@@ -402,7 +402,7 @@ function validate(c){
   if(k.mode==='compare'&&k.beakerCount<2)throw Error('Comparison questions need at least 2 beakers.');
   if(!['same','individual'].includes(k.beakerSetup))throw Error('Choose a supported beaker setup.');
   let beakers=[];if(k.beakerSetup==='individual'){if(!Array.isArray(k.beakers)||k.beakers.length!==k.beakerCount)throw Error('Set up every selected beaker.');beakers=k.beakers.map((b,i)=>validateSpec(b,`Beaker ${BEAKER_IDS[i]}`));}
-  return {title:k.title.trim(),mode:k.mode,unit:k.unit,max:k.max,step:k.step,major:k.major,answerFormat:k.answerFormat,showInterval:k.showInterval,count:k.count,hints:k.hints,beakerCount:k.beakerCount,beakerSetup:k.beakerSetup,beakers};
+  return {title:k.title.trim(),mode:k.beakerCount>1?'total':k.mode,unit:k.unit,max:k.max,step:k.step,major:k.major,answerFormat:k.answerFormat,showInterval:k.showInterval,count:k.count,hints:k.hints,beakerCount:k.beakerCount,beakerSetup:k.beakerSetup,beakers};
 }
 function volumeText(ml){const litres=Math.floor(ml/1000),rest=ml%1000;return litres?rest?`${litres} ℓ ${rest} ml`:`${litres} ℓ`:`${rest} ml`;}
 function scaleText(ml,c=currentSpec()){return c.unit==='ml'?`${ml} ml`:ml===0?'0 ℓ':volumeText(ml);}
@@ -471,16 +471,42 @@ function generate(c){
   }
   return out;
 }
+function enforceMultiBeakerTotalRule(q){
+  if(!q||config.beakerCount<=1)return q;
+  q.mode='total';
+  let variable=Number.isInteger(q.variableBeaker)&&q.variableBeaker>=0&&q.variableBeaker<config.beakerCount?q.variableBeaker:index%config.beakerCount;
+  q.variableBeaker=variable;
+  q.beakers=Array.from({length:config.beakerCount},(_,i)=>{
+    const spec=beakerSpec(i),totalTicks=spec.max/spec.step;
+    if(i===variable){
+      let tick=q.beakers?.[i]?.tick;
+      if(!Number.isInteger(tick)||tick<=0||tick>=totalTicks){
+        const span=Math.max(1,totalTicks-1);
+        tick=1+((index+i)%span);
+        if(tick>=totalTicks)tick=Math.max(1,totalTicks-1);
+      }
+      return {tick,ml:tick*spec.step,isVariable:true};
+    }
+    return {tick:totalTicks,ml:spec.max,isVariable:false};
+  });
+  const values=q.beakers.map(b=>b.ml);
+  q.aTick=q.beakers[0].tick;
+  q.bTick=q.beakers[1]?.tick||0;
+  q.a=values[0];
+  q.b=values[1]||0;
+  q.target=values.reduce((sum,value)=>sum+value,0);
+  return q;
+}
 function active(){return questions[index];}
 function startActivity(c){config=validate(c);responseFormat=config.answerFormat==='either'?'ml':config.answerFormat;questions=generate(config);index=0;results=[];$('summary').classList.add('hidden');$('activity').classList.remove('hidden');if(pupil)$('surfaceLabel').textContent=config.title;showQuestion();}
 function showQuestion(continuing=false){
-  const q=active(),single=['read','set'].includes(q.mode);if(!continuing){beakerIndex=0;groupResults=[];fillTicks=Array(config.beakerCount).fill(0);}
+  const q=enforceMultiBeakerTotalRule(active()),single=['read','set'].includes(q.mode);if(!continuing){beakerIndex=0;groupResults=[];fillTicks=Array(config.beakerCount).fill(0);}
   if(single){q.a=q.beakers[beakerIndex].ml;q.aTick=q.beakers[beakerIndex].tick;q.target=q.a;}
   const spec=currentSpec();hintLevel=0;attempts=0;solved=false;fillTick=fillTicks[beakerIndex];dragging=false;
   $('answer').value='';$('answerMl').value='';for(const id of ['answer','answerMl','responseFormat','fillRange','check','hintBtn','less','more'])$(id).disabled=false;
   $('check').classList.remove('hidden');$('next').classList.add('hidden');$('feedback').classList.add('hidden');$('hint').classList.add('hidden');$('hintBtn').classList.toggle('hidden',!config.hints);$('hintBtn').textContent='Help me';
   $('questionMeta').textContent=`Question ${index+1} of ${config.count}`+(single&&config.beakerCount>1?` · Beaker ${beakerIndex+1} of ${config.beakerCount}`:'');
-  $('skillChip').textContent={read:'Read the volume',set:'Fill the beaker',compare:'Compare volumes',total:'Add the volumes'}[q.mode];
+  $('skillChip').textContent={read:'Read the volume',set:'Fill the beaker',compare:'Compare volumes',total:'Find the total volume'}[q.mode];
   $('intervalChip').textContent=!config.showInterval?'Find the smallest intervals':config.beakerSetup==='individual'&&!single?'Each beaker has its own scale':`1 space = ${scaleText(spec.step,spec)}`;
   const name=config.beakerCount>1?`beaker ${BEAKER_IDS[beakerIndex]}`:'the beaker';
   $('questionTitle').textContent=q.mode==='read'?`What volume is in ${name}?`:q.mode==='set'?`Fill ${name} to ${answerText(q.target)}.`:q.mode==='total'?'What is the total volume of liquid?':config.beakerCount===2?'What is the difference in volume between A and B?':'What is the difference between the largest and smallest volumes?';
@@ -490,7 +516,7 @@ function showQuestion(continuing=false){
   $('activity').classList.toggle('is-compare',q.mode==='compare');$('activity').classList.toggle('is-fill',q.mode==='set');$('activity').classList.toggle('is-total',q.mode==='total');$('activity').classList.toggle('has-multiple',config.beakerCount>1);
   $('fillControls').classList.toggle('hidden',q.mode!=='set');$('answerFields').classList.toggle('hidden',q.mode==='set');updateAnswerFields();
   $('fillRange').min=0;$('fillRange').max=spec.max/spec.step;$('fillRange').step=1;$('fillRange').value=fillTick;
-  $('sessionNote').textContent=q.mode==='total'?'Add whole litres first, then the remaining ml.':'Count spaces, not marks.';updateScaleNote();updateProgress();renderBeakers();
+  $('sessionNote').textContent=q.mode==='total'?'One partial beaker + all other beakers full = total volume.':'Count spaces, not marks.';updateScaleNote();updateProgress();renderBeakers();
   if(continuing&&window.matchMedia?.('(min-width:800px) and (min-height:480px)').matches)$('scale'+BEAKER_IDS[beakerIndex]+'Card').scrollIntoView({block:'nearest',inline:'nearest'});
   if(continuing)(q.mode==='set'?$('scale'+BEAKER_IDS[beakerIndex]):$('answer')).focus({preventScroll:true});
 }
@@ -524,7 +550,7 @@ function renderBeakers(){
   for(let i=0;i<config.beakerCount;i++){
     const letter=BEAKER_IDS[i],spec=beakerSpec(i),card=$('scale'+letter+'Card'),current=single&&i===beakerIndex,done=single&&i<groupResults.length;
     card.classList.toggle('is-current',config.beakerCount>1&&current);card.classList.toggle('is-done',done);card.classList.toggle('has-dense-scale',q.mode==='total'&&spec.max/spec.major>5);
-    $('scale'+letter+'Label').textContent=config.beakerCount===1?'Beaker':`Beaker ${letter}`+(done?' · Done':current?' · Your turn':'');
+    $('scale'+letter+'Label').textContent=config.beakerCount===1?'Beaker':q.mode==='total'?(i===q.variableBeaker?`Beaker ${letter} · Read this level`:`Beaker ${letter} · Full to capacity`):`Beaker ${letter}`+(done?' · Done':current?' · Your turn':'');
     const ml=q.mode==='set'?fillTicks[i]*spec.step:q.beakers[i].ml;
     renderBeaker('scale'+letter,ml,`Beaker ${letter}`,q.mode==='set'&&current&&!solved,q.mode==='total'||(q.mode==='compare'?(ml===min||ml===max):current),spec,q.mode==='total');
   }
