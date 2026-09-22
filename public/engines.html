@@ -1184,7 +1184,7 @@ function renderAnswers(){const host=$('answerFields');host.replaceChildren();con
  else if(type==='durationseconds'){host.append(durationSecondsAnswerEntry());}
  else if(type==='quotient'){host.append(inputBox('answer1','Quotient',0),inputBox('answer2','Remainder',0,current.data.b-1));}
  else{const wholeAnswer=current.type==='fraction'&&current.answer?.[1]===1;host.append(fractionAnswerEntry(wholeAnswer));if(config.task==='equivalent')$('answer2').value=current.answer[1];}
- if(engine==='money'&&config.task==='word'){const locked=interaction.moneyModelChecked!==true;host.querySelectorAll('input').forEach(input=>input.disabled=locked);$('checkButton').disabled=locked||!interaction.moneyOperation;}
+ if(engine==='money'&&config.task==='word'){const locked=interaction.moneyModelChecked!==true||!interaction.moneyOperation;host.querySelectorAll('input').forEach(input=>input.disabled=locked);$('checkButton').disabled=locked;}
 }
 function response(){return current.type==='choice'?selected:current.type==='reason'?interaction.reasons:current.type==='sequence'?interaction.sequenceValues:current.type==='timeampm'?[$('answer1').value,$('answer2').value,selected]:current.type==='time24four'?$('answer1').value:current.type==='number'?$('answer1').value:current.type==='fraction'&&current.answer?.[1]===1?[$('answer1').value,'1']:[$('answer1').value,$('answer2').value];}
 $('answerForm').onsubmit=e=>{e.preventDefault();if(solved)return;attempts++;const ok=checkAnswer(current,response(),interaction);$('feedback').style.color=ok?'#24735e':'#a6372c';if(ok){solved=true;$('feedback').textContent='Correct! '+current.explanation;results.push({first:attempts===1&&hints===0,attempts,hints});$('nextButton').hidden=false;$('checkButton').disabled=true;if(engine==='fraction')$('checkButton').hidden=true;$('hintButton').disabled=true;if(engine==='operations'){drawOperation();lockOperationAnswer();}if(engine==='place'){if(config.task==='ordinal')drawOrdinal();else if(config.task==='odd-even')drawOddEven();else{interaction.pvCards=true;interaction.pvExpanded=true;interaction.pvDigits=true;drawCountingChart();}}if(engine==='numberline'&&config.task==='pattern'){interaction.sequenceRuleShown=true;renderSequencePattern();}progress();}else{$('feedback').textContent=engine==='error'?'Check your explanation of the error and your corrected answer.':engine==='fraction'&&config.task==='shade'?'Check both the shaded parts and your fraction.':engine==='money'&&config.task==='make'?'Check both the value tokens and your written amount.':engine==='money'&&config.task==='word'?'Check the relationship, the operation and your money answer.':engine==='time'&&config.task==='set'?'Check both the clock hands and your written time.':engine==='numberline'&&config.task==='pattern'?'Fill every blank, then check the order of the number cards.':engine==='numberline'&&['add','subtract'].includes(config.task)?'Check both the blue marker and your written answer.':'Try again. Look at the model or tap Help me.';}};
@@ -1900,6 +1900,10 @@ function drawMoneyWord(c,host){
      <span class="unknown">?</span>
     </div>`:'<p class="money-word-gate-note">Check the correct model first.</p>'}
   </div>
+  <div class="money-word-step">
+   <div class="money-word-step-head"><span><b>4</b> Write the answer</span></div>
+   <p class="money-word-gate-note">${op?'Enter the final money amount in the answer box below.':'Choose the operation first.'}</p>
+  </div>
  </div>${caption('Choose model -> check model -> choose operation -> write the money answer.')}`;
  host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{
   interaction.moneyModel=button.dataset.moneyModel;
@@ -1916,6 +1920,7 @@ function drawMoneyWord(c,host){
    interaction.moneyModelChecked=true;
    interaction.moneyModelFeedback='Correct model.';
   }else{
+   attempts++;
    interaction.moneyModelChecked=false;
    interaction.moneyModelFeedback='Try the other model.';
    interaction.moneyOperation='';
@@ -1926,6 +1931,7 @@ function drawMoneyWord(c,host){
  host.querySelectorAll('[data-money-op]').forEach(button=>button.onclick=()=>{
   interaction.moneyOperation=button.dataset.moneyOp;
   drawMoney();
+  document.querySelectorAll('#answerFields input').forEach(input=>input.disabled=false);
   $('checkButton').disabled=!interaction.moneyModelChecked||!interaction.moneyOperation;
  });
 }
