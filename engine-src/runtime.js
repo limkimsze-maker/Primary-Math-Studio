@@ -722,7 +722,7 @@ function drawMoneyAlgorithm(c,host){
  wireMoneyOperationSteps(host,plan);
 }
 function moneyBrace(direction='top'){
- const d=direction==='top'?'M4 18 C4 10 6 6 12 6 L45 6 C47 6 48.5 6 50 2 C51.5 6 53 6 55 6 L88 6 C94 6 96 10 96 18':'M4 6 C4 14 6 18 12 18 L45 18 C47 18 48.5 18 50 22 C51.5 18 53 18 55 18 L88 18 C94 18 96 14 96 6';
+ const d=direction==='top'?'M3 20 V5 H97 V20':'M3 4 V19 H97 V4';
  return `<svg class='money-model-brace-svg' viewBox='0 0 100 24' preserveAspectRatio='none' aria-hidden='true'><path d='${d}'/></svg>`;
 }
 function moneyPartWhole(c){
