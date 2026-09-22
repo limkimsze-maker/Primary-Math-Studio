@@ -426,7 +426,7 @@ function fields(c) {
   const format=select('format','Answer format',[['mixed','Dollars and cents'],['cents','Cents only']]);
   if(c.task==='convert')return [pair('a',c.direction==='money-to-cents'?'Amount in dollars and cents':'Amount in cents',5,moneyMax,5),select('direction','Conversion direction',[['cents-to-money','Cents → dollars and cents'],['money-to-cents','Dollars and cents → cents']])];
   if(c.task==='make')return [select('target','Savings Quest level',[['100','Make $1'],['1000','Make $10'],['10000','Make $100']]),format];
-  if(c.task==='compare')return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5)];
+  if(c.task==='compare')return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),select('compareMode','Question form',[['compare2','Compare 2 amounts'],['order3','Order 3 amounts · least to greatest']]),...(c.compareMode==='order3'?[pair('cMoney','Third amount',5,moneyMax,5)]:[])];
   if(['add','subtract'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
   if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
   return [pair('a','Amount to show',5,moneyMax,5),format];
@@ -465,7 +465,7 @@ function fields(c) {
 function defaults(engine,grade=3,task){
  if(engine==='fraction'&&grade===1)grade=2;if(engine==='area')grade=3;
  const t=task||tasks(engine,grade)[0][0];
- let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
+ let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',compareMode:'compare2',cMoney:1540,duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
  if(engine==='place'){c.a=t==='ordinal'?4:t==='odd-even'?247:t==='more'?grade===1?29:grade===2?199:999:t==='less'?grade===1?30:grade===2?200:1000:grade===1?34:grade===2?234:2034;c.b=1;}
  if(engine==='place'&&t==='hundred'){c.a=50;c.leftAmount=10;c.rightAmount=1;}
  if(engine==='operations'){c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}}
@@ -475,7 +475,7 @@ function defaults(engine,grade=3,task){
  if(engine==='money'){
   c.a=grade===1?75:t==='convert'?140:1275;c.b=grade===1?20:t==='subtract'?860:860;
   c.target=String(grade===1?100:grade===2?1000:10000);c.direction='cents-to-money';c.wordType='total';
-  if(t==='subtract'){c.a=grade===1?95:3160;c.b=grade===1?30:2090;}if(t==='compare'){c.a=1275;c.b=860;}
+  if(t==='subtract'){c.a=grade===1?95:3160;c.b=grade===1?30:2090;}if(t==='compare'){c.a=1275;c.b=860;c.cMoney=1540;c.compareMode='compare2';}
   if(t==='word'){c.a=grade===1?75:1275;c.b=grade===1?20:860;c.wordType='compare';}
   if(t==='count'&&grade===1)c.format='cents';
  }
@@ -573,11 +573,11 @@ function validate(raw){
  }
  if(c.engine==='error'&&c.task==='place'&&c.a%10===Math.floor(c.a/10))throw Error('Choose different tens and ones digits so the swapped reading is wrong.');
  if(c.engine==='money'){
-  const used=[...(['count','convert'].includes(c.task)?[c.a]:[]),...(['add','subtract','word'].includes(c.task)?[c.a,c.b]:[])];
+  const used=[...(['count','convert'].includes(c.task)?[c.a]:[]),...(['add','subtract','word'].includes(c.task)?[c.a,c.b]:[]),...(c.task==='compare'?[c.a,c.b,...(c.compareMode==='order3'?[c.cMoney]:[])]:[])];
   if(used.some(v=>v%5!==0))throw Error('Use amounts in 5-cent intervals.');
   if(c.task==='count'&&c.format==='dollars'&&c.a%100!==0)throw Error('Whole dollars only requires an amount with 0 cents.');
   if(c.task==='add'&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the total within ${g===1?'$100.00':'$999.95'}.`);
-  if(c.task==='subtract'&&c.b>c.a)throw Error('The second amount must not exceed the first amount.');
+  if(c.task==='subtract'&&c.b>c.a)throw Error('The second amount must not exceed the first amount.');if(c.task==='compare'&&c.compareMode==='order3'&&new Set([c.a,c.b,c.cMoney]).size<3)throw Error('Use three different money amounts for ordering.');
   if(c.task==='word'&&['change','compare'].includes(c.wordType)&&c.b>c.a)throw Error('For this problem, the second amount must not exceed the first amount.');
   if(c.task==='word'&&c.wordType==='total'&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the total within ${g===1?'$100.00':'$999.95'}.`);
  }
@@ -638,7 +638,7 @@ function generatedConfig(c,r=Math.random){
   if(c.task==='make')p.target=String(choose(r,g===1?[100]:g===2?[100,1000]:[100,1000,10000]));
   else if(c.task==='count')p.a=c.format==='dollars'?int(r,1,Math.floor(moneyCap/100))*100:amount(moneyCap);
   else if(c.task==='convert')p.a=amount(moneyCap);
-  else if(c.task==='compare'){p.a=amount(moneyCap);if(r()<.2)p.b=p.a;else do p.b=amount(moneyCap);while(p.b===p.a);}
+  else if(c.task==='compare'){p.a=amount(moneyCap);if(c.compareMode==='order3'){do p.b=amount(moneyCap);while(p.b===p.a);do p.cMoney=amount(moneyCap);while(p.cMoney===p.a||p.cMoney===p.b);}else{if(r()<.2)p.b=p.a;else do p.b=amount(moneyCap);while(p.b===p.a);}}
   else if(c.task==='add'||c.task==='word'&&c.wordType==='total'){p.a=amount(moneyCap-5);p.b=amount(moneyCap-p.a);}
   else{p.a=amount(moneyCap);p.b=amount(p.a);}
   break;
@@ -858,7 +858,18 @@ function lesson(config,r=Math.random){
    else{answer=a;type='number';unit='cents';question=`Convert ${money(a)} to cents.`;explanation=`${money(a)} = ${a} cents.`;}
    hint='100 cents = 1 dollar. Group or ungroup the dollars before working with the remaining cents.';
   }else if(t==='compare'){
-   type='choice';answer=a===b?'=':a>b?'>':'<';choices=['<','=','>'];question=`Compare ${money(a)} and ${money(b)}. Choose <, > or =.`;hint='Compare dollars first. If the dollars are equal, compare the cents.';explanation=`${money(a)} ${answer} ${money(b)}.`;
+   type='choice';
+   if(c.compareMode==='order3'){
+    const vals=[a,b,c.cMoney],sorted=[...vals].sort((x,y)=>x-y),fmt=v=>money(v),join=x=>x.map(fmt).join(' < ');
+    answer=join(sorted);
+    const perms=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]].map(order=>join(order.map(i=>vals[i])));
+    choices=[answer,...perms.filter(v=>v!==answer)];
+    question=`Order ${money(a)}, ${money(b)} and ${money(c.cMoney)} from least to greatest.`;
+    hint='Compare dollars first. If two amounts have the same dollars, compare their cents.';
+    explanation=`Least to greatest: ${answer}.`;
+   }else{
+    answer=a===b?'=':a>b?'>':'<';choices=['<','=','>'];question=`Compare ${money(a)} and ${money(b)}. Choose <, > or =.`;hint='Compare dollars first. If the dollars are equal, compare the cents.';explanation=`${money(a)} ${answer} ${money(b)}.`;
+   }
   }else if(t==='make'){
    const target=Number(c.target);d.a=target;finish(target);question=`Use the coin and note diagrams to make exactly ${money(target)}.`;hint=target===100?'Count in cents until you reach $1.':target===1000?'Make $1 first, then count on to $10.':'Reach the next $1, then the next $10, and continue to $100.';
   }else if(t==='add'){
@@ -1789,7 +1800,7 @@ function drawMoneyWord(c,host){
 function drawMoney(){
  const c=current.data,host=$('diagram');
  if(c.task==='convert'){drawMoneyConversion(c,host);return;}
- if(c.task==='compare'){host.innerHTML=`<div class="money-model-choices"><div class="money-whole">A · ${E(moneyText(c.a))}</div><div class="money-whole">B · ${E(moneyText(c.b))}</div></div><div class="money-board">${pieces(c.a).map(v=>moneyToken(v)).join('')}</div><div class="money-board">${pieces(c.b).map(v=>moneyToken(v)).join('')}</div>${caption('Compare dollars first. If the dollars are equal, compare the cents.')}`;return;}
+ if(c.task==='compare'){const amounts=c.compareMode==='order3'?[['A',c.a],['B',c.b],['C',c.cMoney]]:[['A',c.a],['B',c.b]];host.innerHTML=`<div class="money-model-choices">${amounts.map(([label,value])=>`<div class="money-whole">${label} · ${E(moneyText(value))}</div>`).join('')}</div>${amounts.map(([label,value])=>`<div class="money-board" aria-label="Amount ${label}">${pieces(value).map(v=>moneyToken(v)).join('')}</div>`).join('')}${caption(c.compareMode==='order3'?'Order the three amounts from least to greatest. Compare dollars first, then cents.':'Compare dollars first. If the dollars are equal, compare the cents.')}`;return;}
  if(['add','subtract'].includes(c.task)){drawMoneyAlgorithm(c,host);return;}
  if(c.task==='word'){drawMoneyWord(c,host);return;}
  if(c.task==='make'){
@@ -1904,7 +1915,7 @@ const GUIDE={
 
 Count money · Big to small arranges original coin and note diagrams from the largest value to the smallest. They use the same clear, child-friendly convention as the linked GitHub activity: round labelled cent coins, an octagonal $1 coin and coloured rectangular notes. They are teaching diagrams, not reproductions or scans of real Singapore currency. Pupils count on and answer in cents, or in dollars and cents, according to the teacher setting.
 
-Convert cents ↔ dollars lets the teacher choose either direction. Reveal next step first groups every 100 cents into 1 dollar, or changes each dollar into 100 cents. Pupils can answer before revealing the working.\n\nCompare money amounts (P2 onwards) shows two amounts and asks pupils to choose <, = or >. Compare dollars first; when the dollar amounts are equal, compare the cents.
+Convert cents ↔ dollars lets the teacher choose either direction. Reveal next step first groups every 100 cents into 1 dollar, or changes each dollar into 100 cents. Pupils can answer before revealing the working.\n\nCompare money amounts (P2 onwards) can compare two amounts using <, = or >, or order three amounts from least to greatest. Compare dollars first; when the dollar amounts are equal, compare the cents.
 
 Saving Quest · Make $1, $10 or $100 lets the teacher select one target. Pupils tap the coin and note diagrams, watch the running amount, and undo or clear choices. The built amount and written answer must both be correct. In Random practice, P1 uses $1, P2 varies between $1 and $10, and P3 varies among all three targets.
 
@@ -1920,7 +1931,7 @@ Pause before every Next step and ask pupils to predict the move. Keep the concre
 
 Money word problems · Choose the model asks pupils to select Comparison or Part–whole before entering an amount. The model and final answer must both match the story. Teachers can choose find the total, find what remains, or find the difference.
 
-For counting, addition, subtraction and word problems, the teacher enters ordinary money notation in the field beside the visible dollar sign: type 12.75 for $12.75. Use two decimal places for clarity and 5-cent intervals. In Cents → dollars and cents conversion, the source field remains a whole-cent number such as 140. Fixed numbers preserve the exact amounts and selected settings. Random practice preserves the visible direction, problem structure and answer format while generating new valid amounts.`,`Count $8.50 from large to small; 140¢ = $1.40; make $1, $10 or $100; $12.75 + $8.60; $31.60 − $20.90; choose a comparison or part–whole model for a money story.`],
+For counting, addition, subtraction and word problems, the teacher enters ordinary money notation in the field beside the visible dollar sign: type 12.75 for $12.75. Use two decimal places for clarity and 5-cent intervals. In Cents → dollars and cents conversion, the source field remains a whole-cent number such as 140. Fixed numbers preserve the exact amounts and selected settings. Random practice preserves the visible direction, problem structure and answer format while generating new valid amounts.`,`Count $8.50 from large to small; 140¢ = $1.40; compare two money amounts or order three; make $1, $10 or $100; $12.75 + $8.60; $31.60 − $20.90; choose a comparison or part–whole model for a money story.`],
  fraction:['Follow the Space Max fraction learning sequence','The Fraction menu follows the ten subtopics in Space Max and the Lost Fraction Rocket Parts. P2 has Writing Fractions, Comparing Unit Fractions, Comparing Like Fractions, Adding Like Fractions and Subtracting Like Fractions. P3 keeps those foundations and adds Equivalent Fractions, Simplifying Fractions, Comparing & Ordering Unlike Fractions, Adding Unlike Fractions and Subtracting Unlike Fractions.\n\nWriting Fractions uses the same clear order: check for equal parts, count all equal parts for the denominator, count shaded parts for the numerator, then write shaded parts over total equal parts. Unit fractions compare one equal part: the larger denominator gives the smaller part. Like fractions have equal denominators, so compare, add or subtract the numerators while the denominator stays the same.\n\nFor equivalent fractions, split every part by the same factor and multiply both numerator and denominator. For simplifying, divide numerator and denominator by the same greatest common factor. For unlike fractions, first make equal-sized parts with a common denominator. Only one denominator needs changing in the addition and subtraction examples. Then work with the numerators, keep the common denominator and simplify the answer.\n\nEach question opens at Step 1. Ask pupils to predict, then press Next step →. ← Previous revisits the explanation. These two buttons, the answer blank, Check answer and Next question stay in one fixed control dock, so their mouse positions do not jump while teaching. Check answer changes to Next question in the same button position after a correct response. Revealing or revisiting steps counts as help. The last step displays the symbolic answer and matching strip; pupils must still enter the fraction themselves. The numerator is entered above a real fraction line and the denominator below it. Fraction answers must be written in the requested simplest or equivalent form, not merely as any fraction with the same value.\n\nComparing tasks can compare two fractions or order three from least to greatest / greatest to least. Fixed mode keeps the teacher’s exact fractions. Random practice keeps the selected subtopic, question form and equivalent-fraction factor while generating new valid examples.','Write 3/8; compare 1/3 and 1/5; order 2/8, 5/8, 7/8; 3/8 + 2/8; 2/3 = 4/6; simplify 4/8; 1/2 + 1/4 = 3/4.'],
  time:['Teach Time by the Primary level','This Time engine is grouped by the MOE Primary Mathematics Syllabus (updated October 2025). Each Primary level shows only its relevant Time tasks.\n\nP1 Read clocks uses five-minute intervals only. Start with the short hour hand and long minute hand, then o’clock, half past, quarter past / quarter to and all five-minute positions. Set clocks uses the same precision and lets pupils see the hour hand move gradually. The a.m. / p.m. task uses unambiguous scenes: a morning sun and a moon-with-owl scene mean a.m.; an afternoon sun and a night moon mean p.m. P1 duration is limited to 30 min and 1 h.\n\nP2 Read clocks and Set clocks work to the nearest minute. The duration tasks distinguish a time of day from a length of time, and pupils convert hours-and-minutes to minutes alone and back.\n\nP3 adds seconds, elapsed time, finishing time and starting time. The elapsed-time task retains the interactive 24-hour timeline. The clock-conversion tasks cover 12-hour → 24-hour and 24-hour → 12-hour forms, including 0000 h / 1200 h.','P1 4:35 and 7:00 a.m.; P1 8:15 to 8:45 is 30 min; P2 6:23; 2 h 15 min = 135 min; 95 min = 1 h 35 min; P3 80 s = 1 min 20 s; 1140 h + 55 min = 1235 h; 1545 h = 3:45 p.m.; 0000 h = 12:00 a.m.'],
  geometry:['Use the mathematical features','Choose a 2D shape, count its straight sides, or name a 3D solid. P3 also compares angles with a right angle and identifies parallel / perpendicular lines. The side-count task counts straight sides only; curves are not straight sides. Avoid relying on a shape’s colour or orientation.','A triangle has 3 straight sides. A semicircle has 1 straight side. Perpendicular lines meet at a right angle.'],
