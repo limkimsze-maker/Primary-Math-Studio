@@ -32,7 +32,7 @@ export function fields(c) {
   if(c.task==='convert')return [pair('a',c.direction==='money-to-cents'?'Amount in dollars and cents':'Amount in cents',5,moneyMax,5),select('direction','Conversion direction',[['cents-to-money','Cents → dollars and cents'],['money-to-cents','Dollars and cents → cents']])];
   if(c.task==='make')return [select('target','Savings Quest level',[['100','Make $1'],['1000','Make $10'],['10000','Make $100']]),format];
   if(['add','subtract'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
-  if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
+  if(c.task==='word')return [];
   return [pair('a','Amount to show',5,moneyMax,5),format];
  }
  case 'fraction':{
