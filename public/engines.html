@@ -438,6 +438,43 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 @media(max-width:700px){
  .money-word-reference #diagram,.money-word-reference-frame{min-height:1450px}
 }
+
+
+/* P1 Operations reference activities live inside the normal Studio engine shell. */
+.p1-operation-reference .activity-bar{display:flex}
+.p1-operation-reference .question-block{padding-bottom:8px}
+.p1-operation-reference #answerForm,
+.p1-operation-reference .activity-bottom{display:none!important}
+.p1-operation-reference #questionView{height:auto;min-height:0}
+.p1-operation-reference #diagram{
+ display:block!important;
+ width:100%!important;
+ max-width:none!important;
+ min-height:900px!important;
+ max-height:none!important;
+ overflow:visible!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+}
+.p1-operation-reference-frame{
+ display:block;
+ width:100%;
+ min-height:900px;
+ border:0;
+ margin:0;
+ padding:0;
+ background:#fff;
+}
+.pupil.p1-operation-reference main,
+.pupil.p1-operation-reference .activity,
+.pupil.p1-operation-reference #questionView{height:auto!important;min-height:100dvh!important;overflow:visible!important}
+.pupil.p1-operation-reference #diagram{min-height:100dvh!important}
+@media(max-width:700px){
+ .p1-operation-reference #diagram,.p1-operation-reference-frame{min-height:1350px}
+}
 </style><script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head><body>
 <script id="saved-config" type="application/json">null</script>
@@ -453,7 +490,7 @@ const select=(key,label,options)=>({key,label,options,type:'select'});
 function tasks(engine,grade) {
  const all={
  place:[['read','Read blocks or discs'],['hundred','Explore numbers to 100 · Hundred chart & flip chart'],['digit','Value of a digit'],['more','More than a number'],['less','Less than a number']],
- operations:[['add','Add step by step'],['subtract','Subtract step by step'],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
+ operations:[...(grade===1?[['count-on-back','Addition / subtraction within 10 · Count on / count back'],['fact-family','Fact family']]:[]),['add','Add step by step'],['subtract','Subtract step by step'],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
  numberline:[['point','Find the missing number'],['add','Find a number more'],['subtract','Find a number less'],['pattern','Complete a number pattern']],
  bar:[['whole','Part–whole: find the whole'],['part','Part–whole: find a part'],['compare','Comparison: find the difference'],['change','Change: find what remains'],['groups','Equal groups: find the total']],
  money:[['count','Count money · Big to small'],['convert','Convert cents ↔ dollars'],['make','Saving Quest · $1 / $10 / $100'],['add','Add money · Step by step'],['subtract','Subtract money · Step by step'],['word','Money word problems · Model']],
@@ -470,7 +507,7 @@ function fields(c) {
  const max=LIMITS[c.grade], small=c.grade===1?20:c.grade===2?100:1000;
  switch(c.engine){
  case 'place':return c.task==='hundred'?[pair('a','Starting number (0–100)',0,100),pair('leftAmount','Yellow-button amount',1,100),pair('rightAmount','Blue-button amount',1,100)]:[pair('a',['more','less'].includes(c.task)?'Starting number':'Number to show',0,max),...(['more','less'].includes(c.task)?[pair('b',c.task==='more'?'How much more?':'How much less?',1,max)]:[]),...(c.task==='digit'?[select('place','Place to focus on',[['1','Ones'],['10','Tens'],...(c.grade>=2?[['100','Hundreds']]:[]),...(c.grade===3?[['1000','Thousands']]:[])])]:[]),select('representation','Model',[['blocks','Base-ten blocks'],['discs','Place-value discs']])];
- case 'operations':return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',c.task==='add'||c.task==='subtract'?0:1,['add','subtract'].includes(c.task)?max:c.task.endsWith('-column')?9:10),...(['add','subtract'].includes(c.task)?[select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])]:[])];
+ case 'operations':if(['count-on-back','fact-family'].includes(c.task))return [];return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',c.task==='add'||c.task==='subtract'?0:1,['add','subtract'].includes(c.task)?max:c.task.endsWith('-column')?9:10),...(['add','subtract'].includes(c.task)?[select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])]:[])];
  case 'numberline':return c.task==='pattern'?[pair('a','Start number',0,max),select('patternType','Pattern type',[['constant','Constant change'],['alternating','Alternating changes']]),pair('b',c.patternType==='alternating'?'First change (+ or −)':'Change each time (+ or −)',-small,small),...(c.patternType==='alternating'?[pair('b2','Second change (+ or −)',-small,small)]:[]),select('missing','Missing numbers',[['2','2 · Easy'],['3','3 · Medium'],['4','4 · Hard']])]:[pair('a',c.task==='point'?'Missing number':'Start number',0,max),pair('b',c.task==='point'?'Tick interval':'Jump size',1,c.task==='point'?Math.max(10,max/10):small)];
  case 'bar':return [pair('a',c.task==='groups'?'Number of groups':c.task==='whole'?'First part':c.task==='part'?'Whole':'Starting / larger amount',1,c.task==='groups'?10:max),pair('b',c.task==='groups'?'Amount in each group':c.task==='whole'?'Second part':c.task==='part'?'Known part':c.task==='compare'?'Smaller amount':'Amount removed',1,c.task==='groups'?10:max),{key:'context',label:'Objects in the story',type:'text',maxLength:30}];
  case 'money':{
@@ -929,23 +966,45 @@ function teacherMoneyCents(raw,label='Amount'){
  return cents;
 }
 function readForm(){const c={...draft,engine,grade:Number($('grade').value),task:$('task').value,mode:$('mode').value,count:Number($('count').value)};for(const f of fields(c)){const el=$('setting-'+f.key);if(el)c[f.key]=el.dataset.moneyDollars==='true'?teacherMoneyCents(el.value,f.label):el.value;}return validate(c);}
+function p1OperationReference(c){
+ if(c.engine!=='operations'||c.grade!==1)return null;
+ if(c.task==='count-on-back')return {title:'Addition / subtraction within 10 · Count on / count back',url:'https://limkimsze-maker.github.io/P1_Addition_Subtraction_Within_10_Count_On_or_Count_Backward/'};
+ if(c.task==='fact-family')return {title:'Fact family',url:'https://limkimsze-maker.github.io/P1_Fact_Family/'};
+ return null;
+}
+function showP1OperationReference(c){
+ const ref=p1OperationReference(c);if(!ref)return false;
+ document.body.classList.add('p1-operation-reference');
+ $('summary').hidden=true;$('questionView').hidden=false;
+ $('question').textContent=ref.title;
+ $('taskLabel').textContent='Primary 1 · Operations';
+ $('questionMeta').textContent='';
+ $('activityInstruction').textContent='Use the original activity below.';
+ $('feedback').textContent='';$('hint').hidden=true;
+ $('answerForm').hidden=true;$('checkButton').hidden=true;$('hintButton').hidden=true;$('nextButton').hidden=true;
+ const host=$('diagram');host.innerHTML=`<iframe id="p1OperationReferenceFrame" class="p1-operation-reference-frame" src="${ref.url}" title="${E(ref.title)}" loading="eager"></iframe>`;
+ const frame=$('p1OperationReferenceFrame');
+ const fit=()=>{try{const doc=frame.contentDocument;if(!doc)return;const h=Math.max(900,doc.documentElement?.scrollHeight||0,doc.body?.scrollHeight||0);frame.style.height=Math.ceil(h+4)+'px';}catch{}};
+ frame.addEventListener('load',()=>{fit();setTimeout(fit,160);setTimeout(fit,600);try{const doc=frame.contentDocument;if(doc?.body&&'ResizeObserver'in window){const ro=new ResizeObserver(()=>requestAnimationFrame(fit));ro.observe(doc.body);frame._p1OperationObserver=ro;}}catch{}});
+ return true;
+}
 function populate(c){draft={...c};$('grade').replaceChildren();for(const g of engine==='area'?[3]:engine==='fraction'?[2,3]:[1,2,3]){const o=document.createElement('option');o.value=g;o.textContent='Primary '+g;$('grade').append(o);}$('grade').value=c.grade;$('task').replaceChildren();for(const [v,l]of tasks(engine,c.grade)){const o=document.createElement('option');o.value=v;o.textContent=l;$('task').append(o);}$('task').value=c.task;$('mode').value=c.mode;$('count').value=c.mode==='fixed'?8:c.count;populateFields();}
-function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord;$('countField').hidden=!random||exploring||referenceMoneyWord;
+function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',referenceP1Operation=Boolean(p1OperationReference({...draft,engine})),random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord||referenceP1Operation;$('countField').hidden=!random||exploring||referenceMoneyWord||referenceP1Operation;
  const kept={operations:['representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category']};
  for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode')populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='$';symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else wrap.append(input);$('engineFields').append(wrap);}
- $('randomNote').textContent=exploring?'Explore numbers from 0 to 100. Generate restores your starting number and both button amounts.':random?'New questions use this grade’s preset ranges. The settings shown here stay fixed; other numbers or shapes vary. Generate again or reopen the downloaded file for a new practice set.':'Your chosen numbers make one fixed example. Reopening or restarting keeps that same example.';
+ $('randomNote').textContent=referenceP1Operation?'This opens your original P1 activity inside Primary Maths Studio, with its original teaching flow and checking.':exploring?'Explore numbers from 0 to 100. Generate restores your starting number and both button amounts.':random?'New questions use this grade’s preset ranges. The settings shown here stay fixed; other numbers or shapes vary. Generate again or reopen the downloaded file for a new practice set.':'Your chosen numbers make one fixed example. Reopening or restarting keeps that same example.';
 }
 function builderTab(which){const setup=which==='setup';$('setupPanel').hidden=!setup;$('examplePanel').hidden=setup;$('setupTab').setAttribute('aria-selected',setup);$('exampleTab').setAttribute('aria-selected',!setup);}
 $('setupTab').onclick=()=>builderTab('setup');$('exampleTab').onclick=()=>builderTab('examples');
 for(const [id,which] of [['setupTab','setup'],['exampleTab','examples']])$(id).onkeydown=e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const n=which==='setup'?'examples':'setup';builderTab(n);$(n==='setup'?'setupTab':'exampleTab').focus();}};
 $('grade').onchange=()=>{populate(defaults(engine,Number($('grade').value)));setPresets();};$('task').onchange=()=>{populate(defaults(engine,Number($('grade').value),$('task').value));setPresets();};$('mode').onchange=()=>populateFields();
 $('builderForm').onsubmit=e=>{e.preventDefault();try{start(readForm());$('teacherStatus').style.color='#24735e';$('teacherStatus').textContent='Activity ready. Settings applied.';}catch(err){$('teacherStatus').style.color='#a6372c';$('teacherStatus').textContent=err.message;}};
-function setPresets(){$('presets').replaceChildren();const grade=Number($('grade').value);for(const [task,label]of tasks(engine,grade)){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{const c=validate(defaults(engine,grade,task));populate(c);start(c);builderTab('setup');$('teacherStatus').textContent='Example loaded. You can change the numbers.';};$('presets').append(b);}if(engine==='place'&&$('task').value==='hundred')return;const p=document.createElement('button');p.type='button';p.textContent='Random practice · 8 questions';p.onclick=()=>{const c={...defaults(engine,grade,$('task').value),mode:'random',count:8};populate(c);start(validate(c));builderTab('setup');};$('presets').append(p);}
+function setPresets(){$('presets').replaceChildren();const grade=Number($('grade').value);for(const [task,label]of tasks(engine,grade)){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{const c=validate(defaults(engine,grade,task));populate(c);start(c);builderTab('setup');$('teacherStatus').textContent=p1OperationReference(c)?'P1 activity loaded in the Studio.':'Example loaded. You can change the numbers.';};$('presets').append(b);}if(engine==='place'&&$('task').value==='hundred')return;const p=document.createElement('button');p.type='button';p.textContent='Random practice · 8 questions';p.onclick=()=>{const c={...defaults(engine,grade,$('task').value),mode:'random',count:8};populate(c);start(validate(c));builderTab('setup');};$('presets').append(p);}
 $('saveButton').onclick=()=>{try{const c=readForm();if(!onlineDownload(c,'settings'))file(engine+'-settings.json',JSON.stringify(c,null,2),'application/json');$('teacherStatus').textContent='Settings saved. This JSON is a setup file.';}catch(e){$('teacherStatus').textContent=e.message;}};
 $('loadButton').onclick=()=>$('loadFile').click();$('loadFile').onchange=async()=>{try{const f=$('loadFile').files[0];if(!f)return;const c=validate(JSON.parse(await f.text()));if(c.engine!==engine)throw Error('This file is for '+ENGINE_NAMES[c.engine]+'. Open that engine tab to load it.');populate(c);start(c);setPresets();$('teacherStatus').textContent='Settings loaded.';}catch(e){$('teacherStatus').textContent=e.message;}$('loadFile').value='';};
 $('downloadButton').onclick=()=>{try{const c=readForm(),html=activityHTML(initialHTML,c);if(!onlineDownload(c,'activity'))file(engine+'-activity.html',html,'text/html');$('teacherStatus').textContent='HTML activity downloaded with these settings. '+(c.task==='hundred'?'Your starting number and both button amounts stay the same.':c.mode==='random'?'Questions vary each time it opens.':'Your fixed example stays the same.');}catch(e){$('teacherStatus').textContent=e.message;}};
 function pupil(on){document.body.classList.toggle('pupil',on);$('viewButton').textContent=on?'Teacher view':'Pupil view';$('previewLabel').textContent=on?'Your activity':'Pupil activity preview';if(parent!==window)parent.postMessage({type:'primary-maths-pupil-view',on},'*');} $('viewButton').onclick=()=>pupil(!document.body.classList.contains('pupil'));
-function start(c){config=validate(c);index=0;results=[];try{localStorage.setItem('maths-studio-'+engine,JSON.stringify(config));}catch{}$('summary').hidden=true;$('questionView').hidden=false;showQuestion();}
+function start(c){config=validate(c);index=0;results=[];try{localStorage.setItem('maths-studio-'+engine,JSON.stringify(config));}catch{}document.body.classList.remove('p1-operation-reference');$('hintButton').hidden=false;$('checkButton').hidden=false;if(showP1OperationReference(config))return;$('summary').hidden=true;$('questionView').hidden=false;showQuestion();}
 function showQuestion(){current=lesson(config);attempts=0;hints=0;solved=false;selected=null;interaction={};document.body.classList.toggle('operations-engine',engine==='operations');document.body.classList.toggle('money-word-reference',engine==='money'&&config.task==='word');$('question').textContent=current.question;$('taskLabel').textContent=tasks(engine,config.grade).find(t=>t[0]===config.task)[1];$('questionMeta').textContent=`${index+1} / ${config.count}`;$('activityInstruction').textContent=current.type==='explore'?'Explore. Predict. Explain.':current.type==='sequence'?'Arrange. Explain. Check.':'Look at the model. Explain. Check.';$('feedback').textContent='';$('hint').hidden=true;$('nextButton').hidden=true;$('nextButton').textContent=index+1===config.count?'Finish activity →':'Next question →';$('checkButton').hidden=false;$('checkButton').disabled=false;$('hintButton').disabled=false;renderDiagram();renderAnswers();if(engine==='operations')lockOperationAnswer();progress();}
 function progress(){$('progress').replaceChildren();for(let n=0;n<config.count;n++){const s=document.createElement('span');s.className=n<results.length?'done':n===index?'current':'';$('progress').append(s);}$('progress').setAttribute('aria-label',`${results.length} of ${config.count} completed`);}
 function inputBox(id,label,min=0,max){const w=document.createElement('label');w.innerHTML=`<span class="answer-label">${E(label)}</span>`;const i=document.createElement('input');i.id=id;i.type='number';i.inputMode='numeric';i.step=1;i.min=min;if(max!==undefined)i.max=max;i.className='answer-input';i.required=true;i.autocomplete='off';w.append(i);return w;}
