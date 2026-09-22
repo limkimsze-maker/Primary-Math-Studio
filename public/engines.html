@@ -440,7 +440,7 @@ function fields(c) {
   if(c.task==='make')return [select('target','Savings Quest level',[['100','Make $1'],['1000','Make $10'],['10000','Make $100']]),format];
   if(c.task==='compare')return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),select('compareMode','Question form',[['compare2','Compare 2 amounts'],['order3','Order 3 amounts · least to greatest']]),...(c.compareMode==='order3'?[pair('cMoney','Third amount',5,moneyMax,5)]:[])];
   if(['add','subtract'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
-  if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
+  if(c.task==='word')return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount / difference',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the whole'],['change','Part–whole · Find what remains'],['initial','Part–whole · Find the starting amount'],['compare','Comparison · Find the difference'],['compare-more','Comparison · Find the larger amount'],['compare-less','Comparison · Find the smaller amount']]),format];
   return [pair('a','Amount to show',5,moneyMax,5),format];
  }
  case 'fraction':{
@@ -590,8 +590,8 @@ function validate(raw){
   if(c.task==='count'&&c.format==='dollars'&&c.a%100!==0)throw Error('Whole dollars only requires an amount with 0 cents.');
   if(c.task==='add'&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the total within ${g===1?'$100.00':'$999.95'}.`);
   if(c.task==='subtract'&&c.b>c.a)throw Error('The second amount must not exceed the first amount.');if(c.task==='compare'&&c.compareMode==='order3'&&new Set([c.a,c.b,c.cMoney]).size<3)throw Error('Use three different money amounts for ordering.');
-  if(c.task==='word'&&['change','compare'].includes(c.wordType)&&c.b>c.a)throw Error('For this problem, the second amount must not exceed the first amount.');
-  if(c.task==='word'&&c.wordType==='total'&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the total within ${g===1?'$100.00':'$999.95'}.`);
+  if(c.task==='word'&&['change','compare','compare-less'].includes(c.wordType)&&c.b>c.a)throw Error('For this problem, the second amount or difference must not exceed the first amount.');
+  if(c.task==='word'&&['total','initial','compare-more'].includes(c.wordType)&&c.a+c.b>(g===1?10000:99995))throw Error(`Keep the answer within ${g===1?'$100.00':'$999.95'}.`);
  }
  if(c.engine==='fraction'||(['explain','error'].includes(c.engine)&&c.task==='fraction')){
   if(c.a>c.den)throw Error('The numerator cannot exceed its denominator.');
@@ -651,7 +651,11 @@ function generatedConfig(c,r=Math.random){
   else if(c.task==='count')p.a=c.format==='dollars'?int(r,1,Math.floor(moneyCap/100))*100:amount(moneyCap);
   else if(c.task==='convert')p.a=amount(moneyCap);
   else if(c.task==='compare'){p.a=amount(moneyCap);if(c.compareMode==='order3'){do p.b=amount(moneyCap);while(p.b===p.a);do p.cMoney=amount(moneyCap);while(p.cMoney===p.a||p.cMoney===p.b);}else{if(r()<.2)p.b=p.a;else do p.b=amount(moneyCap);while(p.b===p.a);}}
-  else if(c.task==='add'||c.task==='word'&&c.wordType==='total'){p.a=amount(moneyCap-5);p.b=amount(moneyCap-p.a);}
+  else if(c.task==='add'){p.a=amount(moneyCap-5);p.b=amount(moneyCap-p.a);}
+  else if(c.task==='word'){
+   if(['total','initial','compare-more'].includes(c.wordType)){p.a=amount(moneyCap-5);p.b=amount(moneyCap-p.a);}
+   else{p.a=amount(moneyCap);p.b=amount(p.a);}
+  }
   else{p.a=amount(moneyCap);p.b=amount(p.a);}
   break;
  }
