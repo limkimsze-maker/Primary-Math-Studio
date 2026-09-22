@@ -11,12 +11,13 @@ const expected=[
 ];
 assert.equal(ids.length,19,'The public homepage must offer all 19 topic tabs.');
 assert.deepEqual(ids,expected,'The homepage topic order changed unexpectedly.');
-assert(html.includes("id==='more-word-problems'?'https://limkimsze-maker.github.io/P3_More_Word_Problems_Monster_Quest_Main_Page/'"),'P3 More Word Problems must use the original Monster Quest reference directly.');
+assert(html.includes("id==='more-word-problems'?`https://limkimsze-maker.github.io/P3_More_Word_Problems_Monster_Quest_Main_Page/?studio=1&v=${release}`"),'P3 More Word Problems must use the original Monster Quest reference directly.');
 assert(html.includes('public/engines.html?engine=${encodeURIComponent(id)}&v=${release}'));
 assert(html.includes("['length','mass','volume'].includes(id)?\`public/measurement/${id}.html?v=${release}\`"),'Measurement engines must use their standalone pages.');
 assert(html.includes('id="engineFrame"')&&html.includes('id="focusButton"'));
 assert(html.includes('.presentation')&&html.includes("event.data?.type==='primary-maths-pupil-view'"),'Pupil view must expand the teaching engine across the whole Studio.');
 assert(html.includes("active==='more-word-problems'"),'The Monster Quest reference must get the full-height mobile frame treatment.');
+assert(html.includes('prepareMoreWordProblemsFrame')&&html.includes("getElementById('mqStartQuestBtn')"),'The embedded Monster Quest cover must auto-enter so mobile pupils never see a blank navy screen.');
 assert(html.includes('Created by Lim Kim Sze'));
 assert(!html.includes('<h2>Development</h2>'),'Development notes must not replace the public studio.');
 
