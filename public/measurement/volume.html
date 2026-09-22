@@ -403,7 +403,7 @@ function validate(c){
   if(![1,2,3,4,5].includes(k.beakerCount))throw Error('Choose 1 to 5 beakers per question.');
   if(k.mode==='compare-direct'&&k.beakerCount!==2)throw Error('Direct comparison uses exactly 2 beakers.');if(k.mode==='compare'&&k.beakerCount<2)throw Error('Comparison questions need at least 2 beakers.');
   if(!['same','individual'].includes(k.beakerSetup))throw Error('Choose a supported beaker setup.');
-  let beakers=[];if(k.beakerSetup==='individual'){if(!Array.isArray(k.beakers)||k.beakers.length!==k.beakerCount)throw Error('Set up every selected beaker.');beakers=k.beakers.map((b,i)=>validateSpec(b,`Beaker ${BEAKER_IDS[i]}`));}
+  let beakers=[];if(k.beakerSetup==='individual'){if(!Array.isArray(k.beakers)||k.beakers.length!==k.beakerCount)throw Error('Set up every selected beaker.');beakers=k.beakers.map((b,i)=>validateSpec(b,`Beaker ${BEAKER_IDS[i]}`));if(k.mode==='compare-direct'&&beakers.length===2&&beakers.every(b=>b.reading!=='random')&&beakers[0].value===beakers[1].value)throw Error('For comparison, use two different liquid volumes.');}
   return {title:k.title.trim(),mode:k.mode==='compare-direct'?'compare-direct':k.beakerCount>1?'total':k.mode,unit:k.unit,max:k.max,step:k.step,major:k.major,answerFormat:k.answerFormat,showInterval:k.showInterval,count:k.count,hints:k.hints,beakerCount:k.beakerCount,beakerSetup:k.beakerSetup,beakers};
 }
 function volumeText(ml){const litres=Math.floor(ml/1000),rest=ml%1000;return litres?rest?`${litres} ℓ ${rest} ml`:`${litres} ℓ`:`${rest} ml`;}
