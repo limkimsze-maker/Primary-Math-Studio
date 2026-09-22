@@ -3,6 +3,7 @@ export const ENGINE_NAMES = {place:'Place value',operations:'Operations & groupi
 export const LIMITS = {1:100,2:1000,3:10000};
 const pair=(v,label,min,max,step=1)=>({key:v,label,min,max,step,type:'number'});
 const select=(key,label,options)=>({key,label,options,type:'select'});
+const time24Field=(key,label)=>({key,label,type:'time24',maxLength:4});
 export function tasks(engine,grade) {
  const all={
  place:[['read','Read blocks or discs'],['hundred','Explore numbers to 100 · Hundred chart & flip chart'],['digit','Value of a digit'],['more','More than a number'],['less','Less than a number']],
@@ -11,7 +12,7 @@ export function tasks(engine,grade) {
  bar:[['whole','Part–whole: find the whole'],['part','Part–whole: find a part'],['compare','Comparison: find the difference'],['change','Change: find what remains'],['groups','Equal groups: find the total']],
  money:[['count','Count money · Big to small'],['convert','Convert cents ↔ dollars'],['make','Saving Quest · $1 / $10 / $100'],['add','Add money · Step by step'],['subtract','Subtract money · Step by step'],['word','Money word problems · Model']],
  fraction:[['write','1 · Writing Fractions'],['unit-compare','2 · Comparing Unit Fractions'],['like-compare','3 · Comparing Like Fractions'],['like-add','4 · Adding Like Fractions'],['like-subtract','5 · Subtracting Like Fractions'],...(grade===3?[['equivalent','6 · Equivalent Fractions'],['simplify','7 · Simplifying Fractions'],['unlike-compare','8 · Comparing & Ordering Unlike Fractions'],['unlike-add','9 · Adding Unlike Fractions'],['unlike-subtract','10 · Subtracting Unlike Fractions']]:[])],
- time:[['read','Read the clock'],['set','Set the clock'],['duration','Find the duration'],...(grade>=2?[['later','Find the later time']]:[])],
+ time:grade===1?[['read','1 · Read clocks · 5-minute intervals'],['set','2 · Set clocks · 5-minute intervals'],['ampm','3 · Read clock · a.m. / p.m.'],['duration','4 · Find a 30 min / 1 h interval']]:grade===2?[['read','1 · Read clocks · 1-minute intervals'],['set','2 · Set clocks · 1-minute intervals'],['duration','3 · Find duration · h and min'],['later','4 · Find the finishing time'],['convert-duration','5 · Convert h and min ↔ min']]:[['seconds','1 · Measure duration · seconds'],['duration','2 · Find elapsed time · 24-hour timeline'],['endtime','3 · Find the finishing time · 24-hour'],['starttime','4 · Find the starting time · 24-hour'],['twentyfour','5 · 12-hour clock → 24-hour time'],['twelvehour','6 · 24-hour time → 12-hour time']],
  geometry:[['shape','Name a 2D shape'],['sides','Count sides'],...(grade>=2?[['solid','Name a 3D shape']]:[]),...(grade===3?[['angle','Compare with a right angle'],['lines','Parallel or perpendicular']]:[])],
  area:[['area','Area of a rectangle'],['perimeter','Perimeter of a rectangle'],['compare','Same area, different perimeter']],
  graph:[['read','Read a category'],['total','Find the total'],['difference','Compare categories']],
@@ -45,7 +46,19 @@ export function fields(c) {
   if(c.task==='simplify')return [pair('den','Denominator',2,12),pair('a','Numerator',1,11)];
   return [pair('den','First denominator',2,12),pair('a',c.task.includes('subtract')?'Starting numerator':'First numerator',1,12),pair('b','Second numerator',1,12),...(['unlike-add','unlike-subtract'].includes(c.task)?[pair('den2','Second denominator',2,12)]:[])];
  }
- case 'time':return [pair('a','Hour (1–12)',1,12),pair('b','Minute',0,59),...(['later','duration'].includes(c.task)?[pair('duration','Minutes later',1,c.grade===1?60:c.grade===2?120:300)]:[])];
+ case 'time':{
+  const minuteStep=c.grade===1?5:1;
+  if(c.task==='ampm')return [pair('a','Clock hour (1–12)',1,12),pair('b','Minute',0,59,minuteStep),select('sky','Sky clue',[['morning','Morning · sun'],['afternoon','Afternoon · sun'],['night','Night · moon'],['overnight','Early morning · moon & owl']])];
+  if(c.grade===3&&c.task==='duration')return [time24Field('startTime','Start time (24-hour, h)'),time24Field('endTime','End time (24-hour, h)')];
+  if(c.grade===3&&['endtime','starttime'].includes(c.task))return [time24Field('clockTime',c.task==='endtime'?'Start time (24-hour, h)':'End time (24-hour, h)'),pair('duration','Duration (min)',1,720)];
+  if(c.grade===3&&c.task==='twentyfour')return [pair('a','Clock hour (1–12)',1,12),pair('b','Minute',0,59),select('sky','Sky clue',[['morning','Morning · sun'],['afternoon','Afternoon · sun'],['night','Night · moon'],['overnight','Early morning · moon & owl']])];
+  if(c.grade===3&&c.task==='twelvehour')return [time24Field('clockTime','24-hour time (h)')];
+  if(c.grade===3&&c.task==='seconds')return c.secondsDirection==='from-seconds'?[pair('a','Seconds',1,599),select('secondsDirection','Conversion',[['to-seconds','Minutes and seconds → seconds'],['from-seconds','Seconds → minutes and seconds']])]:[pair('a','Minutes',0,5),pair('b','Seconds',0,59),select('secondsDirection','Conversion',[['to-seconds','Minutes and seconds → seconds'],['from-seconds','Seconds → minutes and seconds']])];
+  if(c.grade===2&&c.task==='convert-duration')return c.durationDirection==='from-minutes'?[pair('a','Minutes',1,360),select('durationDirection','Conversion',[['to-minutes','Hours and minutes → minutes'],['from-minutes','Minutes → hours and minutes']])]:[pair('a','Hours',0,5),pair('b','Minutes',0,59),select('durationDirection','Conversion',[['to-minutes','Hours and minutes → minutes'],['from-minutes','Minutes → hours and minutes']])];
+  if(c.task==='duration')return [pair('a','Start hour (1–12)',1,12),pair('b','Start minute',0,59,minuteStep),pair('duration',c.grade===1?'Interval (min)':'Duration (min)',c.grade===1?30:1,c.grade===1?60:360,c.grade===1?30:1)];
+  if(['read','set','later'].includes(c.task))return [pair('a','Hour (1–12)',1,12),pair('b','Minute',0,59,minuteStep),...(c.task==='later'?[pair('duration','Minutes later',1,180)]:[])];
+  return [];
+ }
  case 'geometry':return [...(['shape','sides'].includes(c.task)?[select('shape','2D shape',[['square','Square'],['rectangle','Rectangle'],['triangle','Triangle'],['circle','Circle'],['semicircle','Semicircle'],['quarter','Quarter-circle']])]:[]),...(c.task==='solid'?[select('solid','3D shape',[['cube','Cube'],['cuboid','Cuboid'],['cone','Cone'],['cylinder','Cylinder'],['sphere','Sphere']])]:[]),...(c.task==='angle'?[select('angle','Angle type',[['less','Less than a right angle'],['right','Right angle'],['greater','Greater than a right angle']])]:[]),...(c.task==='lines'?[select('lines','Line relationship',[['parallel','Parallel'],['perpendicular','Perpendicular'],['neither','Neither']])]:[])];
  case 'area':return [pair('a','Length (cm)',1,12),pair('b','Width (cm)',1,10),...(c.task==='compare'?[pair('cols2','Second rectangle length (cm)',1,12),pair('rows2','Second rectangle width (cm)',1,10)]:[])];
  case 'graph':return [{key:'labels',label:'Category names (comma separated)',type:'text',maxLength:80},{key:'values',label:'Counts (comma separated)',type:'text',maxLength:80},pair('key','One picture / tick represents',1,c.grade===1?1:10),select('graphType','Graph type',[['picture','Picture graph'],...(c.grade===3?[['bar','Bar graph']]:[])]),select('category','Ask about category',[['0','First'],['1','Second'],['2','Third']])];
@@ -57,7 +70,7 @@ export function fields(c) {
 export function defaults(engine,grade=3,task){
  if(engine==='fraction'&&grade===1)grade=2;if(engine==='area')grade=3;
  const t=task||tasks(engine,grade)[0][0];
- let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
+ let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
  if(engine==='place'){c.a=t==='more'?grade===1?29:grade===2?199:999:t==='less'?grade===1?30:grade===2?200:1000:grade===1?34:grade===2?234:2034;c.b=1;}
  if(engine==='place'&&t==='hundred'){c.a=50;c.leftAmount=10;c.rightAmount=1;}
  if(engine==='operations'){c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}}
@@ -82,7 +95,20 @@ export function defaults(engine,grade=3,task){
   if(t==='unlike-add'){c.a=1;c.den=2;c.b=1;c.den2=4;}
   if(t==='unlike-subtract'){c.a=3;c.den=4;c.b=1;c.den2=2;}
  }
- if(engine==='time'){c.a=3;c.b=grade===1?30:25;c.duration=grade===1?30:45;}
+ if(engine==='time'){
+  c.a=3;c.b=grade===1?30:25;c.clockTime=grade===1?'0330':'0325';c.duration=grade===1?30:45;
+  if(grade===1&&t==='duration'){c.a=8;c.b=15;c.duration=30;}
+  if(grade===1&&t==='ampm'){c.a=7;c.b=0;c.sky='morning';}
+  if(grade===2&&t==='duration'){c.a=10;c.b=45;c.duration=95;}
+  if(grade===2&&t==='later'){c.a=11;c.b=40;c.duration=55;}
+  if(grade===2&&t==='convert-duration'){c.durationDirection='to-minutes';c.a=2;c.b=15;}
+  if(grade===3&&t==='duration'){c.startTime='0535';c.endTime='1635';}
+  if(grade===3&&t==='endtime'){c.clockTime='1140';c.duration=55;}
+  if(grade===3&&t==='starttime'){c.clockTime='1610';c.duration=45;}
+  if(grade===3&&t==='seconds'){c.secondsDirection='to-seconds';c.a=1;c.b=20;}
+  if(grade===3&&t==='twelvehour'){c.clockTime='2040';}
+  if(grade===3&&t==='twentyfour'){c.a=2;c.b=35;c.sky='overnight';}
+ }
  if(engine==='area'){c.a=6;c.b=4;}if(engine==='graph'&&grade===1)c.key=1;
  if(engine==='explain'){c.a=t==='fraction'?3:t==='perimeter'?6:t==='groups'?4:12;c.b=t==='perimeter'?4:t==='groups'?6:8;}
  if(engine==='error'){c.a=t==='fraction'?3:t==='time'?3:t==='perimeter'?6:t==='place'?34:28;c.b=t==='time'?25:t==='perimeter'?4:17;}
@@ -91,6 +117,16 @@ export function defaults(engine,grade=3,task){
 export function fractionGcd(a,b){a=Math.abs(Number(a));b=Math.abs(Number(b));while(b)[a,b]=[b,a%b];return a||1;}
 export function fractionLcm(a,b){return Math.abs(a*b)/fractionGcd(a,b);}
 export function simplestFraction(n,d){const factor=fractionGcd(n,d);return [n/factor,d/factor];}
+function padTime(value){return String(value).padStart(2,'0');}
+function time24Minutes(value){const digits=String(value??'').trim(),match=/^([01]\d|2[0-3])([0-5]\d)$/.exec(digits);return match?Number(match[1])*60+Number(match[2]):null;}
+function formatTime24(total){const minute=((Number(total)%1440)+1440)%1440;return `${padTime(Math.floor(minute/60))}${padTime(minute%60)}`;}
+function formatTime24Digits(total){return formatTime24(total);}
+function formatTime24H(total){return `${formatTime24(total)} h`;}
+function clockPartsFrom24(total){const minute=((Number(total)%1440)+1440)%1440,hour24=Math.floor(minute/60);return [hour24%12||12,minute%60];}
+function formatDuration(total){const minutes=Math.max(0,Number(total)||0),hours=Math.floor(minutes/60),remaining=minutes%60;return hours&&remaining?`${hours} h ${remaining} min`:hours?`${hours} h`:`${remaining} min`;}
+function analogueTo24Minutes(hour,minute,sky){const h=Number(hour)%12;const hour24=sky==='morning'||sky==='overnight'?h:sky==='afternoon'?(h===0?12:h+12):h+12;return hour24*60+Number(minute);}
+function skyFor24(total){const hour=Math.floor((((Number(total)%1440)+1440)%1440)/60);return hour<6?'overnight':hour<12?'morning':hour<18?'afternoon':'night';}
+
 export function validate(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Choose a valid settings file.');
  if(!Object.hasOwn(ENGINE_NAMES,raw.engine))throw Error('Unknown engine.');
@@ -104,8 +140,19 @@ export function validate(raw){
  if(c.mode==='fixed')c.count=1;
  for(const f of fields(c)){
   if(f.type==='number'){c[f.key]=Number(c[f.key]);if(!Number.isInteger(c[f.key])||c[f.key]<f.min||c[f.key]>f.max)throw Error(`${f.label}: use a whole number from ${f.min} to ${f.max}.`);}
+  if(f.type==='time24'){const minute=time24Minutes(c[f.key]);if(minute===null)throw Error(`${f.label}: use exactly four digits, for example 0535.`);c[f.key]=formatTime24(minute);}
   if(f.type==='text'){if(typeof c[f.key]!=='string'||c[f.key].length>f.maxLength)throw Error(`${f.label}: use at most ${f.maxLength} characters.`);}
   if(f.type==='select'){c[f.key]=String(c[f.key]);if(!f.options.some(o=>o[0]===c[f.key]))throw Error(`Choose a valid ${f.label.toLowerCase()}.`);}
+ }
+ if(c.engine==='time'&&g===3&&c.task==='duration'){
+  const start=time24Minutes(c.startTime),end=time24Minutes(c.endTime);
+  if(start===null||end===null)throw Error('Use four-digit 24-hour times, for example 0535.');
+  if(start===end)throw Error('Choose different start and end times.');
+  c.startTime=formatTime24(start);c.endTime=formatTime24(end);
+ }
+ if(c.engine==='time'&&(c.task==='ampm'||g===3&&c.task==='twentyfour')){
+  const hour=Number(c.a),matchesSky=c.sky==='morning'?hour>=6&&hour<=11:c.sky==='afternoon'||c.sky==='overnight'?[12,1,2,3,4,5].includes(hour):[6,7,8,9,10,11].includes(hour);
+  if(!matchesSky)throw Error(c.sky==='morning'?'For a morning sun, choose 6 to 11 on the clock.':c.sky==='afternoon'?'For an afternoon sun, choose 12 to 5 on the clock.':c.sky==='night'?'For a night moon, choose 6 to 11 on the clock.':'For a moon and owl, choose 12 to 5 on the clock.');
  }
  c.place=Number(c.place);c.category=Number(c.category);
  if(c.engine==='numberline'&&c.task==='pattern'&&(c.b===0||(c.patternType==='alternating'&&c.b2===0)))throw Error('Use a non-zero change in the number pattern.');
@@ -161,8 +208,10 @@ export function validate(raw){
    }
   }
  }
- if(c.engine==='time'&&g===1&&c.b%5!==0)throw Error('P1 presets use five-minute intervals.');
+ if(c.engine==='time'&&g===1&&['read','set','ampm','duration'].includes(c.task)&&c.b%5!==0)throw Error('P1 clock times use five-minute intervals.');
  if(c.engine==='time'&&g===1&&c.task==='duration'&&![30,60].includes(c.duration))throw Error('P1 duration presets use half an hour or one hour.');
+ if(c.engine==='time'&&g===2&&c.task==='convert-duration'&&c.durationDirection==='to-minutes'&&c.a===0&&c.b===0)throw Error('Use a duration greater than 0 min.');
+ if(c.engine==='time'&&g===3&&c.task==='seconds'&&c.secondsDirection==='to-seconds'&&c.a===0&&c.b===0)throw Error('Use a duration greater than 0 s.');
  if(c.engine==='error'&&c.task==='time'&&c.b%5!==0)throw Error('Use a five-minute interval for this clock error.');
  if(c.engine==='area'&&c.task==='compare'&&c.a*c.b!==c.cols2*c.rows2)throw Error('Use two rectangles with the same area.');
  if(c.engine==='error'&&c.task==='perimeter'&&c.a*c.b===2*(c.a+c.b))throw Error('Choose dimensions whose area and perimeter have different numerical values.');
@@ -224,7 +273,41 @@ export function generatedConfig(c,r=Math.random){
   else{p.a=int(r,1,p.den);const max=Math.max(1,Math.floor(p.a/p.den*p.den2));p.b=int(r,1,max);if(p.b/p.den2>p.a/p.den)p.b=Math.max(1,p.b-1);}
   break;
  }
- case 'time':p.a=int(r,1,12);p.b=g===1?int(r,0,11)*5:int(r,0,59);p.duration=g===1?choose(r,[30,60]):int(r,1,g===2?120:300);break;
+ case 'time':{
+ if(g===3&&c.task==='duration'){
+   const start=int(r,0,287)*5,friendly=[10,15,20,25,30,35,40,45,50,55,60,75,90,105,120,150,180,210,240,300,360,420,480,540,600,660,720],duration=choose(r,friendly);
+   p.startTime=formatTime24(start);p.endTime=formatTime24(start+duration);break;
+  }
+  if(g===3&&['endtime','starttime'].includes(c.task)){
+   const friendly=[10,15,20,25,30,35,40,45,50,55,60,75,90,105,120,150,180,210,240,300],duration=choose(r,friendly),known=c.task==='endtime'?int(r,360,1080):int(r,480,1320);p.clockTime=formatTime24(known);p.duration=duration;break;
+  }
+  if(g===3&&c.task==='twelvehour'){p.clockTime=formatTime24(int(r,0,1439));break;}
+  if(g===3&&c.task==='seconds'){
+   p.secondsDirection=choose(r,['to-seconds','from-seconds']);
+   if(p.secondsDirection==='to-seconds'){p.a=int(r,0,5);p.b=int(r,0,59);if(p.a===0&&p.b===0)p.b=1;}else p.a=choose(r,[45,59,60,65,75,80,95,110,125,135,155,185,245,305,359,420,485,599]);
+   break;
+  }
+  if(g===3&&c.task==='twentyfour'){
+   p.sky=choose(r,['morning','afternoon','night','overnight']);
+   p.a=p.sky==='morning'?int(r,6,11):p.sky==='afternoon'||p.sky==='overnight'?choose(r,[12,1,2,3,4,5]):choose(r,[6,7,8,9,10,11]);
+   p.b=int(r,0,59);break;
+  }
+  if(c.task==='ampm'){
+   p.sky=choose(r,['morning','afternoon','night','overnight']);
+   p.a=p.sky==='morning'?int(r,6,11):p.sky==='afternoon'||p.sky==='overnight'?choose(r,[12,1,2,3,4,5]):choose(r,[6,7,8,9,10,11]);
+   p.b=g===1?int(r,0,11)*5:int(r,0,59);break;
+  }
+  if(g===2&&c.task==='convert-duration'){
+   p.durationDirection=choose(r,['to-minutes','from-minutes']);
+   if(p.durationDirection==='to-minutes'){p.a=int(r,0,5);p.b=int(r,0,59);if(p.a===0&&p.b===0)p.b=5;}else p.a=choose(r,[35,40,55,60,65,75,80,95,110,120,125,135,140,155,175,195,235,275,315,360]);
+   break;
+  }
+  if(c.task==='duration'){
+   p.a=int(r,1,12);p.b=g===1?int(r,0,11)*5:int(r,0,59);p.duration=g===1?choose(r,[30,60]):choose(r,[10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,110,120,135,150,180,240,300,360]);break;
+  }
+  if(['read','set','later'].includes(c.task)){p.a=int(r,1,12);p.b=g===1?int(r,0,11)*5:int(r,0,59);p.duration=g===1?choose(r,[30,60]):int(r,1,g===2?120:300);break;}
+  break;
+ }
  case 'geometry':for(const f of fields(c).filter(f=>f.type==='select'))p[f.key]=choose(r,f.options)[0];break;
  case 'area':if(c.task==='compare'){const dims=choose(r,[[6,4,8,3],[6,2,4,3],[8,2,4,4],[10,2,5,4]]);[p.a,p.b,p.cols2,p.rows2]=dims;}else{p.a=int(r,1,12);p.b=int(r,1,10);}break;
  case 'graph':p.values=[int(r,1,Math.floor(60/c.key))*c.key,int(r,1,Math.floor(60/c.key))*c.key,int(r,1,Math.floor(60/c.key))*c.key].join(', ');break;
@@ -234,6 +317,8 @@ export function generatedConfig(c,r=Math.random){
  return p;
 }
 export const formatTime=(h,m)=>`${h||12}:${String(m).padStart(2,'0')}`;
+export const add12Time=(h,m,duration)=>{const total=((Number(h)%12)*60+Number(m)+Number(duration))%720;return [Math.floor(total/60)||12,total%60];};
+export const formatSeconds=total=>{const seconds=Math.max(0,Number(total)||0),minutes=Math.floor(seconds/60),remaining=seconds%60;return minutes?`${minutes} min ${remaining} s`:`${remaining} s`;};
 export const wholeNumberText=value=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
 export function numberlineQuestion(task,start,change){
  if(task==='point')return 'Fill in the missing number on the number line.';
@@ -422,7 +507,67 @@ export function lesson(config,r=Math.random){
   }
   break;
  }
- case 'time':type=t==='duration'?'number':'time';answer=t==='duration'?c.duration:[t==='later'?Math.floor(((a%12*60+b+c.duration)%720)/60)||12:a,t==='later'?(b+c.duration)%60:b];unit=t==='duration'?'minutes':'';d.end=[Math.floor(((a%12*60+b+c.duration)%720)/60)||12,(b+c.duration)%60];question=t==='read'?'What time does this clock show?':t==='set'?`Set the clock to ${formatTime(a,b)}. Then enter that time.`:t==='later'?`It is ${formatTime(a,b)}. What time will it be ${c.duration} minutes later?`:'How many minutes pass from the first clock to the second?';hint='The short hand shows the hour. The long hand shows the minutes. Each numbered space is 5 minutes.';explanation=t==='duration'?`${formatTime(a,b)} to ${formatTime(...d.end)} takes ${c.duration} minutes (moving forwards within one 12-hour cycle).`:`The time is ${formatTime(...answer)}.`;break;
+ case 'time':{
+ if(c.grade===3&&t==='duration'){
+   const start=time24Minutes(c.startTime),end=time24Minutes(c.endTime),elapsed=(end-start+1440)%1440;
+   type='duration';answer=[Math.floor(elapsed/60),elapsed%60];d.start24=start;d.end24=end;d.time24=start;d.elapsed=elapsed;d.overnight=end<start;
+  question=`From ${formatTime24H(start)} to ${formatTime24H(end)}, how long?`;
+  hint='Use the 24-hour timeline. Add a period from the start time to the end time, then count the hours and minutes.';
+  explanation=`${formatTime24H(start)} to ${formatTime24H(end)} is ${formatDuration(elapsed)}.`;
+  }else if(c.grade===3&&['endtime','starttime'].includes(t)){
+   const known=time24Minutes(c.clockTime),start=t==='endtime'?known:(known-c.duration+1440)%1440,end=t==='endtime'?(known+c.duration)%1440:known,answerTime=t==='endtime'?end:start;
+   type='time24four';answer=formatTime24(answerTime);d.start24=start;d.end24=end;d.time24=answerTime;d.duration=c.duration;d.missing=t==='endtime'?'end':'start';
+   question=t==='endtime'?`A lesson starts at ${formatTime24H(start)} and lasts ${formatDuration(c.duration)}. What time does it end?`:`A lesson ends at ${formatTime24H(end)} after ${formatDuration(c.duration)}. What time did it start?`;
+   hint=t==='endtime'?'Move forwards on the 24-hour timeline.':'Move backwards on the 24-hour timeline.';
+   explanation=t==='endtime'?`${formatTime24H(start)} + ${formatDuration(c.duration)} = ${formatTime24H(end)}.`:`${formatTime24H(end)} − ${formatDuration(c.duration)} = ${formatTime24H(start)}.`;
+  }else if(c.grade===3&&t==='seconds'){
+   if(c.secondsDirection==='to-seconds'){const total=a*60+b;type='number';answer=total;unit='s';d.seconds=[a,b];d.secondsDirection=c.secondsDirection;question=`A stopwatch shows ${formatSeconds(total)}. How many seconds is that?`;hint='Each minute is 60 seconds. Change the minutes to seconds first.';explanation=`${a} min = ${a*60} s. ${a*60} s + ${b} s = ${total} s.`;}
+   else{const minutes=Math.floor(a/60),seconds=a%60;type='durationseconds';answer=[minutes,seconds];d.secondsTotal=a;d.secondsDirection=c.secondsDirection;question=`A stopwatch measures ${a} s. Express it in minutes and seconds.`;hint='Take away groups of 60 seconds. The remainder is the number of seconds.';explanation=`${a} s = ${minutes*60} s + ${seconds} s = ${formatSeconds(a)}.`;}
+  }else if(c.grade===2&&t==='convert-duration'){
+   if(c.durationDirection==='to-minutes'){const total=a*60+b;type='number';answer=total;unit='min';d.durationDirection=c.durationDirection;d.duration12=[a,b];question=`Convert ${formatDuration(a*60+b)} to minutes.`;hint='Change the hours to minutes first: 1 h = 60 min.';explanation=`${a} h = ${a*60} min. ${a*60} min + ${b} min = ${total} min.`;}
+   else{const hours=Math.floor(a/60),minutes=a%60;type='duration';answer=[hours,minutes];d.durationDirection=c.durationDirection;d.totalMinutes=a;question=`Convert ${a} min to hours and minutes.`;hint='Take away one group of 60 min for each hour.';explanation=`${a} min = ${hours*60} min + ${minutes} min = ${formatDuration(a)}.`;}
+  }else if(c.grade!==3&&t==='duration'){
+   const start=[a,b],end=add12Time(a,b,c.duration);type='duration';answer=[Math.floor(c.duration/60),c.duration%60];d.start12=start;d.end12=end;d.duration=c.duration;
+   question=`From ${formatTime(...start)} to ${formatTime(...end)}, how long?`;
+   hint=c.grade===1?'Count one half-hour or one whole hour on the clock.':'Move forwards from the start time to the end time. Group 60 minutes as 1 hour.';
+   explanation=`${formatTime(...start)} to ${formatTime(...end)} is ${formatDuration(c.duration)}.`;
+  }else if(c.grade===3&&t==='twelvehour'){
+   const total=time24Minutes(c.clockTime),time12=clockPartsFrom24(total),meridiem=total<720?'a.m.':'p.m.';type='timeampm';answer=[time12[0],time12[1],meridiem];d.time24=total;d.source24=total;d.sky=skyFor24(total);d.time12=time12;d.meridiem=meridiem;
+   question=`Write ${formatTime24H(total)} in 12-hour notation and choose a.m. or p.m.`;
+   hint='For 0000 h to 1159 h, use a.m. For 1200 h to 2359 h, use p.m. Then change the hour to the 12-hour clock.';
+   explanation=`${formatTime24H(total)} is ${formatTime(...time12)} ${meridiem} In the 24-hour system, 0000 h is 12:00 a.m. and 1200 h is 12:00 p.m.`;
+  }else if(c.grade===3&&t==='twentyfour'){
+   const value=analogueTo24Minutes(a,b,c.sky);type='time24four';answer=formatTime24Digits(value);d.time24=value;d.sky=c.sky;
+   question='Look at the analogue clock and the sky clue. Write the time in 24-hour notation.';
+   hint='Write four digits: two for the hour and two for the minute. Do not use a colon. The unit h is already shown.';
+   explanation=`The hour hand is at ${a} and the minute hand shows ${b} minutes. ${c.sky==='morning'?'The morning sun gives a time from 0600 h to 1159 h.':c.sky==='afternoon'?'The afternoon sun gives a time from 1200 h to 1759 h.':c.sky==='night'?'The night moon gives a time from 1800 h to 2359 h.':'The moon and owl give an early-morning time from 0000 h to 0559 h.'} So the 24-hour time is ${formatTime24H(value)}.`;
+  }else if(t==='ampm'){
+   const value=analogueTo24Minutes(a,b,c.sky),meridiem=c.sky==='morning'||c.sky==='overnight'?'a.m.':'p.m.';type='timeampm';answer=[a,b,meridiem];d.time24=value;d.sky=c.sky;d.meridiem=meridiem;d.time12=[a,b];
+   question='Look at the analogue clock and the forest sky clue. Write the time in 12-hour notation and choose a.m. or p.m.';
+   hint=c.grade===1?'Read the clock in five-minute steps, then use the clear forest sky clue to choose a.m. or p.m.':'Write the hour and minute with a colon. Then use the forest sky clue to choose a.m. or p.m.';
+   explanation=`The clock shows ${formatTime(a,b)}. ${c.sky==='morning'?'The morning sun means a.m.':c.sky==='afternoon'?'The afternoon sun means p.m.':c.sky==='night'?'The night moon means p.m.':'The moon and owl show early morning, so it is a.m.'} So the time is ${formatTime(a,b)} ${meridiem}`;
+  }else if(['read','set','later'].includes(t)){
+   const end=[Math.floor(((a%12*60+b+c.duration)%720)/60)||12,(b+c.duration)%60];d.end=end;
+   type='time';answer=t==='later'?end:[a,b];
+   question=t==='read'?'What time does this clock show?':t==='set'?`Set the clock to ${formatTime(a,b)}. Then enter that time.`:`It is ${formatTime(a,b)}. What time will it be ${c.duration} minutes later?`;
+   hint=c.grade===1?'The short hand shows the hour. Count 5, 10, 15 … 55 around the clock for the minutes.':'The short hand shows the hour. Count in fives, then count the remaining small minute marks.';
+   explanation=`The time is ${formatTime(...answer)}.`;
+  }else{
+   const start=time24Minutes(c.clockTime),end=(start+c.duration)%1440;d.start24=start;d.end24=end;d.time24=t==='later'?end:start;d.sky=skyFor24(d.time24);
+   if(t==='duration'){
+    type='duration';answer=[Math.floor(c.duration/60),c.duration%60];
+    question=`From ${formatTime24H(start)} to ${formatTime24H(end)}, how long?`;
+    hint='Read the start and end times in 24-hour notation. Move forwards, crossing midnight if needed.';
+    explanation=`${formatTime24H(start)} to ${formatTime24H(end)} is ${formatDuration(c.duration)}.`;
+   }else{
+    type='time24four';answer=formatTime24(d.time24);
+    question=t==='read'?'What time does this clock show? Write it in 24-hour notation.':t==='set'?`Set the clock to ${formatTime24H(start)}. Then enter that time.`:`It is ${formatTime24H(start)}. What time will it be ${c.duration} minutes later?`;
+    hint='Use the short hand, long hand and sky clue. Write four digits only; the unit h is already shown.';
+    explanation=`The time is ${formatTime24H(d.time24)}.`;
+   }
+  }
+  break;
+ }
  case 'geometry':type='choice';answer=t==='shape'?c.shape==='quarter'?'Quarter-circle':c.shape==='semicircle'?'Semicircle':c.shape[0].toUpperCase()+c.shape.slice(1):t==='solid'?c.solid[0].toUpperCase()+c.solid.slice(1):t==='sides'?c.shape==='circle'?'0':c.shape==='triangle'?'3':c.shape==='quarter'?'2':c.shape==='semicircle'?'1':'4':t==='angle'?c.angle==='right'?'Right angle':c.angle==='less'?'Less than a right angle':'Greater than a right angle':c.lines[0].toUpperCase()+c.lines.slice(1);question=t==='shape'?'Name the shape.':t==='sides'?'How many straight sides does this shape have?':t==='solid'?'Name this 3D shape.':t==='angle'?'Compare the marked angle with a right angle.':'How are the two lines related?';choices=t==='shape'?fields(c)[0].options.map(o=>o[1]):t==='solid'?['Cube','Cuboid','Cone','Cylinder','Sphere']:t==='sides'?['0','1','2','3','4']:t==='angle'?['Less than a right angle','Right angle','Greater than a right angle']:['Parallel','Perpendicular','Neither'];hint=t==='sides'?'Count only the straight edges.':t==='lines'?'Parallel lines keep the same distance apart. Perpendicular lines meet at a right angle.':t==='angle'?'Use the right-angle corner as a reference.':'Look at the sides, corners and faces.';explanation=`${answer}.`;break;
  case 'area':type=t==='compare'?'choice':'number';answer=t==='area'?a*b:t==='perimeter'?2*(a+b):2*(a+b)===2*(c.cols2+c.rows2)?'Same perimeter':2*(a+b)>2*(c.cols2+c.rows2)?'First is greater':'Second is greater';unit=t==='area'?'cm²':t==='perimeter'?'cm':'';question=t==='area'?'Find the area. Each small square is 1 cm².':t==='perimeter'?'Find the distance all the way around the rectangle.':'These rectangles have the same area. Compare their perimeters.';choices=t==='compare'?['First is greater','Same perimeter','Second is greater']:null;hint=t==='area'?'Count rows × columns.':`Add all four sides. The opposite sides are equal.`;explanation=t==='area'?`${a} × ${b} = ${answer} cm².`:t==='perimeter'?`${a} + ${b} + ${a} + ${b} = ${answer} cm.`:`Both areas are ${a*b} cm². Their perimeters are ${2*(a+b)} cm and ${2*(c.cols2+c.rows2)} cm.`;break;
  case 'graph':d.labels=c.labels.split(',').map(s=>s.trim());d.values=c.values.split(',').map(s=>Number(s.trim()));answer=t==='read'?d.values[c.category]:t==='total'?d.values.reduce((x,y)=>x+y,0):Math.abs(d.values[0]-d.values[1]);question=t==='read'?`How many ${d.labels[c.category]} are shown?`:t==='total'?'How many items are shown altogether?':`What is the difference between ${d.labels[0]} and ${d.labels[1]}?`;hint=`Each ${c.graphType==='picture'?'picture':'tick interval'} represents ${c.key} items. Read the key before counting.`;explanation=t==='read'?`${d.values[c.category]/c.key} × ${c.key} = ${answer}.`:t==='total'?`${d.values.join(' + ')} = ${answer}.`:`${Math.max(d.values[0],d.values[1])} − ${Math.min(d.values[0],d.values[1])} = ${answer}.`;break;
@@ -443,6 +588,11 @@ export function checkAnswer(l,input,interaction={}){
  if(l.type==='fraction')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[1])>0&&Number(input[0])*l.answer[1]===l.answer[0]*Number(input[1]);
  if(l.type==='money')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[1])<100&&Number(input[0])*100+Number(input[1])===l.answer;
  if(l.type==='time')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[0])>=1&&Number(input[0])<=12&&Number(input[1])<60&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
+ if(l.type==='timeampm')ok=Array.isArray(input)&&input.length===3&&input.slice(0,2).every(whole)&&Number(input[0])>=1&&Number(input[0])<=12&&Number(input[1])<60&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1]&&input[2]===l.answer[2];
+ if(l.type==='time24')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[0])<24&&Number(input[1])<60&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
+ if(l.type==='time24four')ok=/^\d{4}$/.test(String(input??''))&&String(input)===l.answer;
+ if(l.type==='duration')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[1])<60&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
+ if(l.type==='durationseconds')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[1])<60&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
  if(l.type==='quotient')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1]&&Number(input[1])<l.data.b;
  if(l.type==='reason')ok=Array.isArray(input)&&input.length===3&&input.every((v,i)=>v===l.data.reasons[i]);
  if(l.type==='sequence')ok=Array.isArray(input)&&input.length===l.answer.length&&l.data.blanks.every(i=>whole(input[i])&&Number(input[i])===l.answer[i]);
