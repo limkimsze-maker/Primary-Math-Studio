@@ -478,3 +478,20 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 @media(max-width:460px){
  .p1-teach-steps{grid-template-columns:1fr}.p1-number-tape{overflow-x:auto;grid-template-columns:repeat(11,42px)}.p1-family-equation{grid-template-columns:50px 20px 50px 20px 50px}.p1-family-equation input,.p1-eq-fixed{width:50px}
 }
+
+
+/* P1 Adding & Subtracting Within 20 — same Studio visual language, original strategy sequence. */
+.p1-within20-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:#eef3f2;border:1px solid #dce5e2;border-radius:14px;padding:8px}
+.p1-within20-nav button{min-height:48px}.p1-within20-nav button.selected{background:#1c6558;color:#fff;border-color:#1c6558}
+.p1-pupil-try{display:flex;align-items:end;justify-content:center;gap:10px;flex-wrap:wrap;background:#f7fbfa;border:1px solid #dce5e2;border-radius:14px;padding:18px}
+.p1-pupil-try label{display:grid;gap:5px;font-weight:900}.p1-pupil-try input{width:120px;font-size:28px;font-weight:900;text-align:center}
+.p1-pupil-try p{width:100%;margin:4px 0 0;text-align:center;font-weight:800;color:#48655f}
+.p1-step-talk{display:flex;align-items:center;gap:12px;background:#fff9df;border:2px solid #f0bd42;border-radius:13px;padding:12px 14px}
+.p1-step-talk>span{flex:none;padding:6px 9px;border-radius:999px;background:#f4cc57;font-size:12px;font-weight:900}.p1-step-talk>strong{line-height:1.35}
+.p1-frame-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.p1-frame-row>div{background:#f7fbfa;border:1px solid #dce5e2;border-radius:13px;padding:12px;display:grid;gap:8px;text-align:center}
+.p1-ten-frame{width:min(100%,360px);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,62px);border:4px solid #315a52;background:#fff}
+.p1-ten-cell{position:relative;border:1px solid #9fb3ad;display:grid;place-items:center}.p1-counter{display:block;width:38px;height:38px;border-radius:50%;box-shadow:inset 0 -5px 0 #0001}.p1-counter.red{background:#ef6b6b}.p1-counter.gold{background:#f4cc57}
+.p1-cross{position:absolute;inset:0;display:grid;place-items:center;font-size:50px;line-height:1;color:#a6372c;font-family:Arial,sans-serif}
+.p1-strategy-bond{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:4px 10px}.p1-bond-svg{display:block;width:min(100%,600px);height:auto;margin:auto}.p1-bond-svg text{font:900 28px Arial;fill:#173b36}.p1-bond-svg line{stroke:#173b36;stroke-width:3;stroke-linecap:round}
+.p1-line-card{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:8px;overflow-x:auto}.p1-line20-svg{display:block;width:100%;min-width:760px;height:auto}.p1-line20-svg text{fill:#173b36}
+@media(max-width:700px){.p1-within20-nav{grid-template-columns:1fr}.p1-frame-row{grid-template-columns:1fr}.p1-ten-frame{grid-template-rows:repeat(2,52px)}.p1-counter{width:32px;height:32px}}
