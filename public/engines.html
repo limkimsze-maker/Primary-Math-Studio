@@ -272,6 +272,27 @@ body.pupil.hundred-engine #diagram{min-height:355px}.pupil .hundred-workspace h3
 @media(max-width:620px){.money-engine #diagram:has(.strict-money-workspace){min-height:760px;max-height:none;overflow:visible}.strict-money-workspace,.pupil .strict-money-workspace{grid-template-columns:1fr;min-height:720px}.strict-money-mat,.pupil .strict-money-mat{height:320px}.strict-money-mat.subtracting,.pupil .strict-money-mat.subtracting{height:260px}.strict-money-algorithm,.strict-money-step-card{max-width:390px}.strict-money-token{width:38px;height:30px}.strict-money-note{width:62px;height:28px}.strict-money-token+ .strict-money-token{margin-bottom:-18px}.strict-money-token b{font-size:9px}}
 .money-answer-entry{display:grid;grid-template-columns:26px minmax(95px,130px) 18px minmax(82px,105px);gap:4px;align-items:end}.money-answer-entry label{min-width:0}.money-answer-symbol,.money-answer-dot{font-size:34px;font-weight:800;line-height:46px;text-align:center}.money-answer-entry .answer-input{width:100%;font-variant-numeric:tabular-nums}.money-answer-entry .money-cents-input{letter-spacing:2px}
 .money-model-choices{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.money-model-choices button.selected{background:#183c35;color:#fff;border-color:#183c35}
+.money-word-flow{width:min(100%,760px);display:grid;gap:9px;margin:0 auto}
+.money-word-step{border:1px solid #c9d9c4;border-radius:10px;background:#fff;padding:9px 11px}
+.money-word-step-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-size:12px;font-weight:900;color:#315a46}
+.money-word-step-head b{display:inline-grid;place-items:center;min-width:25px;height:25px;border-radius:50%;background:#e6f1e2}
+.money-word-status{font-size:12px;font-weight:800;text-align:center;padding:7px 9px;border-radius:8px;background:#f3f6f1;color:#657c69}
+.money-word-status.good{background:#e8f5e9;color:#24735e}
+.money-word-status.bad{background:#fff0ed;color:#a6372c}
+.money-word-op-bank{display:flex;justify-content:center;gap:12px}
+.money-word-op-bank button{min-width:66px;font-size:25px;font-weight:900}
+.money-word-op-bank button.selected{background:#183c35;color:#fff;border-color:#183c35}
+.money-word-equation{display:grid;grid-template-columns:minmax(90px,1fr) 58px minmax(90px,1fr) 36px minmax(80px,1fr);align-items:center;gap:6px;font-size:clamp(18px,3vw,25px);font-weight:900;text-align:center}
+.money-word-equation span{border:2px solid #c5d5c0;border-radius:8px;background:#fff;padding:9px 5px}
+.money-word-equation .op{border-style:dashed;border-color:#b38427;background:#fff9e8}
+.money-word-equation .eq{border:0;background:transparent}
+.money-word-equation .unknown{border-style:dashed}
+.money-word-model-label{display:block;font-size:11px;color:#5f7565;margin-bottom:4px}
+.money-model.part-whole-model .money-parts span{display:grid;gap:3px}
+.money-model.part-whole-model .money-parts small{font-size:10px;color:#5f7565}
+.money-model.comparison-model .money-compare-row strong{font-size:11px;line-height:1.2}
+.money-word-gate-note{font-size:11px;line-height:1.4;color:#6b7c6e;text-align:center}
+@media(max-width:620px){.money-word-equation{grid-template-columns:minmax(65px,1fr) 42px minmax(65px,1fr) 24px minmax(60px,1fr);font-size:16px}.money-word-equation span{padding:7px 2px}.money-word-step{padding:8px 7px}}
 .money-compare-visual{width:min(100%,760px);display:grid;gap:10px;margin:0 auto}
 .money-compare-expression{display:grid;grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);gap:10px;align-items:center}
 .money-compare-amount-card{border:2px solid #315a46;border-radius:10px;background:#e9f4e4;text-align:center;padding:9px 6px;font-size:clamp(20px,3.2vw,30px);font-weight:900;font-variant-numeric:tabular-nums}
@@ -901,7 +922,7 @@ function lesson(config,r=Math.random){
     question=`Zara bought a book for ${money(a)}. Amir bought a game for ${money(b)}. How much did they spend in all?`;
     explanation=`${money(a)} + ${money(b)} = ${money(value)}. They spent ${money(value)} in all.`;
    }else if(wt==='change'){
-    value=a-b;d.correctModel='part-whole';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    value=a-b;d.correctModel='part-whole';d.wordOperation='-';d.wordEquation={left:a,right:b};
     d.wordModel={kind:'part-whole',wholeLabel:'money at first',wholeValue:a,unknown:'part2',parts:[{label:'money spent',value:b},{label:'money left',value:value}]};
     question=`Mei had ${money(a)}. She spent ${money(b)} on a storybook. How much money did she have left?`;
     explanation=`${money(a)} − ${money(b)} = ${money(value)}. Mei had ${money(value)} left.`;
@@ -916,17 +937,17 @@ function lesson(config,r=Math.random){
     question=`A water bottle costs ${money(a)}. A thermos costs ${money(b)} more than the water bottle. How much does the thermos cost?`;
     explanation=`${money(a)} + ${money(b)} = ${money(value)}. The thermos costs ${money(value)}.`;
    }else if(wt==='compare-less'){
-    value=a-b;d.correctModel='compare';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    value=a-b;d.correctModel='compare';d.wordOperation='-';d.wordEquation={left:a,right:b};
     d.wordModel={kind:'compare',largerLabel:'school bag',smallerLabel:'pencil case',largerValue:a,smallerValue:value,differenceValue:b,unknown:'smaller'};
     question=`A school bag costs ${money(a)}. A pencil case costs ${money(b)} less than the school bag. How much does the pencil case cost?`;
     explanation=`${money(a)} − ${money(b)} = ${money(value)}. The pencil case costs ${money(value)}.`;
    }else{
-    value=a-b;d.correctModel='compare';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    value=a-b;d.correctModel='compare';d.wordOperation='-';d.wordEquation={left:a,right:b};
     d.wordModel={kind:'compare',largerLabel:'March savings',smallerLabel:'April savings',largerValue:a,smallerValue:b,differenceValue:value,unknown:'difference'};
     question=`Yondu saved ${money(a)} in March and ${money(b)} in April. How much more did he save in March than in April?`;
     explanation=`${money(a)} − ${money(b)} = ${money(value)}. The difference is ${money(value)}.`;
    }
-   finish(value);
+   const storyExplanation=explanation;finish(value);explanation=storyExplanation;
    hint='First decide whether the story shows a comparison or a part–whole relationship. Check the model before choosing + or −.';
   }else{hint='Start with the largest value and count on to the smallest value.';
   }
@@ -1057,7 +1078,7 @@ function checkAnswer(l,input,interaction={}){
  if(c.engine==='fraction'&&l.type==='fraction')ok=Array.isArray(input)&&input.length===2&&input.every(whole)&&Number(input[0])===l.answer[0]&&Number(input[1])===l.answer[1];
  if(c.engine==='operations')ok=ok&&interaction.operationComplete===true;
  if(c.engine==='money'&&c.task==='make')ok=ok&&interaction.money===l.answer;
- if(c.engine==='money'&&c.task==='word')ok=ok&&interaction.moneyModel===c.correctModel;
+ if(c.engine==='money'&&c.task==='word')ok=ok&&interaction.moneyModelChecked===true&&interaction.moneyModel===c.correctModel&&interaction.moneyOperation===c.wordOperation;
  if(c.engine==='time'&&c.task==='set')ok=ok&&Array.isArray(interaction.clock)&&interaction.clock[0]===c.a&&interaction.clock[1]===c.b;
  if(c.engine==='numberline'&&['add','subtract'].includes(c.task))ok=ok&&interaction.numberlineMarker===l.answer;
  if(c.engine==='error')ok=ok&&interaction.errorReason===c.errorReason;
@@ -1163,9 +1184,10 @@ function renderAnswers(){const host=$('answerFields');host.replaceChildren();con
  else if(type==='durationseconds'){host.append(durationSecondsAnswerEntry());}
  else if(type==='quotient'){host.append(inputBox('answer1','Quotient',0),inputBox('answer2','Remainder',0,current.data.b-1));}
  else{const wholeAnswer=current.type==='fraction'&&current.answer?.[1]===1;host.append(fractionAnswerEntry(wholeAnswer));if(config.task==='equivalent')$('answer2').value=current.answer[1];}
+ if(engine==='money'&&config.task==='word'){const locked=interaction.moneyModelChecked!==true;host.querySelectorAll('input').forEach(input=>input.disabled=locked);$('checkButton').disabled=locked||!interaction.moneyOperation;}
 }
 function response(){return current.type==='choice'?selected:current.type==='reason'?interaction.reasons:current.type==='sequence'?interaction.sequenceValues:current.type==='timeampm'?[$('answer1').value,$('answer2').value,selected]:current.type==='time24four'?$('answer1').value:current.type==='number'?$('answer1').value:current.type==='fraction'&&current.answer?.[1]===1?[$('answer1').value,'1']:[$('answer1').value,$('answer2').value];}
-$('answerForm').onsubmit=e=>{e.preventDefault();if(solved)return;attempts++;const ok=checkAnswer(current,response(),interaction);$('feedback').style.color=ok?'#24735e':'#a6372c';if(ok){solved=true;$('feedback').textContent='Correct! '+current.explanation;results.push({first:attempts===1&&hints===0,attempts,hints});$('nextButton').hidden=false;$('checkButton').disabled=true;if(engine==='fraction')$('checkButton').hidden=true;$('hintButton').disabled=true;if(engine==='operations'){drawOperation();lockOperationAnswer();}if(engine==='place'){if(config.task==='ordinal')drawOrdinal();else if(config.task==='odd-even')drawOddEven();else{interaction.pvCards=true;interaction.pvExpanded=true;interaction.pvDigits=true;drawCountingChart();}}if(engine==='numberline'&&config.task==='pattern'){interaction.sequenceRuleShown=true;renderSequencePattern();}progress();}else{$('feedback').textContent=engine==='error'?'Check your explanation of the error and your corrected answer.':engine==='fraction'&&config.task==='shade'?'Check both the shaded parts and your fraction.':engine==='money'&&config.task==='make'?'Check both the value tokens and your written amount.':engine==='money'&&config.task==='word'?'Check the model you chose and the amount you entered.':engine==='time'&&config.task==='set'?'Check both the clock hands and your written time.':engine==='numberline'&&config.task==='pattern'?'Fill every blank, then check the order of the number cards.':engine==='numberline'&&['add','subtract'].includes(config.task)?'Check both the blue marker and your written answer.':'Try again. Look at the model or tap Help me.';}};
+$('answerForm').onsubmit=e=>{e.preventDefault();if(solved)return;attempts++;const ok=checkAnswer(current,response(),interaction);$('feedback').style.color=ok?'#24735e':'#a6372c';if(ok){solved=true;$('feedback').textContent='Correct! '+current.explanation;results.push({first:attempts===1&&hints===0,attempts,hints});$('nextButton').hidden=false;$('checkButton').disabled=true;if(engine==='fraction')$('checkButton').hidden=true;$('hintButton').disabled=true;if(engine==='operations'){drawOperation();lockOperationAnswer();}if(engine==='place'){if(config.task==='ordinal')drawOrdinal();else if(config.task==='odd-even')drawOddEven();else{interaction.pvCards=true;interaction.pvExpanded=true;interaction.pvDigits=true;drawCountingChart();}}if(engine==='numberline'&&config.task==='pattern'){interaction.sequenceRuleShown=true;renderSequencePattern();}progress();}else{$('feedback').textContent=engine==='error'?'Check your explanation of the error and your corrected answer.':engine==='fraction'&&config.task==='shade'?'Check both the shaded parts and your fraction.':engine==='money'&&config.task==='make'?'Check both the value tokens and your written amount.':engine==='money'&&config.task==='word'?'Check the relationship, the operation and your money answer.':engine==='time'&&config.task==='set'?'Check both the clock hands and your written time.':engine==='numberline'&&config.task==='pattern'?'Fill every blank, then check the order of the number cards.':engine==='numberline'&&['add','subtract'].includes(config.task)?'Check both the blue marker and your written answer.':'Try again. Look at the model or tap Help me.';}};
 $('hintButton').onclick=()=>{hints++;$('hint').hidden=false;const step=interaction.plan?.steps[interaction.step];$('hint').textContent=step?(hints===1?step.prompt:step.equation):hints===1?current.hint:current.hint+' '+current.explanation;};
 $('nextButton').onclick=()=>{index++;if(index>=config.count)summary();else showQuestion();};
 document.addEventListener('keydown',event=>{if(engine!=='fraction'||!['ArrowLeft','ArrowRight'].includes(event.key)||/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName))return;const target=$(event.key==='ArrowLeft'?'fractionBack':'fractionNext');if(!target||target.disabled)return;event.preventDefault();target.click();});
@@ -1843,8 +1865,69 @@ function moneyComparison(c){
  return `<div class="money-model comparison-model"><div class="money-compare-row"><strong>${E(m.largerLabel)}</strong><span style="--bar:100%">${E(larger)}</span></div><div class="money-compare-row"><strong>${E(m.smallerLabel)}</strong><span style="--bar:${pct}%">${E(smaller)}</span></div><div class="money-difference">Difference: ${E(diff)}</div></div>`;
 }
 function drawMoneyWord(c,host){
- host.innerHTML=`<div class="money-model-choices"><button type="button" data-money-model="compare" class="${interaction.moneyModel==='compare'?'selected':''}">Comparison model</button><button type="button" data-money-model="part-whole" class="${interaction.moneyModel==='part-whole'?'selected':''}">Part–whole model</button></div>${interaction.moneyModel?(interaction.moneyModel==='compare'?moneyComparison(c):moneyPartWhole(c)):'<div class="money-model-placeholder">Choose the model that matches the story.</div>'}${caption('Choose a model, use it to decide the operation, then enter the amount.')}`;
- host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{interaction.moneyModel=button.dataset.moneyModel;drawMoney();});
+ const checked=interaction.moneyModelChecked===true;
+ const feedback=interaction.moneyModelFeedback||'';
+ const op=interaction.moneyOperation||'';
+ const model=checked
+   ?(c.correctModel==='compare'?moneyComparison(c):moneyPartWhole(c))
+   :'<div class="money-model-placeholder">The model stays hidden until the correct model is checked.</div>';
+ const eq=c.wordEquation;
+ host.innerHTML=`<div class="money-word-flow">
+  <div class="money-word-step">
+   <div class="money-word-step-head"><span><b>1</b> Choose the relationship</span></div>
+   <div class="money-model-choices">
+    <button type="button" data-money-model="compare" class="${interaction.moneyModel==='compare'?'selected':''}">Comparison</button>
+    <button type="button" data-money-model="part-whole" class="${interaction.moneyModel==='part-whole'?'selected':''}">Part-whole</button>
+   </div>
+   <div class="diagram-toolbar"><button type="button" id="checkMoneyModel" ${interaction.moneyModel?'':'disabled'}>Check model</button></div>
+   <div class="money-word-status ${feedback==='Correct model.'?'good':feedback?'bad':''}">${E(feedback||'Choose a model, then check it before solving.')}</div>
+  </div>
+  <div class="money-word-step">
+   <div class="money-word-step-head"><span><b>2</b> Read the model</span></div>
+   ${model}
+  </div>
+  <div class="money-word-step" ${checked?'':'aria-disabled="true"'}>
+   <div class="money-word-step-head"><span><b>3</b> Choose the operation</span></div>
+   ${checked?`<div class="money-word-op-bank">
+     <button type="button" data-money-op="+" class="${op==='+'?'selected':''}">+</button>
+     <button type="button" data-money-op="-" class="${op==='-'?'selected':''}">&#8722;</button>
+    </div>
+    <div class="money-word-equation">
+     <span>${E(moneyText(eq.left))}</span>
+     <span class="op">${E(op==='-'?'\u2212':op||'?')}</span>
+     <span>${E(moneyText(eq.right))}</span>
+     <span class="eq">=</span>
+     <span class="unknown">?</span>
+    </div>`:'<p class="money-word-gate-note">Check the correct model first.</p>'}
+  </div>
+ </div>${caption('Choose model -> check model -> choose operation -> write the money answer.')}`;
+ host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{
+  interaction.moneyModel=button.dataset.moneyModel;
+  interaction.moneyModelChecked=false;
+  interaction.moneyModelFeedback='';
+  interaction.moneyOperation='';
+  renderAnswers();
+  drawMoney();
+ });
+ const check=$('checkMoneyModel');
+ if(check)check.onclick=()=>{
+  if(!interaction.moneyModel)return;
+  if(interaction.moneyModel===c.correctModel){
+   interaction.moneyModelChecked=true;
+   interaction.moneyModelFeedback='Correct model.';
+  }else{
+   interaction.moneyModelChecked=false;
+   interaction.moneyModelFeedback='Try the other model.';
+   interaction.moneyOperation='';
+  }
+  renderAnswers();
+  drawMoney();
+ };
+ host.querySelectorAll('[data-money-op]').forEach(button=>button.onclick=()=>{
+  interaction.moneyOperation=button.dataset.moneyOp;
+  drawMoney();
+  $('checkButton').disabled=!interaction.moneyModelChecked||!interaction.moneyOperation;
+ });
 }
 function drawMoney(){
  const c=current.data,host=$('diagram');
@@ -1997,7 +2080,7 @@ For classroom display, choose Pupil view. The money mat, written calculation and
 
 Pause before every Next step and ask pupils to predict the move. Keep the concrete mat and written calculation in view together. After all places are complete, pupils enter the whole answer and check it. They may also solve directly without revealing every step.
 
-Money word problems · Choose the model asks pupils to select Comparison or Part–whole before entering an amount. The model and final answer must both match the story. Teachers can choose find the total, find what remains, or find the difference.
+Money word problems now follow the P3 Money Word Problems reference flow: read the story → choose Comparison or Part–whole → Check model → use the revealed model to choose + or − → enter the final money answer. The answer stays locked until the model is checked. Teachers can choose part–whole problems that find the whole, what remains or the starting amount, and comparison problems that find the difference, the larger amount or the smaller amount.
 
 For counting, addition, subtraction and word problems, the teacher enters ordinary money notation in the field beside the visible dollar sign: type 12.75 for $12.75. Use two decimal places for clarity and 5-cent intervals. In Cents → dollars and cents conversion, the source field remains a whole-cent number such as 140. Fixed numbers preserve the exact amounts and selected settings. Random practice preserves the visible direction, problem structure and answer format while generating new valid amounts.`,`Count $8.50 from large to small; 140¢ = $1.40; compare two money amounts or order three; make $1, $10 or $100; $12.75 + $8.60; $31.60 − $20.90; choose a comparison or part–whole model for a money story.`],
  fraction:['Follow the Space Max fraction learning sequence','The Fraction menu follows the ten subtopics in Space Max and the Lost Fraction Rocket Parts. P2 has Writing Fractions, Comparing Unit Fractions, Comparing Like Fractions, Adding Like Fractions and Subtracting Like Fractions. P3 keeps those foundations and adds Equivalent Fractions, Simplifying Fractions, Comparing & Ordering Unlike Fractions, Adding Unlike Fractions and Subtracting Unlike Fractions.\n\nWriting Fractions uses the same clear order: check for equal parts, count all equal parts for the denominator, count shaded parts for the numerator, then write shaded parts over total equal parts. Unit fractions compare one equal part: the larger denominator gives the smaller part. Like fractions have equal denominators, so compare, add or subtract the numerators while the denominator stays the same.\n\nFor equivalent fractions, split every part by the same factor and multiply both numerator and denominator. For simplifying, divide numerator and denominator by the same greatest common factor. For unlike fractions, first make equal-sized parts with a common denominator. Only one denominator needs changing in the addition and subtraction examples. Then work with the numerators, keep the common denominator and simplify the answer.\n\nEach question opens at Step 1. Ask pupils to predict, then press Next step →. ← Previous revisits the explanation. These two buttons, the answer blank, Check answer and Next question stay in one fixed control dock, so their mouse positions do not jump while teaching. Check answer changes to Next question in the same button position after a correct response. Revealing or revisiting steps counts as help. The last step displays the symbolic answer and matching strip; pupils must still enter the fraction themselves. The numerator is entered above a real fraction line and the denominator below it. Fraction answers must be written in the requested simplest or equivalent form, not merely as any fraction with the same value.\n\nComparing tasks can compare two fractions or order three from least to greatest / greatest to least. Fixed mode keeps the teacher’s exact fractions. Random practice keeps the selected subtopic, question form and equivalent-fraction factor while generating new valid examples.','Write 3/8; compare 1/3 and 1/5; order 2/8, 5/8, 7/8; 3/8 + 2/8; 2/3 = 4/6; simplify 4/8; 1/2 + 1/4 = 3/4.'],
