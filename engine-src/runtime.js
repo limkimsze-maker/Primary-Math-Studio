@@ -721,11 +721,31 @@ function drawMoneyAlgorithm(c,host){
  host.innerHTML=`<div class="strict-money-workspace">${moneyOperationMat(plan,state,step,animation,settled)}<div class="strict-money-symbolic">${moneyWrittenAlgorithm(c,plan,state,step)}${moneyOperationPanel(plan,step,animation)}</div></div>${caption(c.task==='add'?'Align the decimal dots. Add 5¢, 10¢, $1, $10 and $100 in that order.':'Start at 5¢. If a place can subtract, subtract immediately; if not, rename first.')}`;
  wireMoneyOperationSteps(host,plan);
 }
-function moneyPartWhole(c){
- const total=c.wordType==='total'?'?':moneyText(c.a),left=c.wordType==='total'?moneyText(c.a):moneyText(c.b),right=c.wordType==='total'?moneyText(c.b):'?';
- return `<div class="money-model part-whole-model"><div class="money-whole">Whole: ${E(total)}</div><div class="money-parts"><span>${E(left)}</span><span>${E(right)}</span></div></div>`;
+function moneyBrace(direction='top'){
+ const d=direction==='top'?'M4 18 C4 10 6 6 12 6 L45 6 C47 6 48.5 6 50 2 C51.5 6 53 6 55 6 L88 6 C94 6 96 10 96 18':'M4 6 C4 14 6 18 12 18 L45 18 C47 18 48.5 18 50 22 C51.5 18 53 18 55 18 L88 18 C94 18 96 14 96 6';
+ return `<svg class='money-model-brace-svg' viewBox='0 0 100 24' preserveAspectRatio='none' aria-hidden='true'><path d='${d}'/></svg>`;
 }
-function moneyComparison(c){return `<div class="money-model comparison-model"><div class="money-compare-row"><strong>School bag</strong><span style="--bar:100%">${E(moneyText(c.a))}</span></div><div class="money-compare-row"><strong>Pencil case</strong><span style="--bar:${Math.max(12,Math.round(c.b/c.a*100))}%">${E(moneyText(c.b))}</span></div><div class="money-difference">Difference: ?</div></div>`;}
+function moneyPartWhole(c){
+ const findTotal=c.wordType==='total',total=findTotal?'?':moneyText(c.a),left=findTotal?moneyText(c.a):moneyText(c.b),right=findTotal?moneyText(c.b):'?';
+ const leftLabel=findTotal?'Book':'Spent',rightLabel=findTotal?'Game':'Left';
+ return `<div class='money-model reference-money-model part-whole-model'><div class='money-pw-stage'>
+   <div class='money-brace-span money-brace-top money-pw-top-brace'>${moneyBrace('top')}<span class='money-brace-value money-brace-value-top'>${E(total)}</span></div>
+   <div class='money-pw-bar'><div class='money-pw-part money-pw-left'><span class='money-model-part-label'>${E(leftLabel)}</span></div><div class='money-pw-part money-pw-right'><span class='money-model-part-label'>${E(rightLabel)}</span></div></div>
+   <div class='money-pw-bottom'><div class='money-brace-segment'><div class='money-brace-span money-brace-bottom'>${moneyBrace('bottom')}<span class='money-brace-value money-brace-value-bottom'>${E(left)}</span></div></div><div class='money-brace-segment'><div class='money-brace-span money-brace-bottom'>${moneyBrace('bottom')}<span class='money-brace-value money-brace-value-bottom'>${E(right)}</span></div></div></div>
+ </div></div>`;
+}
+function moneyComparison(c){
+ const ratio=Math.max(32,Math.min(78,Math.round(c.b/c.a*100)));
+ return `<div class='money-model reference-money-model comparison-model' style='--money-small-pct:${ratio}%'><div class='money-cmp-stage'>
+   <div class='money-cmp-labels'><strong>School bag</strong><strong>Pencil case</strong></div>
+   <div class='money-cmp-canvas'>
+    <div class='money-brace-span money-brace-top money-cmp-top-brace'>${moneyBrace('top')}<span class='money-brace-value money-brace-value-top'>${E(moneyText(c.a))}</span></div>
+    <div class='money-cmp-bar money-cmp-large'></div><div class='money-cmp-bar-row'><div class='money-cmp-bar money-cmp-small'></div></div>
+    <span class='money-cmp-guide money-cmp-guide-boundary' aria-hidden='true'></span><span class='money-cmp-guide money-cmp-guide-end' aria-hidden='true'></span>
+    <div class='money-cmp-bottom'><div class='money-brace-segment'><div class='money-brace-span money-brace-bottom'>${moneyBrace('bottom')}<span class='money-brace-value money-brace-value-bottom'>${E(moneyText(c.b))}</span></div></div><div class='money-brace-segment'><div class='money-brace-span money-brace-bottom'>${moneyBrace('bottom')}<span class='money-brace-value money-brace-value-bottom money-unknown-value'>?</span></div></div></div>
+   </div>
+  </div></div>`;
+}
 function drawMoneyWord(c,host){
  host.innerHTML=`<div class="money-model-choices"><button type="button" data-money-model="compare" class="${interaction.moneyModel==='compare'?'selected':''}">Comparison model</button><button type="button" data-money-model="part-whole" class="${interaction.moneyModel==='part-whole'?'selected':''}">Part–whole model</button></div>${interaction.moneyModel?(interaction.moneyModel==='compare'?moneyComparison(c):moneyPartWhole(c)):'<div class="money-model-placeholder">Choose the model that matches the story.</div>'}${caption('Choose a model, use it to decide the operation, then enter the amount.')}`;
  host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{interaction.moneyModel=button.dataset.moneyModel;drawMoney();});
