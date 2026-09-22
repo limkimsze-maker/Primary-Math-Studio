@@ -381,7 +381,7 @@ input[type=range]{width:100%;accent-color:var(--green);height:28px}.unit-reminde
 const $=id=>document.getElementById(id);
 const DEFAULT={title:"Let's read beaker scales",mode:'read',unit:'ml',max:500,step:50,major:100,answerFormat:'ml',showInterval:true,count:8,hints:true,beakerCount:1,beakerSetup:'same',beakers:[]};
 const CAPACITIES={ml:[100,250,500,1000,2000],l:[1000,2000,5000]};
-let config={...DEFAULT},questions=[],index=0,hintLevel=0,attempts=0,results=[],solved=false,fillTick=0,pupil=false,responseFormat='ml',dragging=false,beakerIndex=0,groupResults=[],fillTicks=[];
+let config={...DEFAULT},questions=[],index=0,hintLevel=0,attempts=0,results=[],solved=false,fillTick=0,pupil=false,responseFormat='ml',dragging=false,beakerIndex=0,groupResults=[],fillTicks=[],selectedVolume='';
 const BEAKER_IDS=['A','B','C','D','E'];
 let beakerDrafts=[];
 const unitLabel=unit=>unit==='l'?'ℓ':'ml';
