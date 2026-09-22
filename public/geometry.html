@@ -203,17 +203,17 @@ function copyGridSvg(q){
 }
 function lineGridSvg(q){
  const chosen=interaction.linePoint,anchor=q.anchor,ref=q.ref;
- const toXY=p=>[60+p[0]*80,35+p[1]*52],a=toXY(anchor),r1=toXY(ref[0]),r2=toXY(ref[1]);
+ const toXY=p=>[144+p[0]*52,18+p[1]*52],a=toXY(anchor),r1=toXY(ref[0]),r2=toXY(ref[1]);
  let s='<svg viewBox="0 0 600 310" role="img" aria-label="Draw a '+q.rel+' line"><rect x="35" y="18" width="530" height="274" rx="14" fill="#f8fbf7" stroke="#c9dac8"/>';
- for(let x=0;x<=6;x++)for(let y=0;y<=5;y++){const p=toXY([x,y]),anchorDot=x===anchor[0]&&y===anchor[1];s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(anchorDot?9:6)+'" fill="'+(anchorDot?'#efb84e':'#cfddce')+'" '+(!anchorDot?'class="grid-dot" data-lx="'+x+'" data-ly="'+y+'" tabindex="0" role="button"':'')+'/>';}
+ for(let x=0;x<=6;x++)for(let y=0;y<=5;y++){const p=toXY([x,y]),anchorDot=x===anchor[0]&&y===anchor[1];s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(anchorDot?10:8)+'" fill="'+(anchorDot?'#efb84e':'#cfddce')+'" '+(!anchorDot?'class="grid-dot" data-lx="'+x+'" data-ly="'+y+'" tabindex="0" role="button"':'')+'/>';}
  s+='<line x1="'+r1[0]+'" y1="'+r1[1]+'" x2="'+r2[0]+'" y2="'+r2[1]+'" class="geometry-target"/><circle cx="'+a[0]+'" cy="'+a[1]+'" r="10" class="geometry-anchor"/>';
  if(chosen){const b=toXY(chosen);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" class="geometry-drawn"/><circle cx="'+b[0]+'" cy="'+b[1]+'" r="8" fill="#2f72b8"/>';}
  s+='<text x="300" y="303" text-anchor="middle" font-size="13" font-weight="800" fill="#5b6d5d">Black = reference · Gold = starting point · Tap another dot</text></svg>';return s;
 }
 function vector(a,b){return[b[0]-a[0],b[1]-a[1]];}
-function lineDrawingCorrect(q){
- if(!interaction.linePoint)return false;
- const rv=vector(q.ref[0],q.ref[1]),dv=vector(q.anchor,interaction.linePoint),cross=rv[0]*dv[1]-rv[1]*dv[0],dot=rv[0]*dv[0]+rv[1]*dv[1];
+function linePointCorrect(q,point){
+ if(!point||point[0]===q.anchor[0]&&point[1]===q.anchor[1])return false;
+ const rv=vector(q.ref[0],q.ref[1]),dv=vector(q.anchor,point),cross=rv[0]*dv[1]-rv[1]*dv[0],dot=rv[0]*dv[0]+rv[1]*dv[1];
  if(q.rel==='parallel'){
    if(cross!==0)return false;
    const off=vector(q.ref[0],q.anchor);
@@ -221,6 +221,10 @@ function lineDrawingCorrect(q){
  }
  return dot===0;
 }
+function validLinePoints(q){
+ const out=[];for(let x=0;x<=6;x++)for(let y=0;y<=5;y++)if(linePointCorrect(q,[x,y]))out.push([x,y]);return out;
+}
+function lineDrawingCorrect(q){return linePointCorrect(q,interaction.linePoint);}
 function renderInteractive(q){
  const stage=$('stage'),choices=$('choices');choices.className='choices';$('key').className='key hidden';
  if(q.interactive==='build'){
@@ -268,7 +272,7 @@ function makeQuestion(g,t){
  else if(orientation==='vertical'){ref=[[3,0],[3,5]];anchor=rel==='parallel'?[pick([0,1,2,4,5,6]),pick([1,2,3,4])]:[3,pick([1,2,3,4])];}
  else if(orientation==='diag-up'){ref=[[1,4],[5,0]];anchor=rel==='parallel'?pick([[0,3],[1,2],[2,4],[4,3],[5,2]]):pick([[1,4],[2,3],[3,2],[4,1],[5,0]]);}
  else{ref=[[1,1],[5,5]];anchor=rel==='parallel'?pick([[0,2],[1,3],[2,4],[4,2],[5,3]]):pick([[1,1],[2,2],[3,3],[4,4],[5,5]]);}
- return{interactive:'draw-line',signature:'draw:'+rel+':'+orientation+':'+anchor.join(','),rel,ref,anchor,q:'Draw a '+rel+' line.',instruction:'Start from the gold point. Tap one other grid point to draw the blue line.',answer:rel,choices:[],hint:rel==='parallel'?'Parallel lines have the same direction and never meet. Use the grid to copy the black line’s direction.':'Perpendicular lines meet at a right angle. Turn a quarter-turn from the black line.'};
+ const q={interactive:'draw-line',signature:'draw:'+rel+':'+orientation+':'+anchor.join(','),rel,ref,anchor,q:'Draw a '+rel+' line.',instruction:'Start from the gold point. Tap one other grid point to draw the blue line.',answer:rel,choices:[],hint:rel==='parallel'?'Parallel lines have the same direction and never meet. Use the grid to copy the black line’s direction.':'Perpendicular lines meet at a right angle. Turn a quarter-turn from the black line.'};q.validPoints=validLinePoints(q);return q.validPoints.length?q:makeQuestion(g,t);
 }
 function build(){
  const g=Number($('grade').value),t=$('task').value,n=Number($('count').value);
