@@ -495,3 +495,39 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 .p1-strategy-bond{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:4px 10px}.p1-bond-svg{display:block;width:min(100%,600px);height:auto;margin:auto}.p1-bond-svg text{font:900 28px Arial;fill:#173b36}.p1-bond-svg line{stroke:#173b36;stroke-width:3;stroke-linecap:round}
 .p1-line-card{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:8px;overflow-x:auto}.p1-line20-svg{display:block;width:100%;min-width:760px;height:auto}.p1-line20-svg text{fill:#173b36}
 @media(max-width:700px){.p1-within20-nav{grid-template-columns:1fr}.p1-frame-row{grid-template-columns:1fr}.p1-ten-frame{grid-template-rows:repeat(2,52px)}.p1-counter{width:32px;height:32px}}
+
+/* P1 within-20 clarity upgrade */
+.p1-visual-stack{display:grid;gap:12px}
+.p1-visual-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 2px;color:#173b36}
+.p1-visual-heading b{font-size:17px}.p1-visual-heading span{font-size:13px;font-weight:800;color:#5a716c;text-align:right}
+.p1-visual-heading.line{margin-top:2px}
+.p1-frame-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.p1-frame-row>div{min-width:0;padding:14px}
+.p1-frame-row small{font-size:12px;font-weight:800;line-height:1.35;color:#55716b;min-height:32px}
+.p1-ten-frame{width:min(100%,400px);grid-template-rows:repeat(2,68px);border-width:4px}
+.p1-counter{width:44px;height:44px;border:2px solid #0003;box-shadow:inset 0 -5px 0 #00000012}
+.p1-counter.transferred{outline:4px solid #fff1ad;outline-offset:2px}
+.p1-split-bond{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:8px 12px}
+.p1-split-caption{text-align:center;font-size:14px;font-weight:900;color:#48655f;margin-bottom:2px}
+.p1-split-bond-svg{display:block;width:min(100%,430px);height:auto;margin:auto}
+.p1-split-bond-svg text{font:900 27px Arial;fill:#173b36}.p1-split-bond-svg line{stroke:#173b36;stroke-width:3;stroke-linecap:round}
+.p1-transfer-band{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;padding:12px 16px;border:2px solid #f0bd42;border-radius:13px;background:#fff9df;text-align:center;font-weight:900}
+.p1-transfer-band>strong{font-size:30px;color:#1c6558}.p1-transfer-band.complete{border-color:#82c699;background:#effaf2}.p1-transfer-band.subtract{border-color:#e6aa88;background:#fff4ec}.p1-transfer-band.proof{border-color:#a8c8be;background:#f2f8f6}
+.p1-strategy-pathway{padding:10px 14px;border-radius:12px;background:#173b36;color:#fff;text-align:center;font-size:24px;font-weight:900;letter-spacing:.01em}
+.p1-visual-placeholder{padding:12px 14px;border:1px dashed #9fb3ad;border-radius:12px;background:#f7fbfa;text-align:center;font-weight:800;color:#48655f}
+.p1-line-card{padding:10px 8px 2px;overflow-x:auto}
+.p1-line20-svg{display:block;width:100%;min-width:760px;height:auto}
+.p1-line20-svg text{font-family:Arial,sans-serif}
+@media(max-width:700px){
+ .p1-visual-heading{display:grid;gap:2px}.p1-visual-heading span{text-align:left}
+ .p1-frame-row{grid-template-columns:1fr 1fr;gap:6px}
+ .p1-frame-row>div{padding:8px 5px}.p1-frame-row>div>strong{font-size:13px}
+ .p1-frame-row small{font-size:10px;min-height:28px}
+ .p1-ten-frame{grid-template-rows:repeat(2,44px);border-width:3px}
+ .p1-counter{width:28px;height:28px}.p1-cross{font-size:38px}
+ .p1-transfer-band{grid-template-columns:1fr auto 1fr;padding:9px 7px;gap:6px;font-size:12px}
+ .p1-transfer-band>strong{font-size:22px}
+ .p1-strategy-pathway{font-size:18px;padding:9px}
+ .p1-split-bond-svg{max-width:300px}
+ .p1-line20-svg{min-width:690px}
+}
