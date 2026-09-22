@@ -15,6 +15,7 @@ main{max-width:1500px;margin:auto;padding:12px}.layout{display:grid;grid-templat
 .body{padding:12px;display:grid;gap:10px}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:4px 8px;border-radius:999px;background:var(--green2);color:var(--green);font-size:12px;font-weight:900}.body h2{margin:0;font-size:27px;line-height:1.15}.instruction{margin:0;color:var(--muted)}
 .work{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}.visual{background:#f7faf6;border:1px solid var(--line);border-radius:13px;padding:10px}.stage{min-height:430px;border:1px solid #cfddce;border-radius:12px;background:#fff;display:grid;place-items:center;padding:18px;overflow:hidden}.stage svg{display:block;width:min(100%,760px);height:auto;max-height:390px}.caption{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
 .answer{border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:9px;position:sticky;top:8px}.choices{display:grid;gap:8px}.choice{min-height:46px;border:1px solid #bfd0c0;border-radius:9px;background:#fff;font-weight:800;padding:8px}.choice:hover{background:#f3f8f3}.choice.selected{background:#e8f3ec;border-color:var(--green)}.choices.sorter{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.choices.sorter.two{grid-template-columns:repeat(2,minmax(0,1fr))}.choice.sort-bay{min-height:76px;border-width:2px;display:flex;flex-direction:column;justify-content:center;gap:3px}.choice.sort-bay .main{font-size:14px;font-weight:900}.choice.sort-bay .sub{font-size:11px;color:var(--muted);margin:0}.sort-rulebar{display:grid;gap:6px;margin-top:4px;width:100%}.sort-rulebar.three{grid-template-columns:repeat(3,1fr)}.sort-rulebar.two{grid-template-columns:repeat(2,1fr)}.sort-rule{border:1px solid #c7d7c6;border-radius:9px;background:#f8fbf7;padding:7px 5px;text-align:center;font-size:12px;font-weight:900}.sort-rule small{display:block;color:var(--muted);font-weight:700;margin-top:2px}.check,.next{min-height:44px;border:0;border-radius:9px;font-weight:900}.check{background:var(--green);color:#fff}.next{background:var(--ink);color:#fff}.help{min-height:42px;border:1px solid #cbd8c9;border-radius:9px;background:#fff;font-weight:800}.feedback,.hint{padding:9px 10px;border-radius:9px;font-size:13px}.feedback.good{background:#e7f5e9;color:#245f32}.feedback.bad{background:#fff0ea;color:#8c3d24}.hint{background:#fff8e8;border-left:4px solid var(--gold)}.progress{display:flex;gap:5px;flex-wrap:wrap}.progress i{width:9px;height:9px;border-radius:50%;background:#d9e2d8}.progress i.done{background:var(--green)}.progress i.current{background:var(--gold)}
+.geometry-interactive{width:100%;display:grid;gap:10px}.geometry-interactive svg{touch-action:manipulation}.interactive-note{text-align:center;font-size:13px;color:var(--muted);font-weight:700}.piece-bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}.piece-bank button,.interactive-tools button{min-height:44px;border:1px solid #bfd0c0;border-radius:9px;background:#fff;font-weight:800;padding:7px}.piece-bank button:active,.interactive-tools button:active{transform:translateY(1px)}.interactive-tools{display:flex;gap:7px;flex-wrap:wrap}.grid-dot{cursor:pointer}.grid-dot:hover{fill:#2f72b8}.geometry-drawn{stroke:#2f72b8;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;fill:none}.geometry-target{stroke:#315a46;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;fill:none}.geometry-anchor{fill:#efb84e;stroke:#8b6518;stroke-width:2}
 .key{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}.vertex-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);vertical-align:middle;margin-right:4px}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:7px 12px}
 dialog{width:min(760px,94vw);border:1px solid var(--line);border-radius:14px;padding:0;max-height:85dvh}.ghead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.ghead h2{margin:0}.ghead button{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff}.gbody{padding:16px 20px;line-height:1.55}.gbody p,.gbody li{font-size:14px}
@@ -34,24 +35,24 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;paddin
 <section class="activity"><div class="bar"><strong>P1–P3 · Shapes, Angles & Lines</strong><span id="meta"></span></div><div class="body">
 <div class="chips"><span class="chip" id="levelChip"></span><span class="chip" id="skillChip"></span></div><h2 id="question"></h2><p class="instruction" id="instruction"></p>
 <div class="work"><div class="visual"><div class="stage" id="stage"></div><div class="caption" id="caption"></div><div class="key hidden" id="key"></div></div>
-<aside class="answer"><strong>Choose your answer</strong><div class="choices" id="choices"></div><button class="check" id="check" type="button">Check answer</button><button class="help" id="help" type="button">Help me</button><div class="feedback hidden" id="feedback"></div><div class="hint hidden" id="hint"></div><button class="next hidden" id="next" type="button">Next question →</button><div class="progress" id="progress"></div></aside></div>
+<aside class="answer"><strong id="answerHeading">Choose your answer</strong><div class="choices" id="choices"></div><button class="check" id="check" type="button">Check answer</button><button class="help" id="help" type="button">Help me</button><div class="feedback hidden" id="feedback"></div><div class="hint hidden" id="hint"></div><button class="next hidden" id="next" type="button">Next question →</button><div class="progress" id="progress"></div></aside></div>
 </div></section></div></main>
 <footer>Created by Lim Kim Sze</footer>
 <dialog id="guide"><div class="ghead"><h2>Teacher guide</h2><button id="closeGuide" type="button">×</button></div><div class="gbody">
-<h3>P1 · 2D shapes</h3><p>Name and describe rectangles, squares, triangles, circles, half circles and quarter circles. Explicitly teach <strong>vertex</strong> for one corner and <strong>vertices</strong> for more than one. Pupils count straight sides and vertices and recognise component shapes in simple composite figures.</p>
+<h3>P1 · 2D shapes</h3><p>Name and describe rectangles, squares, triangles, circles, half circles and quarter circles. Explicitly teach <strong>vertex</strong> for one corner and <strong>vertices</strong> for more than one. Pupils count straight sides and vertices, recognise component shapes, <strong>form figures from shapes</strong>, and <strong>copy figures on a dot grid</strong>. In the building activity, pupils select pieces to reproduce the target. In the copy activity, they tap the same vertices on the blank grid; starting at any vertex and drawing clockwise or anticlockwise is accepted.</p>
 <h3>P2 · Patterns and 3D shapes</h3><p>Complete patterns involving shape, size, colour and orientation. Identify, name, describe and classify cubes, cuboids, cones, cylinders and spheres.</p>
-<h3>P3 · Angles and lines</h3><p>Recognise right angles and compare other angles with a right angle. Recognise and draw parallel and perpendicular lines.</p><p><strong>Sorter approach:</strong> inspired by your P3 Angle Dock and Line Dock activities. Pupils classify the visual first; no degree or answer label is printed on the object. Angle sizes and line orientations vary so pupils do not rely on position.</p>
+<h3>P3 · Angles and lines</h3><p>Recognise right angles and compare other angles with a right angle. Recognise and <strong>actually draw</strong> parallel and perpendicular lines. In the drawing task, a black reference line and a gold point are given. Pupils tap a second grid point to create the blue line; the engine checks the mathematical relationship, not a pre-drawn Yes/No choice.</p><p><strong>Sorter approach:</strong> inspired by your P3 Angle Dock and Line Dock activities. Pupils classify the visual first; no degree or answer label is printed on the object. Angle sizes and line orientations vary so pupils do not rely on position.</p>
 </div></dialog>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
 const TASKS={
-  1:[['shape','Name a 2D shape'],['sides','Count straight sides'],['vertices','Count vertices'],['composite','Find a shape in a composite figure']],
+  1:[['shape','Name a 2D shape'],['sides','Count straight sides'],['vertices','Count vertices'],['composite','Find a shape in a composite figure'],['build-figure','Build a figure from shapes'],['copy-grid','Copy a figure on a dot grid']],
   2:[['pattern','Complete a 2D shape pattern'],['solid','Name a 3D shape'],['solid-property','Describe a 3D shape']],
-  3:[['angle','Angle sorter'],['lines','Parallel / perpendicular sorter'],['draw-lines','Choose the correct line to draw']]
+  3:[['angle','Angle sorter'],['lines','Parallel / perpendicular sorter'],['draw-lines','Draw parallel / perpendicular lines']]
 };
 const NOTES={
-  1:'P1: 2D shapes, straight sides, vertex / vertices, composite figures and grid-based visual recognition.',
+  1:'P1: 2D shapes, straight sides, vertex / vertices, composite figures, forming figures from shapes and copying figures on grids.',
   2:'P2: 2D shape patterns and 3D shapes — cube, cuboid, cone, cylinder and sphere.',
   3:'P3: right angles, angles smaller/greater than a right angle, parallel lines and perpendicular lines.'
 };
@@ -70,7 +71,7 @@ const SOLIDS={
  cylinder:{label:'Cylinder',flat:2,curved:1,vertices:0,edges:2},
  sphere:{label:'Sphere',flat:0,curved:1,vertices:0,edges:0}
 };
-let questions=[],index=0,selected='',solved=false,results=[];
+let questions=[],index=0,selected='',solved=false,results=[],interaction={};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function populateTasks(){const g=Number($('grade').value);$('task').innerHTML=TASKS[g].map(([v,l])=>'<option value="'+v+'">'+l+'</option>').join('');$('levelNote').textContent=NOTES[g]}
 function shapeSvg(kind,showVertices=false){let body='',stroke='#315a46',fill='#dcebd7';const rot=pick([-18,-12,-8,0,8,12,18]);if(kind==='triangle')body='<path d="M300 45 L150 245 H450 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>';else if(kind==='circle')body='<circle cx="300" cy="145" r="105" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>';else if(kind==='semicircle')body='<path d="M160 220 A140 140 0 0 1 440 220 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>';else if(kind==='quarter')body='<path d="M190 245 V45 A200 200 0 0 1 390 245 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>';else body='<rect x="'+(kind==='square'?205:140)+'" y="55" width="'+(kind==='square'?190:320)+'" height="190" rx="3" fill="'+fill+'" stroke="'+stroke+'" stroke-width="5"/>';
@@ -110,16 +111,133 @@ function linesSvg(type){
 function patternSvg(seq,blank){const xs=[90,190,290,390,490],y=145;let b='<svg viewBox="0 0 600 290">';seq.forEach((k,i)=>{if(i===blank){b+='<rect x="'+(xs[i]-42)+'" y="103" width="84" height="84" rx="10" fill="#fff" stroke="#efb84e" stroke-width="4" stroke-dasharray="8 6"/><text x="'+xs[i]+'" y="155" text-anchor="middle" font-size="28" font-weight="900">?</text>';return}const col=i%2===0?'#b9dcf4':'#f5d58b';if(k==='triangle')b+='<path d="M'+xs[i]+' 100 l-45 85 h90 z" fill="'+col+'" stroke="#315a46" stroke-width="3"/>';else if(k==='circle')b+='<circle cx="'+xs[i]+'" cy="'+y+'" r="42" fill="'+col+'" stroke="#315a46" stroke-width="3"/>';else b+='<rect x="'+(xs[i]-42)+'" y="103" width="84" height="84" fill="'+col+'" stroke="#315a46" stroke-width="3"/>'});return b+'</svg>'}
 function compositeSvg(target){const parts=[['square',170,70],['triangle',320,65],['circle',420,185],['rectangle',180,190]],rot=pick([-6,-3,0,3,6]);let s='<svg viewBox="0 0 600 300"><g transform="rotate('+rot+' 300 150)">';s+='<rect x="110" y="45" width="380" height="210" rx="18" fill="#f1f6ee" stroke="#b8cbb7" stroke-width="3"/>';parts.forEach(([k,x,y])=>{const hi=SHAPES[k].label===target,stroke=hi?'#c63d3d':'#315a46',sw=hi?7:3;if(k==='square')s+='<rect x="'+x+'" y="'+y+'" width="80" height="80" fill="#b9dcf4" stroke="'+stroke+'" stroke-width="'+sw+'"/>';if(k==='rectangle')s+='<rect x="'+x+'" y="'+y+'" width="130" height="55" fill="#f5d58b" stroke="'+stroke+'" stroke-width="'+sw+'"/>';if(k==='triangle')s+='<path d="M'+x+' '+y+' l-45 80 h90 z" fill="#d7bfe8" stroke="'+stroke+'" stroke-width="'+sw+'"/>';if(k==='circle')s+='<circle cx="'+x+'" cy="'+y+'" r="40" fill="#bce4c0" stroke="'+stroke+'" stroke-width="'+sw+'"/>'});return s+'</g></svg>'}
 function drawLineChoiceSvg(rel,correct){if(rel==='parallel'&&correct)return '<svg viewBox="0 0 600 290"><line x1="120" y1="185" x2="480" y2="185" stroke="#315a46" stroke-width="6"/><line x1="120" y1="95" x2="480" y2="95" stroke="#2f72b8" stroke-width="6"/></svg>';const angle=rel==='perpendicular'?(correct?90:25):35,rad=angle*Math.PI/180,dx=145*Math.cos(rad),dy=145*Math.sin(rad);return '<svg viewBox="0 0 600 290"><line x1="120" y1="145" x2="480" y2="145" stroke="#315a46" stroke-width="6"/><line x1="'+(300-dx)+'" y1="'+(145-dy)+'" x2="'+(300+dx)+'" y2="'+(145+dy)+'" stroke="#2f72b8" stroke-width="6"/>'+(rel==='perpendicular'&&correct?'<path d="M300 145h24v24h-24" fill="none" stroke="#efb84e" stroke-width="3"/>':'')+'</svg>'}
+
+const BUILD_FIGURES=[
+ {name:'House',pieces:['Square','Triangle','Rectangle'],placements:[['Square',300,175,0],['Triangle',300,75,0],['Rectangle',300,205,0]]},
+ {name:'Rocket',pieces:['Rectangle','Triangle','Circle'],placements:[['Rectangle',300,150,0],['Triangle',300,55,0],['Circle',300,155,0]]},
+ {name:'Boat',pieces:['Half circle','Triangle'],placements:[['Half circle',300,185,0],['Triangle',300,105,0]]},
+ {name:'Tree',pieces:['Triangle','Rectangle'],placements:[['Triangle',300,105,0],['Rectangle',300,205,0]]},
+ {name:'Robot',pieces:['Square','Rectangle','Circle','Circle'],placements:[['Square',300,80,0],['Rectangle',300,175,0],['Circle',255,235,0],['Circle',345,235,0]]},
+ {name:'Ice cream',pieces:['Triangle','Circle'],placements:[['Triangle',300,175,180],['Circle',300,85,0]]},
+ {name:'Fish',pieces:['Circle','Triangle'],placements:[['Circle',285,145,0],['Triangle',405,145,90]]},
+ {name:'Kite',pieces:['Triangle','Triangle'],placements:[['Triangle',300,100,0],['Triangle',300,190,180]]},
+ {name:'Train',pieces:['Rectangle','Square','Circle','Circle'],placements:[['Rectangle',265,135,0],['Square',390,120,0],['Circle',235,220,0],['Circle',365,220,0]]},
+ {name:'Flower',pieces:['Circle','Circle','Circle','Rectangle'],placements:[['Circle',260,100,0],['Circle',340,100,0],['Circle',300,65,0],['Rectangle',300,195,0]]}
+];
+const COPY_FIGURES=[
+ {name:'triangle',points:[[1,4],[3,1],[5,4]]},
+ {name:'square',points:[[1,1],[4,1],[4,4],[1,4]]},
+ {name:'rectangle',points:[[1,2],[5,2],[5,4],[1,4]]},
+ {name:'sloping quadrilateral',points:[[1,1],[4,1],[5,4],[2,4]]},
+ {name:'pentagon',points:[[1,3],[2,1],[4,1],[5,3],[3,5]]},
+ {name:'arrow',points:[[1,2],[3,2],[3,1],[5,3],[3,5],[3,4],[1,4]]},
+ {name:'step shape',points:[[1,1],[4,1],[4,2],[5,2],[5,4],[2,4],[2,3],[1,3]]},
+ {name:'kite',points:[[3,1],[5,3],[3,5],[2,3]]},
+ {name:'trapezium',points:[[2,1],[4,1],[5,4],[1,4]]},
+ {name:'irregular pentagon',points:[[1,2],[3,1],[5,2],[4,5],[2,4]]}
+];
+function pieceShapeSvg(label,x,y,rot=0,filled=true){
+ const fill=filled?'#bfe3c1':'#fff',stroke=filled?'#315a46':'#8aa18d',g='transform="translate('+x+' '+y+') rotate('+rot+')"';
+ if(label==='Square')return '<rect '+g+' x="-42" y="-42" width="84" height="84" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>';
+ if(label==='Rectangle')return '<rect '+g+' x="-52" y="-30" width="104" height="60" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>';
+ if(label==='Triangle')return '<path '+g+' d="M0 -48 L-48 42 H48 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>';
+ if(label==='Circle')return '<circle '+g+' cx="0" cy="0" r="39" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>';
+ if(label==='Half circle')return '<path '+g+' d="M-48 20 A48 48 0 0 1 48 20 Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>';
+ return '';
+}
+function buildFigureSvg(q){
+ let s='<svg viewBox="0 0 600 290" role="img" aria-label="Build the '+q.figure.name+' from shapes"><rect x="18" y="18" width="270" height="254" rx="14" fill="#f8fbf7" stroke="#c9dac8"/><rect x="312" y="18" width="270" height="254" rx="14" fill="#f8fbf7" stroke="#c9dac8"/><text x="153" y="43" text-anchor="middle" font-size="15" font-weight="900" fill="#315a46">TARGET</text><text x="447" y="43" text-anchor="middle" font-size="15" font-weight="900" fill="#315a46">YOUR FIGURE</text>';
+ const scale=.68,tx=-52,ty=20;
+ s+='<g transform="translate('+tx+' '+ty+') scale('+scale+')">'+q.figure.placements.map(p=>pieceShapeSvg(...p,true)).join('')+'</g>';
+ s+='<g transform="translate(244 '+ty+') scale('+scale+')">'+q.figure.placements.map((p,i)=>pieceShapeSvg(p[0],p[1],p[2],p[3],interaction.build?.[i]===p[0])).join('')+'</g></svg>';
+ return s;
+}
+function gridCoord(v){return 42+(v-1)*49;}
+function polygonSegments(points){return points.map((p,i)=>[p,points[(i+1)%points.length]]);}
+function canonicalSegment(a,b){const x=a[0]+','+a[1],y=b[0]+','+b[1];return x<y?x+'|'+y:y+'|'+x;}
+function samePolygonEdges(a,b){
+ if(a.length!==b.length)return false;
+ const sa=new Set(polygonSegments(a).map(([x,y])=>canonicalSegment(x,y)));
+ return polygonSegments(b).every(([x,y])=>sa.has(canonicalSegment(x,y)));
+}
+function copyGridSvg(q){
+ const target=q.copy.points,drawn=interaction.gridPoints||[];
+ const grid=(ox,title,interactive)=>{let s='<g transform="translate('+ox+' 0)"><text x="147" y="27" text-anchor="middle" font-size="15" font-weight="900" fill="#315a46">'+title+'</text>';
+  for(let a=1;a<=5;a++)for(let b=1;b<=5;b++){const x=gridCoord(a),y=gridCoord(b)+15;s+='<circle cx="'+x+'" cy="'+y+'" r="'+(interactive?7:5)+'" fill="'+(interactive?'#d7e4d6':'#a8baa8')+'" '+(interactive?'class="grid-dot" data-gx="'+a+'" data-gy="'+b+'" tabindex="0" role="button"':'')+'/>';}
+  const pts=interactive?drawn:target;if(pts.length>1){const path=pts.map(p=>(gridCoord(p[0]))+','+(gridCoord(p[1])+15)).join(' ');s+='<polyline points="'+path+'" class="'+(interactive?'geometry-drawn':'geometry-target')+'"/>';if((!interactive||pts.length===target.length)&&pts.length>2)s+='<line x1="'+gridCoord(pts.at(-1)[0])+'" y1="'+(gridCoord(pts.at(-1)[1])+15)+'" x2="'+gridCoord(pts[0][0])+'" y2="'+(gridCoord(pts[0][1])+15)+'" class="'+(interactive?'geometry-drawn':'geometry-target')+'"/>';}
+  if(interactive)for(const p of drawn)s+='<circle cx="'+gridCoord(p[0])+'" cy="'+(gridCoord(p[1])+15)+'" r="8" fill="#2f72b8"/>';
+  return s+'</g>';};
+ return '<svg viewBox="0 0 600 310" role="img" aria-label="Target dot-grid figure and pupil copy">'+grid(8,'COPY THIS',false)+grid(305,'YOUR GRID',true)+'</svg>';
+}
+function lineGridSvg(q){
+ const chosen=interaction.linePoint,anchor=q.anchor,ref=q.ref;
+ const toXY=p=>[60+p[0]*80,35+p[1]*52],a=toXY(anchor),r1=toXY(ref[0]),r2=toXY(ref[1]);
+ let s='<svg viewBox="0 0 600 310" role="img" aria-label="Draw a '+q.rel+' line"><rect x="35" y="18" width="530" height="274" rx="14" fill="#f8fbf7" stroke="#c9dac8"/>';
+ for(let x=0;x<=6;x++)for(let y=0;y<=5;y++){const p=toXY([x,y]),anchorDot=x===anchor[0]&&y===anchor[1];s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(anchorDot?9:6)+'" fill="'+(anchorDot?'#efb84e':'#cfddce')+'" '+(!anchorDot?'class="grid-dot" data-lx="'+x+'" data-ly="'+y+'" tabindex="0" role="button"':'')+'/>';}
+ s+='<line x1="'+r1[0]+'" y1="'+r1[1]+'" x2="'+r2[0]+'" y2="'+r2[1]+'" class="geometry-target"/><circle cx="'+a[0]+'" cy="'+a[1]+'" r="10" class="geometry-anchor"/>';
+ if(chosen){const b=toXY(chosen);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" class="geometry-drawn"/><circle cx="'+b[0]+'" cy="'+b[1]+'" r="8" fill="#2f72b8"/>';}
+ s+='<text x="300" y="303" text-anchor="middle" font-size="13" font-weight="800" fill="#5b6d5d">Black = reference · Gold = starting point · Tap another dot</text></svg>';return s;
+}
+function vector(a,b){return[b[0]-a[0],b[1]-a[1]];}
+function lineDrawingCorrect(q){
+ if(!interaction.linePoint)return false;
+ const rv=vector(q.ref[0],q.ref[1]),dv=vector(q.anchor,interaction.linePoint),cross=rv[0]*dv[1]-rv[1]*dv[0],dot=rv[0]*dv[0]+rv[1]*dv[1];
+ if(q.rel==='parallel'){
+   if(cross!==0)return false;
+   const off=vector(q.ref[0],q.anchor);
+   return rv[0]*off[1]-rv[1]*off[0]!==0;
+ }
+ return dot===0;
+}
+function renderInteractive(q){
+ const stage=$('stage'),choices=$('choices');choices.className='choices';$('key').className='key hidden';
+ if(q.interactive==='build'){
+   stage.innerHTML='<div class="geometry-interactive">'+buildFigureSvg(q)+'<p class="interactive-note">Tap pieces in the order you want to place them.</p></div>';
+   const bank=['Square','Rectangle','Triangle','Circle','Half circle'];choices.innerHTML='<div class="piece-bank">'+bank.map(x=>'<button type="button" data-piece="'+x+'">'+x+'</button>').join('')+'</div><div class="interactive-tools"><button type="button" id="undoPiece">Undo last piece</button><button type="button" id="clearPieces">Clear</button></div>';
+   choices.querySelectorAll('[data-piece]').forEach(b=>b.onclick=()=>{if(solved||interaction.build.length>=q.figure.pieces.length)return;interaction.build.push(b.dataset.piece);renderInteractive(q);});
+   $('undoPiece').onclick=()=>{if(!solved){interaction.build.pop();renderInteractive(q);}};$('clearPieces').onclick=()=>{if(!solved){interaction.build=[];renderInteractive(q);}};
+ }else if(q.interactive==='copy'){
+   stage.innerHTML='<div class="geometry-interactive">'+copyGridSvg(q)+'<p class="interactive-note">Tap '+q.copy.points.length+' corner dots on YOUR GRID. The last point joins back to the first automatically.</p></div>';
+   choices.innerHTML='<div class="interactive-tools"><button type="button" id="undoGrid">Undo last point</button><button type="button" id="clearGrid">Clear</button></div>';
+   stage.querySelectorAll('[data-gx]').forEach(dot=>{const choose=()=>{if(solved||interaction.gridPoints.length>=q.copy.points.length)return;const p=[Number(dot.dataset.gx),Number(dot.dataset.gy)];if(interaction.gridPoints.some(x=>x[0]===p[0]&&x[1]===p[1]))return;interaction.gridPoints.push(p);renderInteractive(q);};dot.onclick=choose;dot.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}};});
+   $('undoGrid').onclick=()=>{if(!solved){interaction.gridPoints.pop();renderInteractive(q);}};$('clearGrid').onclick=()=>{if(!solved){interaction.gridPoints=[];renderInteractive(q);}};
+ }else if(q.interactive==='draw-line'){
+   stage.innerHTML='<div class="geometry-interactive">'+lineGridSvg(q)+'<p class="interactive-note">Draw through the gold point so the blue line is <strong>'+q.rel+'</strong> to the black line.</p></div>';
+   choices.innerHTML='<div class="interactive-tools"><button type="button" id="clearLine">Clear blue line</button></div>';
+   stage.querySelectorAll('[data-lx]').forEach(dot=>{const choose=()=>{if(solved)return;interaction.linePoint=[Number(dot.dataset.lx),Number(dot.dataset.ly)];renderInteractive(q);};dot.onclick=choose;dot.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}};});
+   $('clearLine').onclick=()=>{if(!solved){interaction.linePoint=null;renderInteractive(q);}};
+ }
+}
 function makeAngleQuestion(deg,orientation){
  const kind=deg<90?'less':deg===90?'right':'greater';
  const ans=kind==='less'?'Smaller than a right angle':kind==='right'?'Right angle':'Greater than a right angle';
  return{sorter:'angle',degree:deg,q:'Sort this angle into the correct bay.',instruction:'No degree is shown. Judge the angle by its opening, as in your Angle Dock sorter.',svg:angleSvg(kind,deg,orientation),answer:ans,choices:['Smaller than a right angle','Right angle','Greater than a right angle'],hint:'Compare the opening with a square corner. Smaller opening → smaller than a right angle; exact square corner → right angle; wider opening → greater than a right angle.'}
 }
-function makeQuestion(g,t){if(g===1){const kind=pick(Object.keys(SHAPES));if(t==='shape')return{q:'Name this 2D shape.',instruction:'Look at the whole shape. Do not use its colour or orientation.',svg:shapeSvg(kind),answer:SHAPES[kind].label,choices:['Square','Rectangle','Triangle','Circle','Half circle','Quarter circle'],hint:'Look at its straight sides, curved sides and corners.'};if(t==='sides')return{q:'How many straight sides does this shape have?',instruction:'Count straight sides only.',svg:shapeSvg(kind),answer:String(SHAPES[kind].sides),choices:['0','1','2','3','4'],hint:'A curved edge is not a straight side.'};if(t==='vertices')return{q:'How many vertices does this shape have?',instruction:'A vertex is one corner. More than one vertex are called vertices.',svg:shapeSvg(kind,true),answer:String(SHAPES[kind].vertices),choices:['0','1','2','3','4'],hint:'Count the red corner points. One corner = one vertex.'};const target=pick(['Square','Rectangle','Triangle','Circle']);return{q:'Which shape is highlighted in red?',instruction:'Look at the smaller shapes that make up the composite figure.',svg:compositeSvg(target),answer:target,choices:['Square','Rectangle','Triangle','Circle'],hint:'Look for the shape with the thick red outline.'}}
- if(g===2){if(t==='pattern'){const family=pick([['square','circle'],['triangle','square'],['circle','triangle']]),seq=[family[0],family[1],family[0],family[1],family[0]],blank=pick([1,2,3,4]);return{q:'Which shape completes the pattern?',instruction:'Look for the repeating shape pattern.',svg:patternSvg(seq,blank),answer:SHAPES[seq[blank]].label,choices:['Square','Triangle','Circle'],hint:'Say the pattern aloud from left to right.'}}const kind=pick(Object.keys(SOLIDS));if(t==='solid')return{q:'Name this 3D shape.',instruction:'Look at its flat and curved surfaces.',svg:solidSvg(kind),answer:SOLIDS[kind].label,choices:['Cube','Cuboid','Cone','Cylinder','Sphere'],hint:'Think about its surfaces, edges and vertices.'};const s=SOLIDS[kind],descs=[];if(s.flat)descs.push(s.flat+' flat surface'+(s.flat===1?'':'s'));if(s.curved)descs.push(s.curved+' curved surface'+(s.curved===1?'':'s'));descs.push(s.vertices+' vert'+(s.vertices===1?'ex':'ices'));return{q:'Which description matches this 3D shape?',instruction:'Use the mathematical properties of the solid.',svg:solidSvg(kind),answer:descs.join(', '),choices:[descs.join(', '),s.flat+' flat surfaces, '+(s.vertices+1)+' vertices',Math.max(0,s.flat-1)+' flat surfaces, '+s.vertices+' vertices'],hint:'Count flat surfaces, curved surfaces and vertices carefully.'}}
- if(t==='angle'){return makeAngleQuestion(pick([30,40,50,60,70,90,105,120,135,145,155]))}
- if(t==='lines'){const kind=pick(['parallel','perpendicular','neither']),ans=kind==='parallel'?'Parallel':kind==='perpendicular'?'Perpendicular':'Neither';return{sorter:'lines',q:'Sort this line pair into the correct bay.',instruction:'The pair may be tilted. Judge the relationship, not its orientation, as in your Line Dock sorter.',svg:linesSvg(kind),answer:ans,choices:['Parallel','Perpendicular','Neither'],hint:'Parallel lines go in the same direction and never meet. Perpendicular lines meet at a right angle. If neither rule fits, choose Neither.'}}
- const rel=pick(['parallel','perpendicular']),correct=Math.random()>.5;return{q:'Would the blue line correctly draw a '+rel+' line?',instruction:'Compare the blue line with the black reference line.',svg:drawLineChoiceSvg(rel,correct),answer:correct?'Yes':'No',choices:['Yes','No'],hint:rel==='parallel'?'Parallel lines must keep the same direction and distance apart.':'Perpendicular lines must meet at a right angle.'}}
+function makeQuestion(g,t){
+ if(g===1){
+  if(t==='build-figure'){const figure=pick(BUILD_FIGURES);return{interactive:'build',signature:'build:'+figure.name,figure,q:'Build the '+figure.name+' using the shape pieces.',instruction:'Look at the target, then tap the pieces to make the same figure.',answer:figure.pieces.join('|'),choices:[],hint:'Look at one target part at a time. Match its shape, then place the next piece.'};}
+  if(t==='copy-grid'){const copy=pick(COPY_FIGURES);return{interactive:'copy',signature:'copy:'+copy.name,copy,q:'Copy the figure on the dot grid.',instruction:'Tap the matching corner dots on YOUR GRID. You may start at any corner and go either way around.',answer:copy.name,choices:[],hint:'Match each corner with the same grid position. Count spaces across and down.'};}
+  const kind=pick(Object.keys(SHAPES));
+  if(t==='shape')return{q:'Name this 2D shape.',instruction:'Look at the whole shape. Do not use its colour or orientation.',svg:shapeSvg(kind),answer:SHAPES[kind].label,choices:['Square','Rectangle','Triangle','Circle','Half circle','Quarter circle'],hint:'Look at its straight sides, curved sides and corners.'};
+  if(t==='sides')return{q:'How many straight sides does this shape have?',instruction:'Count straight sides only.',svg:shapeSvg(kind),answer:String(SHAPES[kind].sides),choices:['0','1','2','3','4'],hint:'A curved edge is not a straight side.'};
+  if(t==='vertices')return{q:'How many vertices does this shape have?',instruction:'A vertex is one corner. More than one are called vertices.',svg:shapeSvg(kind,true),answer:String(SHAPES[kind].vertices),choices:['0','1','2','3','4'],hint:'Count the red corner points. One corner = one vertex.'};
+  const target=pick(['Square','Rectangle','Triangle','Circle']);return{q:'Which shape is highlighted in red?',instruction:'Look at the smaller shapes that make up the composite figure.',svg:compositeSvg(target),answer:target,choices:['Square','Rectangle','Triangle','Circle'],hint:'Look for the shape with the thick red outline.'};
+ }
+ if(g===2){
+  if(t==='pattern'){const family=pick([['square','circle'],['triangle','square'],['circle','triangle']]),seq=[family[0],family[1],family[0],family[1],family[0]],blank=pick([1,2,3,4]);return{q:'Which shape completes the pattern?',instruction:'Look for the repeating shape pattern.',svg:patternSvg(seq,blank),answer:SHAPES[seq[blank]].label,choices:['Square','Triangle','Circle'],hint:'Say the pattern aloud from left to right.'};}
+  const kind=pick(Object.keys(SOLIDS));if(t==='solid')return{q:'Name this 3D shape.',instruction:'Look at its flat and curved surfaces.',svg:solidSvg(kind),answer:SOLIDS[kind].label,choices:['Cube','Cuboid','Cone','Cylinder','Sphere'],hint:'Think about its surfaces, edges and vertices.'};
+  const s=SOLIDS[kind],descs=[];if(s.flat)descs.push(s.flat+' flat surface'+(s.flat===1?'':'s'));if(s.curved)descs.push(s.curved+' curved surface'+(s.curved===1?'':'s'));descs.push(s.vertices+' vert'+(s.vertices===1?'ex':'ices'));return{q:'Which description matches this 3D shape?',instruction:'Use the mathematical properties of the solid.',svg:solidSvg(kind),answer:descs.join(', '),choices:[descs.join(', '),s.flat+' flat surfaces, '+(s.vertices+1)+' vertices',Math.max(0,s.flat-1)+' flat surfaces, '+s.vertices+' vertices'],hint:'Count flat surfaces, curved surfaces and vertices carefully.'};
+ }
+ if(t==='angle')return makeAngleQuestion(pick([30,40,50,60,70,90,105,120,135,145,155]));
+ if(t==='lines'){const kind=pick(['parallel','perpendicular','neither']),ans=kind==='parallel'?'Parallel':kind==='perpendicular'?'Perpendicular':'Neither';return{sorter:'lines',q:'Sort this line pair into the correct bay.',instruction:'The pair may be tilted. Judge the relationship, not its orientation, as in your Line Dock sorter.',svg:linesSvg(kind),answer:ans,choices:['Parallel','Perpendicular','Neither'],hint:'Parallel lines go in the same direction and never meet. Perpendicular lines meet at a right angle. If neither rule fits, choose Neither.'};}
+ const rel=pick(['parallel','perpendicular']),orientation=pick(['horizontal','vertical','diag-up','diag-down']);
+ let ref,anchor;
+ if(orientation==='horizontal'){ref=[[1,2],[5,2]];anchor=rel==='parallel'?[3,4]:[3,2];}
+ else if(orientation==='vertical'){ref=[[3,0],[3,5]];anchor=rel==='parallel'?[1,3]:[3,3];}
+ else if(orientation==='diag-up'){ref=[[1,4],[5,0]];anchor=rel==='parallel'?[1,2]:[3,2];}
+ else{ref=[[1,1],[5,5]];anchor=rel==='parallel'?[1,3]:[3,3];}
+ return{interactive:'draw-line',signature:'draw:'+rel+':'+orientation,rel,ref,anchor,q:'Draw a '+rel+' line.',instruction:'Start from the gold point. Tap one other grid point to draw the blue line.',answer:rel,choices:[],hint:rel==='parallel'?'Parallel lines have the same direction and never meet. Use the grid to copy the black line’s direction.':'Perpendicular lines meet at a right angle. Turn a quarter-turn from the black line.'};
+}
 function build(){
  const g=Number($('grade').value),t=$('task').value,n=Number($('count').value);
  questions=[];
@@ -129,14 +247,39 @@ function build(){
    questions=degrees.map((deg,i)=>makeAngleQuestion(deg,orientations[i]));
  }else{
    const used=new Set();let tries=0;
-   while(questions.length<n&&tries<300){tries++;const q=makeQuestion(g,t),key=q.answer+'|'+q.svg;if(used.has(key))continue;used.add(key);questions.push(q)}
+   while(questions.length<n&&tries<500){tries++;const q=makeQuestion(g,t),key=q.signature||(String(q.answer)+'|'+String(q.svg));if(used.has(key))continue;used.add(key);questions.push(q)}
    while(questions.length<n){questions.push(makeQuestion(g,t))}
  }
  index=0;results=[];show()
 }
-function show(){const q=questions[index],g=Number($('grade').value);selected='';solved=false;$('meta').textContent='Question '+(index+1)+' of '+questions.length;$('levelChip').textContent='P'+g;$('skillChip').textContent=$('task').selectedOptions[0].textContent;$('question').textContent=q.q;$('instruction').textContent=q.instruction;$('stage').innerHTML=q.svg;$('caption').textContent=g===1&&$('task').value==='vertices'?'Vertex = one corner · Vertices = more than one corner':q.sorter?'Look at the diagram first. The object itself does not show the answer.':'';const key=$('key');if(q.sorter==='angle'){key.className='key';key.innerHTML='<div class="sort-rulebar three"><div class="sort-rule">Smaller<small>opening smaller than a right angle</small></div><div class="sort-rule">Right angle<small>same as a square corner</small></div><div class="sort-rule">Greater<small>opening greater than a right angle</small></div></div>'}else if(q.sorter==='lines'){key.className='key';key.innerHTML='<div class="sort-rulebar three"><div class="sort-rule">Parallel<small>same direction · never meet</small></div><div class="sort-rule">Perpendicular<small>meet at a right angle</small></div><div class="sort-rule">Neither<small>not parallel · not perpendicular</small></div></div>'}else{key.className=(g===1&&$('task').value==='vertices')?'key':'key hidden';key.innerHTML='<span><span class="vertex-dot"></span>vertex</span>'}const choices=$('choices');choices.className='choices'+(q.sorter?' sorter':'');choices.innerHTML=q.choices.map((x,i)=>{if(!q.sorter)return '<button type="button" class="choice" data-v="'+x.replace(/"/g,'&quot;')+'">'+x+'</button>';const sub=q.sorter==='angle'?(i===0?'smaller opening':i===1?'square corner':'wider opening'):(i===0?'same direction':i===1?'meet at 90°':'not either');return '<button type="button" class="choice sort-bay" data-v="'+x.replace(/"/g,'&quot;')+'"><span class="main">'+x+'</span><span class="sub">'+sub+'</span></button>'}).join('');choices.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(solved)return;selected=b.dataset.v;choices.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')});$('feedback').className='feedback hidden';$('hint').className='hint hidden';$('check').classList.remove('hidden');$('help').classList.remove('hidden');$('next').classList.add('hidden');renderProgress()}
+function show(){
+ const q=questions[index],g=Number($('grade').value);selected='';solved=false;interaction={build:[],gridPoints:[],linePoint:null};
+ $('meta').textContent='Question '+(index+1)+' of '+questions.length;$('levelChip').textContent='P'+g;$('skillChip').textContent=$('task').selectedOptions[0].textContent;$('question').textContent=q.q;$('instruction').textContent=q.instruction;
+ $('caption').textContent=g===1&&$('task').value==='vertices'?'Vertex = one corner · Vertices = more than one corner':q.interactive==='copy'?'Copy the positions and connecting sides.':q.interactive==='draw-line'?'The gold point is part of the line you must draw.':q.interactive==='build'?'Use the target as your model.':q.sorter?'Look at the diagram first. The object itself does not show the answer.':'';
+ const key=$('key');
+ if(q.sorter==='angle'){key.className='key';key.innerHTML='<div class="sort-rulebar three"><div class="sort-rule">Smaller<small>opening smaller than a right angle</small></div><div class="sort-rule">Right angle<small>same as a square corner</small></div><div class="sort-rule">Greater<small>opening greater than a right angle</small></div></div>';}
+ else if(q.sorter==='lines'){key.className='key';key.innerHTML='<div class="sort-rulebar three"><div class="sort-rule">Parallel<small>same direction · never meet</small></div><div class="sort-rule">Perpendicular<small>meet at a right angle</small></div><div class="sort-rule">Neither<small>not parallel · not perpendicular</small></div></div>';}
+ else{key.className=(g===1&&$('task').value==='vertices')?'key':'key hidden';key.innerHTML='<span><span class="vertex-dot"></span>vertex</span>';}
+ $('answerHeading').textContent=q.interactive==='build'?'Shape pieces':q.interactive==='copy'?'Drawing controls':q.interactive==='draw-line'?'Line controls':'Choose your answer';
+ const choices=$('choices');
+ if(q.interactive){renderInteractive(q);}
+ else{
+   $('stage').innerHTML=q.svg;choices.className='choices'+(q.sorter?' sorter':'');choices.innerHTML=q.choices.map((x,i)=>{if(!q.sorter)return '<button type="button" class="choice" data-v="'+x.replace(/"/g,'&quot;')+'">'+x+'</button>';const sub=q.sorter==='angle'?(i===0?'smaller opening':i===1?'square corner':'wider opening'):(i===0?'same direction':i===1?'meet at 90°':'not either');return '<button type="button" class="choice sort-bay" data-v="'+x.replace(/"/g,'&quot;')+'"><span class="main">'+x+'</span><span class="sub">'+sub+'</span></button>';}).join('');
+   choices.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(solved)return;selected=b.dataset.v;choices.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');});
+ }
+ $('feedback').className='feedback hidden';$('hint').className='hint hidden';$('check').classList.remove('hidden');$('help').classList.remove('hidden');$('next').classList.add('hidden');renderProgress();
+}
 function renderProgress(){const p=$('progress');p.innerHTML=questions.map((_,i)=>'<i class="'+(i<results.length?'done':i===index?'current':'')+'"></i>').join('')}
-$('check').onclick=()=>{if(!selected){$('feedback').className='feedback bad';$('feedback').textContent='Choose an answer first.';return}const q=questions[index];if(selected===q.answer){solved=true;results.push(true);$('feedback').className='feedback good';$('feedback').textContent='Correct.';$('check').classList.add('hidden');$('next').classList.remove('hidden');$('next').textContent=index===questions.length-1?'Finish activity →':'Next question →';renderProgress()}else{$('feedback').className='feedback bad';$('feedback').textContent='Try again. Use the mathematical features in the diagram.'}}
+$('check').onclick=()=>{
+ const q=questions[index];let ok=false,ready=true;
+ if(q.interactive==='build'){ready=interaction.build.length===q.figure.pieces.length;ok=ready&&interaction.build.every((x,i)=>x===q.figure.pieces[i]);}
+ else if(q.interactive==='copy'){ready=interaction.gridPoints.length===q.copy.points.length;ok=ready&&samePolygonEdges(interaction.gridPoints,q.copy.points);}
+ else if(q.interactive==='draw-line'){ready=!!interaction.linePoint;ok=ready&&lineDrawingCorrect(q);}
+ else{ready=!!selected;ok=ready&&selected===q.answer;}
+ if(!ready){$('feedback').className='feedback bad';$('feedback').textContent=q.interactive==='build'?'Place all the shape pieces first.':q.interactive==='copy'?'Tap all the corner points first.':q.interactive==='draw-line'?'Tap one grid point to draw the blue line.':'Choose an answer first.';return;}
+ if(ok){solved=true;results.push(true);$('feedback').className='feedback good';$('feedback').textContent=q.interactive==='draw-line'?'Correct. Your blue line is '+q.rel+'.':q.interactive==='copy'?'Correct. Your copied figure has the same sides and vertices.':q.interactive==='build'?'Correct. Your shape pieces form the target figure.':'Correct.';$('check').classList.add('hidden');$('next').classList.remove('hidden');$('next').textContent=index===questions.length-1?'Finish activity →':'Next question →';renderProgress();}
+ else{$('feedback').className='feedback bad';$('feedback').textContent=q.interactive==='draw-line'?'Try again. Use the grid and the black reference line.':q.interactive==='copy'?'Try again. Compare every corner and connecting side with the target.':q.interactive==='build'?'Try again. Compare each piece with the target from top to bottom.':'Try again. Use the mathematical features in the diagram.';}
+}
 $('help').onclick=()=>{const h=$('hint');h.className='hint';h.textContent=questions[index].hint}
 $('next').onclick=()=>{if(!solved)return;if(index<questions.length-1){index++;show();document.querySelector('.activity').scrollIntoView({block:'start'})}else{$('question').textContent='Activity complete!';$('instruction').textContent='You completed '+questions.length+' questions.';$('stage').innerHTML='<div style="font-size:72px">✓</div>';$('choices').innerHTML='';$('check').classList.add('hidden');$('help').classList.add('hidden');$('next').classList.add('hidden')}}
 $('grade').onchange=()=>{populateTasks();build()};$('task').onchange=build;$('generate').onclick=build;
