@@ -6,6 +6,8 @@ The three measurement engines preserve the completed length, mass and volume act
 
 The grade presets were checked against MOE's 2021 Primary Mathematics syllabus, updated October 2025, pages 31–36. This toolkit covers selected reusable activity types, not every syllabus objective. Original questions and diagrams are used; exact textbook-page alignment is not claimed.
 
+See `SYLLABUS_AUDIT_P1_P3.md` for the current objective-by-objective P1–P3 coverage audit and remaining gaps.
+
 ## Development
 
 Run `node scripts/assemble-engines.mjs` after editing `engine-src/`. It generates the standalone HTML and the download endpoint's template from the same source. Use the project package manager and existing Sites build workflow.
