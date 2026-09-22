@@ -400,6 +400,44 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
  body.pupil.fraction-engine #questionView{overflow:auto}
  body.pupil.fraction-engine #diagram{min-height:620px;margin:4px 8px}
 }
+
+
+/* Money word problems: use the original P3 reference activity exactly.
+   The reference owns the question -> model gate -> model completion -> equation -> answer flow. */
+.money-word-reference .activity-bar,
+.money-word-reference .question-block,
+.money-word-reference #answerForm,
+.money-word-reference .activity-bottom{display:none!important}
+.money-word-reference #questionView{height:auto;min-height:0}
+.money-word-reference #diagram{
+ display:block!important;
+ width:100%!important;
+ max-width:none!important;
+ min-height:900px!important;
+ max-height:none!important;
+ overflow:visible!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+}
+.money-word-reference-frame{
+ display:block;
+ width:100%;
+ min-height:900px;
+ border:0;
+ margin:0;
+ padding:0;
+ background:#fff;
+}
+.pupil.money-word-reference main,
+.pupil.money-word-reference .activity,
+.pupil.money-word-reference #questionView{height:auto!important;min-height:100dvh!important;overflow:visible!important}
+.pupil.money-word-reference #diagram{min-height:100dvh!important}
+@media(max-width:700px){
+ .money-word-reference #diagram,.money-word-reference-frame{min-height:1450px}
+}
 </style><script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head><body>
 <script id="saved-config" type="application/json">null</script>
@@ -441,7 +479,7 @@ function fields(c) {
   if(c.task==='convert')return [pair('a',c.direction==='money-to-cents'?'Amount in dollars and cents':'Amount in cents',5,moneyMax,5),select('direction','Conversion direction',[['cents-to-money','Cents → dollars and cents'],['money-to-cents','Dollars and cents → cents']])];
   if(c.task==='make')return [select('target','Savings Quest level',[['100','Make $1'],['1000','Make $10'],['10000','Make $100']]),format];
   if(['add','subtract'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
-  if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
+  if(c.task==='word')return [];
   return [pair('a','Amount to show',5,moneyMax,5),format];
  }
  case 'fraction':{
@@ -892,7 +930,7 @@ function teacherMoneyCents(raw,label='Amount'){
 }
 function readForm(){const c={...draft,engine,grade:Number($('grade').value),task:$('task').value,mode:$('mode').value,count:Number($('count').value)};for(const f of fields(c)){const el=$('setting-'+f.key);if(el)c[f.key]=el.dataset.moneyDollars==='true'?teacherMoneyCents(el.value,f.label):el.value;}return validate(c);}
 function populate(c){draft={...c};$('grade').replaceChildren();for(const g of engine==='area'?[3]:engine==='fraction'?[2,3]:[1,2,3]){const o=document.createElement('option');o.value=g;o.textContent='Primary '+g;$('grade').append(o);}$('grade').value=c.grade;$('task').replaceChildren();for(const [v,l]of tasks(engine,c.grade)){const o=document.createElement('option');o.value=v;o.textContent=l;$('task').append(o);}$('task').value=c.task;$('mode').value=c.mode;$('count').value=c.mode==='fixed'?8:c.count;populateFields();}
-function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',random=draft.mode==='random';$('mode').closest('.field').hidden=exploring;$('countField').hidden=!random||exploring;
+function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord;$('countField').hidden=!random||exploring||referenceMoneyWord;
  const kept={operations:['representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category']};
  for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode')populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='$';symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else wrap.append(input);$('engineFields').append(wrap);}
  $('randomNote').textContent=exploring?'Explore numbers from 0 to 100. Generate restores your starting number and both button amounts.':random?'New questions use this grade’s preset ranges. The settings shown here stay fixed; other numbers or shapes vary. Generate again or reopen the downloaded file for a new practice set.':'Your chosen numbers make one fixed example. Reopening or restarting keeps that same example.';
@@ -908,7 +946,7 @@ $('loadButton').onclick=()=>$('loadFile').click();$('loadFile').onchange=async()
 $('downloadButton').onclick=()=>{try{const c=readForm(),html=activityHTML(initialHTML,c);if(!onlineDownload(c,'activity'))file(engine+'-activity.html',html,'text/html');$('teacherStatus').textContent='HTML activity downloaded with these settings. '+(c.task==='hundred'?'Your starting number and both button amounts stay the same.':c.mode==='random'?'Questions vary each time it opens.':'Your fixed example stays the same.');}catch(e){$('teacherStatus').textContent=e.message;}};
 function pupil(on){document.body.classList.toggle('pupil',on);$('viewButton').textContent=on?'Teacher view':'Pupil view';$('previewLabel').textContent=on?'Your activity':'Pupil activity preview';if(parent!==window)parent.postMessage({type:'primary-maths-pupil-view',on},'*');} $('viewButton').onclick=()=>pupil(!document.body.classList.contains('pupil'));
 function start(c){config=validate(c);index=0;results=[];try{localStorage.setItem('maths-studio-'+engine,JSON.stringify(config));}catch{}$('summary').hidden=true;$('questionView').hidden=false;showQuestion();}
-function showQuestion(){current=lesson(config);attempts=0;hints=0;solved=false;selected=null;interaction={};document.body.classList.toggle('operations-engine',engine==='operations');$('question').textContent=current.question;$('taskLabel').textContent=tasks(engine,config.grade).find(t=>t[0]===config.task)[1];$('questionMeta').textContent=`${index+1} / ${config.count}`;$('activityInstruction').textContent=current.type==='explore'?'Explore. Predict. Explain.':current.type==='sequence'?'Arrange. Explain. Check.':'Look at the model. Explain. Check.';$('feedback').textContent='';$('hint').hidden=true;$('nextButton').hidden=true;$('nextButton').textContent=index+1===config.count?'Finish activity →':'Next question →';$('checkButton').hidden=false;$('checkButton').disabled=false;$('hintButton').disabled=false;renderDiagram();renderAnswers();if(engine==='operations')lockOperationAnswer();progress();}
+function showQuestion(){current=lesson(config);attempts=0;hints=0;solved=false;selected=null;interaction={};document.body.classList.toggle('operations-engine',engine==='operations');document.body.classList.toggle('money-word-reference',engine==='money'&&config.task==='word');$('question').textContent=current.question;$('taskLabel').textContent=tasks(engine,config.grade).find(t=>t[0]===config.task)[1];$('questionMeta').textContent=`${index+1} / ${config.count}`;$('activityInstruction').textContent=current.type==='explore'?'Explore. Predict. Explain.':current.type==='sequence'?'Arrange. Explain. Check.':'Look at the model. Explain. Check.';$('feedback').textContent='';$('hint').hidden=true;$('nextButton').hidden=true;$('nextButton').textContent=index+1===config.count?'Finish activity →':'Next question →';$('checkButton').hidden=false;$('checkButton').disabled=false;$('hintButton').disabled=false;renderDiagram();renderAnswers();if(engine==='operations')lockOperationAnswer();progress();}
 function progress(){$('progress').replaceChildren();for(let n=0;n<config.count;n++){const s=document.createElement('span');s.className=n<results.length?'done':n===index?'current':'';$('progress').append(s);}$('progress').setAttribute('aria-label',`${results.length} of ${config.count} completed`);}
 function inputBox(id,label,min=0,max){const w=document.createElement('label');w.innerHTML=`<span class="answer-label">${E(label)}</span>`;const i=document.createElement('input');i.id=id;i.type='number';i.inputMode='numeric';i.step=1;i.min=min;if(max!==undefined)i.max=max;i.className='answer-input';i.required=true;i.autocomplete='off';w.append(i);return w;}
 function moneyAnswerEntry(){
@@ -1620,8 +1658,30 @@ function moneyComparison(c){
   </div></div>`;
 }
 function drawMoneyWord(c,host){
- host.innerHTML=`<div class="money-model-choices"><button type="button" data-money-model="compare" class="${interaction.moneyModel==='compare'?'selected':''}">Comparison model</button><button type="button" data-money-model="part-whole" class="${interaction.moneyModel==='part-whole'?'selected':''}">Part–whole model</button></div>${interaction.moneyModel?(interaction.moneyModel==='compare'?moneyComparison(c):moneyPartWhole(c)):'<div class="money-model-placeholder">Choose the model that matches the story.</div>'}${caption('Choose a model, use it to decide the operation, then enter the amount.')}`;
- host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{interaction.moneyModel=button.dataset.moneyModel;drawMoney();});
+ const source='https://limkimsze-maker.github.io/P3_Money_Word_Problems/?studio=primary-maths-studio';
+ host.innerHTML=`<iframe id="moneyWordReferenceFrame" class="money-word-reference-frame" src="${source}" title="P3 Money Word Problems reference activity" loading="eager"></iframe>`;
+ const frame=$('moneyWordReferenceFrame');
+ const fit=()=>{
+  try{
+   const doc=frame.contentDocument;
+   if(!doc)return;
+   const height=Math.max(900,doc.documentElement?.scrollHeight||0,doc.body?.scrollHeight||0);
+   frame.style.height=height+'px';
+  }catch{}
+ };
+ frame.addEventListener('load',()=>{
+  fit();
+  try{
+   const doc=frame.contentDocument;
+   if(doc?.body&&'ResizeObserver' in window){
+    const observer=new ResizeObserver(()=>requestAnimationFrame(fit));
+    observer.observe(doc.body);
+    frame._moneyReferenceObserver=observer;
+   }
+  }catch{}
+  setTimeout(fit,120);
+  setTimeout(fit,500);
+ });
 }
 function drawMoney(){
  const c=current.data,host=$('diagram');
