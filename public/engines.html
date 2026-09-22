@@ -495,6 +495,42 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 .p1-strategy-bond{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:4px 10px}.p1-bond-svg{display:block;width:min(100%,600px);height:auto;margin:auto}.p1-bond-svg text{font:900 28px Arial;fill:#173b36}.p1-bond-svg line{stroke:#173b36;stroke-width:3;stroke-linecap:round}
 .p1-line-card{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:8px;overflow-x:auto}.p1-line20-svg{display:block;width:100%;min-width:760px;height:auto}.p1-line20-svg text{fill:#173b36}
 @media(max-width:700px){.p1-within20-nav{grid-template-columns:1fr}.p1-frame-row{grid-template-columns:1fr}.p1-ten-frame{grid-template-rows:repeat(2,52px)}.p1-counter{width:32px;height:32px}}
+
+/* P1 within-20 clarity upgrade */
+.p1-visual-stack{display:grid;gap:12px}
+.p1-visual-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 2px;color:#173b36}
+.p1-visual-heading b{font-size:17px}.p1-visual-heading span{font-size:13px;font-weight:800;color:#5a716c;text-align:right}
+.p1-visual-heading.line{margin-top:2px}
+.p1-frame-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.p1-frame-row>div{min-width:0;padding:14px}
+.p1-frame-row small{font-size:12px;font-weight:800;line-height:1.35;color:#55716b;min-height:32px}
+.p1-ten-frame{width:min(100%,400px);grid-template-rows:repeat(2,68px);border-width:4px}
+.p1-counter{width:44px;height:44px;border:2px solid #0003;box-shadow:inset 0 -5px 0 #00000012}
+.p1-counter.transferred{outline:4px solid #fff1ad;outline-offset:2px}
+.p1-split-bond{background:#fff;border:1px solid #dce5e2;border-radius:13px;padding:8px 12px}
+.p1-split-caption{text-align:center;font-size:14px;font-weight:900;color:#48655f;margin-bottom:2px}
+.p1-split-bond-svg{display:block;width:min(100%,430px);height:auto;margin:auto}
+.p1-split-bond-svg text{font:900 27px Arial;fill:#173b36}.p1-split-bond-svg line{stroke:#173b36;stroke-width:3;stroke-linecap:round}
+.p1-transfer-band{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;padding:12px 16px;border:2px solid #f0bd42;border-radius:13px;background:#fff9df;text-align:center;font-weight:900}
+.p1-transfer-band>strong{font-size:30px;color:#1c6558}.p1-transfer-band.complete{border-color:#82c699;background:#effaf2}.p1-transfer-band.subtract{border-color:#e6aa88;background:#fff4ec}.p1-transfer-band.proof{border-color:#a8c8be;background:#f2f8f6}
+.p1-strategy-pathway{padding:10px 14px;border-radius:12px;background:#173b36;color:#fff;text-align:center;font-size:24px;font-weight:900;letter-spacing:.01em}
+.p1-visual-placeholder{padding:12px 14px;border:1px dashed #9fb3ad;border-radius:12px;background:#f7fbfa;text-align:center;font-weight:800;color:#48655f}
+.p1-line-card{padding:10px 8px 2px;overflow-x:auto}
+.p1-line20-svg{display:block;width:100%;min-width:760px;height:auto}
+.p1-line20-svg text{font-family:Arial,sans-serif}
+@media(max-width:700px){
+ .p1-visual-heading{display:grid;gap:2px}.p1-visual-heading span{text-align:left}
+ .p1-frame-row{grid-template-columns:1fr 1fr;gap:6px}
+ .p1-frame-row>div{padding:8px 5px}.p1-frame-row>div>strong{font-size:13px}
+ .p1-frame-row small{font-size:10px;min-height:28px}
+ .p1-ten-frame{grid-template-rows:repeat(2,44px);border-width:3px}
+ .p1-counter{width:28px;height:28px}.p1-cross{font-size:38px}
+ .p1-transfer-band{grid-template-columns:1fr auto 1fr;padding:9px 7px;gap:6px;font-size:12px}
+ .p1-transfer-band>strong{font-size:22px}
+ .p1-strategy-pathway{font-size:18px;padding:9px}
+ .p1-split-bond-svg{max-width:300px}
+ .p1-line20-svg{min-width:690px}
+}
 </style><script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head><body>
 <script id="saved-config" type="application/json">null</script>
@@ -1099,22 +1135,50 @@ function p1BondSvg(top,left,right,op='+',answer='?'){
  return '<svg class="p1-bond-svg" viewBox="0 0 420 150" role="img" aria-label="Number bond"><text x="70" y="42">'+top+'</text><text x="130" y="42">'+op+'</text><text x="194" y="42">'+(left+right)+'</text><text x="260" y="42">=</text><text x="325" y="42">'+answer+'</text><line x1="175" y1="54" x2="142" y2="96"/><line x1="175" y1="54" x2="216" y2="96"/><text x="132" y="132">'+left+'</text><text x="226" y="132">'+right+'</text></svg>';
 }
 function p1Line20Svg(d,step,kind){
- const W=980,H=170,left=38,right=942,y=94,gap=(right-left)/20,x=n=>left+n*gap;
- let arcs='',markers='';
- const arc=(a,b,label,level=0)=>{const x1=x(a),x2=x(b),mid=(x1+x2)/2,cy=36-level*14;return '<path d="M '+x1+' '+(y-10)+' Q '+mid+' '+cy+' '+x2+' '+(y-10)+'" fill="none" stroke="#173b36" stroke-width="4" stroke-linecap="round"/><text x="'+mid+'" y="'+(cy-5)+'" text-anchor="middle" font-size="17" font-weight="900">'+label+'</text>';};
+ const W=1080,H=190,left=44,right=1036,y=102,gap=(right-left)/20,x=n=>left+n*gap;
+ const jump=(from,to,label,level=0)=>{
+  const x1=x(from),x2=x(to),mid=(x1+x2)/2,cy=43-level*14;
+  return '<path d="M '+x1+' '+(y-11)+' Q '+mid+' '+cy+' '+x2+' '+(y-11)+'" fill="none" stroke="#17211f" stroke-width="4.5" stroke-linecap="round"/><text x="'+mid+'" y="'+(cy-5)+'" text-anchor="middle" font-size="18" font-weight="900">'+label+'</text>';
+ };
+ let arcs='',markers='',labels='',start=0,target=0,current=null,showTen=false,showTarget=false;
  if(kind==='make10'){
-  if(step===3)arcs+=arc(d.bigger,10,'+'+d.toTen);
-  if(step===4){arcs+=arc(d.bigger,10,'+'+d.toTen);if(d.remainder)arcs+=arc(10,d.total,'+'+d.remainder,1);}
-  if(step>=6){const shown=Math.min(step-5,d.smaller);for(let i=0;i<shown;i++)arcs+=arc(d.bigger+i,d.bigger+i+1,'+1',i%2);}
-  markers='<circle cx="'+x(d.bigger)+'" cy="'+y+'" r="9" fill="#ef4444"/>'+(step>=3?'<circle cx="'+x(10)+'" cy="'+y+'" r="9" fill="#eab308"/>':'')+(step>=4?'<circle cx="'+x(d.total)+'" cy="'+y+'" r="9" fill="#20b15a"/>':'');
+  start=d.bigger;target=d.total;
+  if(step===3)arcs+=jump(d.bigger,10,'+'+d.toTen);
+  else if(step===4){arcs+=jump(d.bigger,10,'+'+d.toTen);if(d.remainder)arcs+=jump(10,d.total,'+'+d.remainder,1);}
+  else if(step>=6){const shown=Math.min(step-5,d.smaller);for(let i=0;i<shown;i++)arcs+=jump(d.bigger+i,d.bigger+i+1,'+1',i%2);}
+  if(step>=5){const shown=Math.max(0,Math.min(step-5,d.smaller));current=d.bigger+shown;showTen=current>=10&&current!==d.bigger;showTarget=current===d.total;}
+  else{showTen=true;showTarget=step>=4;}
  }else{
-  if(step===4)arcs+=arc(d.a,10,'−'+d.toTen);
-  if(step===5){arcs+=arc(d.a,10,'−'+d.toTen);if(d.remainder)arcs+=arc(10,d.result,'−'+d.remainder,1);}
-  if(step>=7){const shown=Math.min(step-6,d.b);for(let i=0;i<shown;i++)arcs+=arc(d.a-i,d.a-i-1,'−1',i%2);}
-  markers='<circle cx="'+x(d.a)+'" cy="'+y+'" r="9" fill="#ef4444"/>'+(step>=4?'<circle cx="'+x(10)+'" cy="'+y+'" r="9" fill="#eab308"/>':'')+(step>=5?'<circle cx="'+x(d.result)+'" cy="'+y+'" r="9" fill="#20b15a"/>':'');
+  start=d.a;target=d.result;
+  if(step===4)arcs+=jump(d.a,10,'−'+d.toTen);
+  else if(step===5){arcs+=jump(d.a,10,'−'+d.toTen);if(d.remainder)arcs+=jump(10,d.result,'−'+d.remainder,1);}
+  else if(step>=7){const shown=Math.min(step-6,d.b);for(let i=0;i<shown;i++)arcs+=jump(d.a-i,d.a-i-1,'−1',i%2);}
+  if(step>=7){const shown=Math.min(step-6,d.b);current=d.a-shown;showTen=current<=10;showTarget=current===d.result;}
+  else{showTen=step>=4;showTarget=step>=5;}
  }
- let ticks='';for(let n=0;n<=20;n++)ticks+='<line x1="'+x(n)+'" y1="'+(y-9)+'" x2="'+x(n)+'" y2="'+(y+9)+'" stroke="#526d67" stroke-width="2"/><text x="'+x(n)+'" y="130" text-anchor="middle" font-size="13" font-weight="800">'+n+'</text>';
- return '<svg class="p1-line20-svg" viewBox="0 0 '+W+' '+H+'" role="img"><line x1="'+left+'" y1="'+y+'" x2="'+right+'" y2="'+y+'" stroke="#173b36" stroke-width="4"/>'+ticks+arcs+markers+'</svg>';
+ markers+='<circle cx="'+x(start)+'" cy="'+y+'" r="10" fill="#ef6b6b" stroke="#8d342d" stroke-width="2"/>';
+ labels+='<text x="'+x(start)+'" y="181" text-anchor="middle" font-size="15" font-weight="900" fill="#a6372c">Start</text>';
+ if(showTen){
+  markers+='<circle cx="'+x(10)+'" cy="'+y+'" r="10" fill="#f4cc57" stroke="#9d7813" stroke-width="2"/>';
+  labels+='<text x="'+x(10)+'" y="181" text-anchor="middle" font-size="15" font-weight="900" fill="#8a6500">'+((current===10)?'Now':kind==='make10'&&step<5?'Make 10':'10')+'</text>';
+ }
+ if(showTarget && target!==10){
+  markers+='<circle cx="'+x(target)+'" cy="'+y+'" r="10" fill="#53b77a" stroke="#23784a" stroke-width="2"/>';
+  labels+='<text x="'+x(target)+'" y="181" text-anchor="middle" font-size="15" font-weight="900" fill="#23784a">'+(current===target?'Now':'Answer')+'</text>';
+ }else if(current!==null&&current!==start&&current!==10&&current!==target){
+  markers+='<circle cx="'+x(current)+'" cy="'+y+'" r="10" fill="#53b77a" stroke="#23784a" stroke-width="2"/>';
+  labels+='<text x="'+x(current)+'" y="181" text-anchor="middle" font-size="15" font-weight="900" fill="#23784a">Now</text>';
+ }
+ let ticks='',boxes='';
+ for(let n=0;n<=20;n++){
+  const xx=x(n);ticks+='<line x1="'+xx+'" y1="'+(y-11)+'" x2="'+xx+'" y2="'+(y+11)+'" stroke="#526d67" stroke-width="2.4"/>';
+  let fill='#f5f8f7',stroke='#b9c9c5';
+  if(n===start){fill='#fee8e6';stroke='#ef6b6b';}
+  else if(showTen&&n===10){fill='#fff4c9';stroke='#e0b42e';}
+  else if((showTarget&&n===target)||(current!==null&&n===current&&n!==start)){fill='#e4f6e9';stroke='#53b77a';}
+  boxes+='<rect x="'+(xx-18)+'" y="132" rx="6" width="36" height="28" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2"/><text x="'+xx+'" y="151" text-anchor="middle" font-size="15" font-weight="900">'+n+'</text>';
+ }
+ return '<svg class="p1-line20-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Number line from 0 to 20"><line x1="'+left+'" y1="'+y+'" x2="'+right+'" y2="'+y+'" stroke="#173b36" stroke-width="4"/>'+ticks+arcs+markers+boxes+labels+'</svg>';
 }
 function p1Make10Talk(d,step){
  if(step===0)return 'Build '+d.a+' and '+d.b+' on the ten-frames. Let us look at the bigger number first.';
@@ -1126,11 +1190,25 @@ function p1Make10Talk(d,step){
  const shown=Math.min(step-5,d.smaller),target=d.bigger+shown;
  return 'Count on by 1. '+shown+' jump'+(shown===1?'':'s')+' of +1 shown, up to '+target+'.';
 }
+function p1SplitBondSvg(whole,left,right,label){
+ return '<div class="p1-split-bond"><div class="p1-split-caption">'+label+'</div><svg class="p1-split-bond-svg" viewBox="0 0 360 132" role="img" aria-label="'+whole+' split into '+left+' and '+right+'"><circle cx="180" cy="31" r="25" fill="#fff" stroke="#315a52" stroke-width="3"/><text x="180" y="39" text-anchor="middle">'+whole+'</text><line x1="168" y1="55" x2="118" y2="91"/><line x1="192" y1="55" x2="242" y2="91"/><circle cx="105" cy="104" r="24" fill="#fff4c9" stroke="#d2a828" stroke-width="3"/><circle cx="255" cy="104" r="24" fill="#fff" stroke="#315a52" stroke-width="3"/><text x="105" y="112" text-anchor="middle">'+left+'</text><text x="255" y="112" text-anchor="middle">'+right+'</text></svg></div>';
+}
+function p1TenFrameMixed(baseCount,movedCount){
+ const total=Math.min(10,baseCount+movedCount);
+ return '<div class="p1-ten-frame">'+Array.from({length:10},(_,i)=>'<span class="p1-ten-cell">'+(i<total?'<i class="p1-counter '+(i<baseCount?'red':'gold')+(i>=baseCount?' transferred':'')+'"></i>':'')+'</span>').join('')+'</div>';
+}
 function p1Make10Visual(d,step){
- const moved=step>=2?d.toTen:0,leftCount=d.bigger+moved,rightCount=d.smaller-moved;
- const bond=step>=1?'<div class="p1-strategy-bond">'+p1BondSvg(d.a+' + '+d.b,d.toTen,d.remainder,'→',step>=4?d.total:'?')+'</div>':'';
- const line=step>=3?p1Line20Svg(d,step,'make10'):'';
- return '<div class="p1-frame-row"><div><strong>Bigger number: '+d.bigger+'</strong>'+p1TenFrame(leftCount,0,'red')+'</div><div><strong>Smaller number: '+d.smaller+'</strong>'+p1TenFrame(rightCount,0,'gold')+'</div></div>'+bond+(line?'<div class="p1-line-card">'+line+'</div>':'');
+ const moved=step>=2?d.toTen:0,remaining=d.smaller-moved;
+ const leftFrame=step>=2?p1TenFrameMixed(d.bigger,d.toTen):p1TenFrame(d.bigger,0,'red');
+ const rightFrame=p1TenFrame(remaining,0,'gold');
+ const bond=step>=1?p1SplitBondSvg(d.smaller,d.toTen,d.remainder,'Split '+d.smaller+' to make 10'):'<div class="p1-visual-placeholder"><b>First:</b> build both numbers with counters.</div>';
+ let action='';
+ if(step===2)action='<div class="p1-transfer-band"><span>Move <b>'+d.toTen+'</b> counter'+(d.toTen===1?'':'s')+'</span><strong>→</strong><span><b>'+d.bigger+' + '+d.toTen+' = 10</b></span></div>';
+ else if(step===3)action='<div class="p1-transfer-band"><span>Made a full ten</span><strong>✓</strong><span><b>'+d.bigger+' + '+d.toTen+' = 10</b></span></div>';
+ else if(step===4)action='<div class="p1-transfer-band complete"><span>Then add the leftover <b>'+d.remainder+'</b></span><strong>→</strong><span><b>10 + '+d.remainder+' = '+d.total+'</b></span></div>';
+ else if(step>=5)action='<div class="p1-transfer-band proof"><span>Proof by counting on</span><strong>→</strong><span><b>'+d.bigger+' + '+d.smaller+' = '+d.total+'</b></span></div>';
+ const pathway=step===0?d.a+' + '+d.b+' = ?':step===1?d.smaller+' = '+d.toTen+' + '+d.remainder:step===2?d.bigger+' + '+d.toTen+' = 10':step===3?d.bigger+' → 10':step===4?d.a+' + '+d.b+' = 10 + '+d.remainder+' = '+d.total:'Count on from '+d.bigger+' to '+d.total;
+ return '<div class="p1-visual-stack"><div class="p1-visual-heading"><b>Counters / ten-frames</b><span>See every change before using the number line.</span></div><div class="p1-frame-row"><div><strong>Bigger number: '+d.bigger+'</strong>'+leftFrame+'<small>'+(step>=2?'The gold counter'+(d.toTen===1?'':'s')+' came from the other frame.':'Keep the bigger number here.')+'</small></div><div><strong>Smaller number: '+d.smaller+'</strong>'+rightFrame+'<small>'+(step>=2?d.remainder+' counter'+(d.remainder===1?' remains':'s remain')+'.':'These counters will be split.')+'</small></div></div>'+bond+action+'<div class="p1-strategy-pathway">'+pathway+'</div><div class="p1-visual-heading line"><b>Number line 0–20</b><span>Follow the jumps one step at a time.</span></div><div class="p1-line-card">'+p1Line20Svg(d,step,'make10')+'</div></div>';
 }
 function p1RenderMake10(){
  const s=interaction.p1,d=s.make10,host=$('diagram'),last=5+d.smaller,talk=p1Make10Talk(d,s.step);
@@ -1163,9 +1241,15 @@ function p1Subtract10Talk(d,step){
 }
 function p1Subtract10Visual(d,step){
  const ones=d.a-10,leftCross=step>=3?d.remainder:0,rightCross=step>=2?ones:0;
- const bond=step>=1?'<div class="p1-strategy-bond">'+p1BondSvg(d.a+' − '+d.b,d.toTen,d.remainder,'→',step>=3?d.result:'?')+'</div>':'';
- const line=step>=4?p1Line20Svg(d,step,'subtract10'):'';
- return '<div class="p1-frame-row"><div><strong>First ten</strong>'+p1TenFrame(10,leftCross,'red')+'</div><div><strong>Ones: '+ones+'</strong>'+p1TenFrame(ones,rightCross,'gold')+'</div></div>'+bond+(line?'<div class="p1-line-card">'+line+'</div>':'');
+ const bond=step>=1?p1SplitBondSvg(d.b,d.toTen,d.remainder,'Split '+d.b+' so we can get to 10'):'<div class="p1-visual-placeholder"><b>First:</b> build '+d.a+' as one full ten and '+ones+' more.</div>';
+ let action='';
+ if(step===2)action='<div class="p1-transfer-band subtract"><span>Take away <b>'+d.toTen+'</b></span><strong>→</strong><span><b>'+d.a+' − '+d.toTen+' = 10</b></span></div>';
+ else if(step===3)action='<div class="p1-transfer-band subtract complete"><span>Then take away <b>'+d.remainder+'</b> more</span><strong>→</strong><span><b>10 − '+d.remainder+' = '+d.result+'</b></span></div>';
+ else if(step===4)action='<div class="p1-transfer-band subtract"><span>Jump back to 10</span><strong>←</strong><span><b>−'+d.toTen+'</b></span></div>';
+ else if(step===5)action='<div class="p1-transfer-band subtract complete"><span>Jump back again</span><strong>←</strong><span><b>−'+d.remainder+' to '+d.result+'</b></span></div>';
+ else if(step>=6)action='<div class="p1-transfer-band proof"><span>Proof by counting back</span><strong>←</strong><span><b>'+d.a+' − '+d.b+' = '+d.result+'</b></span></div>';
+ const pathway=step===0?d.a+' − '+d.b+' = ?':step===1?d.b+' = '+d.toTen+' + '+d.remainder:step===2?d.a+' − '+d.toTen+' = 10':step===3?d.a+' − '+d.b+' = 10 − '+d.remainder+' = '+d.result:step===4?d.a+' → 10':step===5?'10 → '+d.result:'Count back from '+d.a+' to '+d.result;
+ return '<div class="p1-visual-stack"><div class="p1-visual-heading"><b>Counters / ten-frames</b><span>Crossed counters are the counters being taken away.</span></div><div class="p1-frame-row"><div><strong>Full ten</strong>'+p1TenFrame(10,leftCross,'red')+'<small>'+(leftCross?leftCross+' more taken away after reaching 10.':'Keep this full ten intact first.')+'</small></div><div><strong>Ones: '+ones+'</strong>'+p1TenFrame(ones,rightCross,'gold')+'<small>'+(rightCross?ones+' taken away to reach 10.':'Take these away first to get to 10.')+'</small></div></div>'+bond+action+'<div class="p1-strategy-pathway">'+pathway+'</div><div class="p1-visual-heading line"><b>Number line 0–20</b><span>Start at '+d.a+' and follow each backward jump.</span></div><div class="p1-line-card">'+p1Line20Svg(d,step,'subtract10')+'</div></div>';
 }
 function p1RenderSubtract10(){
  const s=interaction.p1,d=s.subtract10,host=$('diagram'),last=6+d.b,talk=p1Subtract10Talk(d,s.step);
