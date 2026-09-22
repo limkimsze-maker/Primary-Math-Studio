@@ -426,7 +426,8 @@ function fields(c) {
   const format=select('format','Answer format',[['mixed','Dollars and cents'],['cents','Cents only']]);
   if(c.task==='convert')return [pair('a',c.direction==='money-to-cents'?'Amount in dollars and cents':'Amount in cents',5,moneyMax,5),select('direction','Conversion direction',[['cents-to-money','Cents → dollars and cents'],['money-to-cents','Dollars and cents → cents']])];
   if(c.task==='make')return [select('target','Savings Quest level',[['100','Make $1'],['1000','Make $10'],['10000','Make $100']]),format];
-  if(['add','subtract','compare'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
+  if(c.task==='compare')return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5)];
+  if(['add','subtract'].includes(c.task))return [pair('a','First amount',5,moneyMax,5),pair('b','Second amount',5,moneyMax,5),format];
   if(c.task==='word')return [pair('a','First / larger amount',5,moneyMax,5),pair('b','Second / smaller amount',5,moneyMax,5),select('wordType','Problem structure',[['total','Part–whole · Find the total'],['change','Part–whole · Find what remains'],['compare','Comparison · Find the difference']]),format];
   return [pair('a','Amount to show',5,moneyMax,5),format];
  }
@@ -637,7 +638,7 @@ function generatedConfig(c,r=Math.random){
   if(c.task==='make')p.target=String(choose(r,g===1?[100]:g===2?[100,1000]:[100,1000,10000]));
   else if(c.task==='count')p.a=c.format==='dollars'?int(r,1,Math.floor(moneyCap/100))*100:amount(moneyCap);
   else if(c.task==='convert')p.a=amount(moneyCap);
-  else if(c.task==='compare'){p.a=amount(moneyCap);do p.b=amount(moneyCap);while(p.b===p.a);}
+  else if(c.task==='compare'){p.a=amount(moneyCap);if(r()<.2)p.b=p.a;else do p.b=amount(moneyCap);while(p.b===p.a);}
   else if(c.task==='add'||c.task==='word'&&c.wordType==='total'){p.a=amount(moneyCap-5);p.b=amount(moneyCap-p.a);}
   else{p.a=amount(moneyCap);p.b=amount(p.a);}
   break;
