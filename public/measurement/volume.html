@@ -640,28 +640,32 @@ for(const [i,letter] of BEAKER_IDS.entries()){
   svg.addEventListener('keydown',e=>{if(!canFill())return;if(['ArrowRight','ArrowUp','ArrowLeft','ArrowDown','Home','End'].includes(e.key)){e.preventDefault();setFill(e.key==='Home'?0:e.key==='End'?currentSpec().max/currentSpec().step:fillTick+(['ArrowRight','ArrowUp'].includes(e.key)?1:-1));}});
 }
 function updateBeakerCountOptions(){
-  const count=Number($('beakerCount').value),mode=$('mode'),direct=mode.value==='compare-direct',ordering=mode.value==='order-direct';
-  for(const option of mode.options){
-    if(count===1)option.disabled=['total','compare','compare-direct','order-direct'].includes(option.value);
-    else if(count===2)option.disabled=!['total','compare-direct'].includes(option.value);
-    else if(count===3)option.disabled=!['total','order-direct'].includes(option.value);
-    else option.disabled=option.value!=='total';
+  const mode=$('mode'),countBox=$('beakerCount');
+  // Keep every activity type selectable. The chosen activity decides how many beakers it needs.
+  for(const option of mode.options)option.disabled=false;
+  if(mode.value==='compare-direct')countBox.value='2';
+  else if(mode.value==='order-direct')countBox.value='3';
+  else if(mode.value==='total'){
+    if(Number(countBox.value)<2)countBox.value='2';
+  }else{
+    countBox.value='1';
   }
-  if(direct&&count!==2){$('beakerCount').value='2';return updateBeakerCountOptions();}
-  if(ordering&&count!==3){$('beakerCount').value='3';return updateBeakerCountOptions();}
-  if(count>3&&mode.value!=='total')mode.value='total';
-  if(count===3&&!['total','order-direct'].includes(mode.value))mode.value='total';
-  if(count===2&&!['total','compare-direct'].includes(mode.value))mode.value='total';
-  if(count===1&&['total','compare','compare-direct','order-direct'].includes(mode.value))mode.value='read';
+  const count=Number(countBox.value);
+  countBox.disabled=mode.value!=='total';
   $('beakerCountNote').textContent=mode.value==='compare-direct'
-    ?'Comparison task: two beakers are shown together. Pupils choose the one with the greater volume.'
+    ?'Comparison task: two beakers are selected automatically. Pupils choose the one with the greater volume.'
     :mode.value==='order-direct'
-      ?'Ordering task: three beakers are shown together. Pupils arrange A, B and C from least to greatest volume.'
-      :count>1?'Total-volume task: one beaker is partly filled; every other beaker is full to capacity. Pupils add all the liquid and enter one total.'
-      :(mode.value==='mixed'?'With 1 beaker, mixed practice includes reading and filling.':'Pupils read or fill the beaker.');
+      ?'Ordering task: three beakers are selected automatically. Pupils arrange A, B and C from least to greatest volume.'
+      :mode.value==='total'
+        ?'Choose 2–5 beakers. One is partly filled and every other beaker is full to capacity. Pupils add all the liquid and enter one total.'
+        :mode.value==='mixed'
+          ?'Mixed practice uses one beaker and includes reading and filling.'
+          :'This activity uses one beaker.';
   updateBeakerEditor();
 }
-$('mode').onchange=()=>{if($('mode').value==='compare-direct')$('beakerCount').value='2';if($('mode').value==='order-direct')$('beakerCount').value='3';updateBeakerCountOptions();};$('beakerCount').onchange=updateBeakerCountOptions;$('beakerSetup').onchange=updateBeakerEditor;
+$('mode').onchange=updateBeakerCountOptions;
+$('beakerCount').onchange=()=>{if($('mode').value==='total'&&Number($('beakerCount').value)<2)$('beakerCount').value='2';updateBeakerCountOptions();};
+$('beakerSetup').onchange=updateBeakerEditor;
 for(const [i,letter] of BEAKER_IDS.entries()){
   const p='beaker'+letter;for(const suffix of ['Unit','Max','Step','Major'])$(p+suffix).onchange=()=>fillBeakerForm(i,readBeakerForm(i));
   $(p+'Reading').onchange=()=>{$(p+'ValueField').hidden=$(p+'Reading').value!=='fixed';};
