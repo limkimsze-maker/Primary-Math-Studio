@@ -23,6 +23,7 @@ function p1OperationReference(c){
  if(c.engine!=='operations'||c.grade!==1)return null;
  if(c.task==='count-on-back')return {title:'Addition / subtraction within 10 · Count on / count back',kind:'count'};
  if(c.task==='fact-family')return {title:'Fact family',kind:'family'};
+ if(c.task==='within-20')return {title:'Adding & subtracting within 20',kind:'within20'};
  return null;
 }
 function p1Speak(text){
@@ -35,20 +36,22 @@ function p1Speak(text){
   speechSynthesis.speak(u);
  }catch{}
 }
-function p1CountQuestion(mode){
+function p1CountQuestion(mode,within20=false){
  if(mode==='sub'){
-  const a=1+Math.floor(Math.random()*10),b=1+Math.floor(Math.random()*a);
-  return{mode:'sub',a,b,headNum:a,fingerNum:b,start:a,steps:b,answer:a-b,original:a+' − '+b+' = ?',counted:Array.from({length:b},(_,i)=>a-i-1)};
+  const a=within20?10+Math.floor(Math.random()*11):1+Math.floor(Math.random()*10);
+  const b=within20?1+Math.floor(Math.random()*9):1+Math.floor(Math.random()*a);
+  return{mode:'sub',a,b,headNum:a,fingerNum:b,start:a,steps:b,answer:a-b,original:a+' − '+b+' = ?',counted:Array.from({length:b},(_,i)=>a-i-1),tapeMax:within20?20:10,within20};
  }
- let a,b;do{a=1+Math.floor(Math.random()*9);b=1+Math.floor(Math.random()*9);}while(a+b>10);
- const headNum=Math.max(a,b),fingerNum=Math.min(a,b);
- return{mode:'add',a,b,headNum,fingerNum,start:headNum,steps:fingerNum,answer:a+b,original:a+' + '+b+' = ?',counted:Array.from({length:fingerNum},(_,i)=>headNum+i+1)};
+ let a,b,headNum,fingerNum;
+ if(within20){do{a=10+Math.floor(Math.random()*10);b=1+Math.floor(Math.random()*9);}while(a+b>20);headNum=a;fingerNum=b;}
+ else{do{a=1+Math.floor(Math.random()*9);b=1+Math.floor(Math.random()*9);}while(a+b>10);headNum=Math.max(a,b);fingerNum=Math.min(a,b);}
+ return{mode:'add',a,b,headNum,fingerNum,start:headNum,steps:fingerNum,answer:a+b,original:a+' + '+b+' = ?',counted:Array.from({length:fingerNum},(_,i)=>headNum+i+1),tapeMax:within20?20:10,within20};
 }
 function p1FingerMarks(total,used=0){
  return Array.from({length:total},(_,i)=>'<span class="p1-finger '+(i<used?'used':'')+'" aria-hidden="true"></span>').join('');
 }
 function p1NumberTape(q,step){
- return Array.from({length:11},(_,n)=>{
+ return Array.from({length:(q.tapeMax||10)+1},(_,n)=>{
   const start=n===q.start,idx=q.counted.indexOf(n),visited=idx>=0&&idx<step,current=step>0&&idx===step-1;
   return '<span class="p1-tape-cell '+(start?'start ':'')+(visited?'visited ':'')+(current?'current':'')+'"><b>'+n+'</b></span>';
  }).join('');
@@ -71,6 +74,7 @@ function p1RenderCount(){
     ?'Say '+current+'. One finger has been used. Keep '+(q.mode==='add'?'counting on.':'counting back.')
     :'You reached '+q.answer+'. Now write the answer.';
  host.innerHTML='<div class="p1-native-wrap">'
+  +(s.within20?p1Within20Nav('count'):'')
   +'<div class="p1-native-toolbar"><div class="p1-mode-tabs"><button type="button" id="p1AddMode" class="'+(q.mode==='add'?'selected':'')+'">Addition · Count on</button><button type="button" id="p1SubMode" class="'+(q.mode==='sub'?'selected':'')+'">Subtraction · Count back</button></div><button type="button" id="p1NewCount">New question</button></div>'
   +'<div class="p1-equation-card"><span class="p1-kicker">Question</span><strong>'+E(q.original)+'</strong><p>'+E(instruction)+'</p></div>'
   +'<div class="p1-count-model"><div class="p1-head-card"><span class="p1-model-label">'+(q.mode==='add'?'Bigger number in the head':'Start number in the head')+'</span><div class="p1-head-shape"><span>HEAD</span><b>'+q.headNum+'</b></div><small>Keep '+q.headNum+' in your head.</small></div>'
@@ -80,9 +84,10 @@ function p1RenderCount(){
   +'<div class="p1-native-controls"><button type="button" id="p1PrevCount" '+(!s.introDone?'disabled':'')+'>← Previous step</button><button type="button" class="primary" id="p1NextCount" '+(finished?'disabled':'')+'>'+(s.introDone?'Next step →':'Start teaching →')+'</button><button type="button" id="p1ReplayCount">🔊 Read step</button><button type="button" id="p1ResetCount">Restart steps</button></div>'
   +(finished?'<div class="p1-native-answer"><label><span>Your answer</span><input id="p1CountAnswer" type="number" min="0" max="10" inputmode="numeric" autocomplete="off"></label><button type="button" class="primary" id="p1CountCheck">Check</button><p id="p1CountFeedback" role="status">Type the answer, then press Check.</p></div>':'')
   +'</div>';
- $('p1AddMode').onclick=()=>{s.mode='add';s.question=p1CountQuestion('add');s.step=0;s.introDone=false;p1RenderCount();};
- $('p1SubMode').onclick=()=>{s.mode='sub';s.question=p1CountQuestion('sub');s.step=0;s.introDone=false;p1RenderCount();};
- $('p1NewCount').onclick=()=>{s.question=p1CountQuestion(s.mode);s.step=0;s.introDone=false;p1RenderCount();};
+ if(s.within20)p1BindWithin20Nav();
+ $('p1AddMode').onclick=()=>{s.mode='add';s.question=p1CountQuestion('add',s.within20);s.step=0;s.introDone=false;p1RenderCount();};
+ $('p1SubMode').onclick=()=>{s.mode='sub';s.question=p1CountQuestion('sub',s.within20);s.step=0;s.introDone=false;p1RenderCount();};
+ $('p1NewCount').onclick=()=>{s.question=p1CountQuestion(s.mode,s.within20);s.step=0;s.introDone=false;p1RenderCount();};
  $('p1ResetCount').onclick=()=>{s.step=0;s.introDone=false;p1RenderCount();};
  $('p1ReplayCount').onclick=()=>p1Speak(instruction);
  $('p1PrevCount').onclick=()=>{if(s.step>0)s.step--;else s.introDone=false;p1RenderCount();};
@@ -96,6 +101,123 @@ function p1RenderCount(){
   $('p1CountAnswer').onkeydown=e=>{if(e.key==='Enter'){$('p1CountCheck').click();}};
  }
 }
+
+const P1_MAKE10_POOL=[[8,2],[8,3],[8,4],[8,5],[8,6],[8,7],[8,8],[8,9],[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[7,3],[7,4],[7,5],[7,6],[6,4],[6,5],[6,6],[6,7],[5,5],[5,6],[5,7],[5,8]];
+function p1Make10Question(){
+ const [a,b]=P1_MAKE10_POOL[Math.floor(Math.random()*P1_MAKE10_POOL.length)],bigger=Math.max(a,b),smaller=Math.min(a,b),toTen=10-bigger,remainder=smaller-toTen,total=a+b;
+ return{a,b,bigger,smaller,toTen,remainder,total};
+}
+function p1Subtract10Question(){
+ const pool=[];for(let a=11;a<=19;a++){const toTen=a-10;for(let b=toTen+1;b<=9;b++)pool.push([a,b]);}
+ const [a,b]=pool[Math.floor(Math.random()*pool.length)],toTen=a-10,remainder=b-toTen,result=a-b;
+ return{a,b,toTen,remainder,result};
+}
+function p1Within20Nav(active){
+ return '<div class="p1-within20-nav"><button type="button" data-p1w="count" class="'+(active==='count'?'selected':'')+'">Count on / count back</button><button type="button" data-p1w="make10" class="'+(active==='make10'?'selected':'')+'">Making 10 for adding</button><button type="button" data-p1w="subtract10" class="'+(active==='subtract10'?'selected':'')+'">Subtract to get 10</button></div>';
+}
+function p1BindWithin20Nav(){
+ document.querySelectorAll('[data-p1w]').forEach(btn=>btn.onclick=()=>{
+  const s=interaction.p1;s.strategy=btn.dataset.p1w;
+  if(s.strategy==='count'){s.mode='add';s.question=p1CountQuestion('add',true);s.step=0;s.introDone=false;p1RenderCount();}
+  else if(s.strategy==='make10'){s.make10=p1Make10Question();s.step=0;s.demo=false;s.checked=false;s.correct=false;p1RenderMake10();}
+  else{s.subtract10=p1Subtract10Question();s.step=0;s.demo=false;s.checked=false;s.correct=false;p1RenderSubtract10();}
+ });
+}
+function p1TenFrame(count,crossed=0,accent='red'){
+ const removed=new Set(Array.from({length:crossed},(_,i)=>Math.max(0,count-1-i)));
+ return '<div class="p1-ten-frame">'+Array.from({length:10},(_,i)=>'<span class="p1-ten-cell">'+(i<count?'<i class="p1-counter '+accent+'"></i>':'')+(removed.has(i)?'<b class="p1-cross">×</b>':'')+'</span>').join('')+'</div>';
+}
+function p1BondSvg(top,left,right,op='+',answer='?'){
+ return '<svg class="p1-bond-svg" viewBox="0 0 420 150" role="img" aria-label="Number bond"><text x="70" y="42">'+top+'</text><text x="130" y="42">'+op+'</text><text x="194" y="42">'+(left+right)+'</text><text x="260" y="42">=</text><text x="325" y="42">'+answer+'</text><line x1="175" y1="54" x2="142" y2="96"/><line x1="175" y1="54" x2="216" y2="96"/><text x="132" y="132">'+left+'</text><text x="226" y="132">'+right+'</text></svg>';
+}
+function p1Line20Svg(d,step,kind){
+ const W=980,H=170,left=38,right=942,y=94,gap=(right-left)/20,x=n=>left+n*gap;
+ let arcs='',markers='';
+ const arc=(a,b,label,level=0)=>{const x1=x(a),x2=x(b),mid=(x1+x2)/2,cy=36-level*14;return '<path d="M '+x1+' '+(y-10)+' Q '+mid+' '+cy+' '+x2+' '+(y-10)+'" fill="none" stroke="#173b36" stroke-width="4" stroke-linecap="round"/><text x="'+mid+'" y="'+(cy-5)+'" text-anchor="middle" font-size="17" font-weight="900">'+label+'</text>';};
+ if(kind==='make10'){
+  if(step===3)arcs+=arc(d.bigger,10,'+'+d.toTen);
+  if(step===4){arcs+=arc(d.bigger,10,'+'+d.toTen);if(d.remainder)arcs+=arc(10,d.total,'+'+d.remainder,1);}
+  if(step>=6){const shown=Math.min(step-5,d.smaller);for(let i=0;i<shown;i++)arcs+=arc(d.bigger+i,d.bigger+i+1,'+1',i%2);}
+  markers='<circle cx="'+x(d.bigger)+'" cy="'+y+'" r="9" fill="#ef4444"/>'+(step>=3?'<circle cx="'+x(10)+'" cy="'+y+'" r="9" fill="#eab308"/>':'')+(step>=4?'<circle cx="'+x(d.total)+'" cy="'+y+'" r="9" fill="#20b15a"/>':'');
+ }else{
+  if(step===4)arcs+=arc(d.a,10,'−'+d.toTen);
+  if(step===5){arcs+=arc(d.a,10,'−'+d.toTen);if(d.remainder)arcs+=arc(10,d.result,'−'+d.remainder,1);}
+  if(step>=7){const shown=Math.min(step-6,d.b);for(let i=0;i<shown;i++)arcs+=arc(d.a-i,d.a-i-1,'−1',i%2);}
+  markers='<circle cx="'+x(d.a)+'" cy="'+y+'" r="9" fill="#ef4444"/>'+(step>=4?'<circle cx="'+x(10)+'" cy="'+y+'" r="9" fill="#eab308"/>':'')+(step>=5?'<circle cx="'+x(d.result)+'" cy="'+y+'" r="9" fill="#20b15a"/>':'');
+ }
+ let ticks='';for(let n=0;n<=20;n++)ticks+='<line x1="'+x(n)+'" y1="'+(y-9)+'" x2="'+x(n)+'" y2="'+(y+9)+'" stroke="#526d67" stroke-width="2"/><text x="'+x(n)+'" y="130" text-anchor="middle" font-size="13" font-weight="800">'+n+'</text>';
+ return '<svg class="p1-line20-svg" viewBox="0 0 '+W+' '+H+'" role="img"><line x1="'+left+'" y1="'+y+'" x2="'+right+'" y2="'+y+'" stroke="#173b36" stroke-width="4"/>'+ticks+arcs+markers+'</svg>';
+}
+function p1Make10Talk(d,step){
+ if(step===0)return 'Build '+d.a+' and '+d.b+' on the ten-frames. Let us look at the bigger number first.';
+ if(step===1)return 'Break '+d.smaller+' into '+d.toTen+' and '+d.remainder+'. '+d.toTen+' helps to make 10.';
+ if(step===2)return 'Move '+d.toTen+' counter'+(d.toTen===1?'':'s')+' slowly to the bigger ten-frame to make 10.';
+ if(step===3)return 'Now skip count by '+d.toTen+' from '+d.bigger+' to 10 on the number line.';
+ if(step===4)return 'Next, skip count by '+d.remainder+' more from 10 to '+d.total+'. So '+d.a+' + '+d.b+' = '+d.total+'.';
+ if(step===5)return 'Prove it by counting on in ones. Press Next Step to show the first +1 jump.';
+ const shown=Math.min(step-5,d.smaller),target=d.bigger+shown;
+ return 'Count on by 1. '+shown+' jump'+(shown===1?'':'s')+' of +1 shown, up to '+target+'.';
+}
+function p1Make10Visual(d,step){
+ const moved=step>=2?d.toTen:0,leftCount=d.bigger+moved,rightCount=d.smaller-moved;
+ const bond=step>=1?'<div class="p1-strategy-bond">'+p1BondSvg(d.a+' + '+d.b,d.toTen,d.remainder,'→',step>=4?d.total:'?')+'</div>':'';
+ const line=step>=3?p1Line20Svg(d,step,'make10'):'';
+ return '<div class="p1-frame-row"><div><strong>Bigger number: '+d.bigger+'</strong>'+p1TenFrame(leftCount,0,'red')+'</div><div><strong>Smaller number: '+d.smaller+'</strong>'+p1TenFrame(rightCount,0,'gold')+'</div></div>'+bond+(line?'<div class="p1-line-card">'+line+'</div>':'');
+}
+function p1RenderMake10(){
+ const s=interaction.p1,d=s.make10,host=$('diagram'),last=5+d.smaller,talk=p1Make10Talk(d,s.step);
+ host.innerHTML='<div class="p1-native-wrap">'+p1Within20Nav('make10')
+ +'<div class="p1-equation-card"><span class="p1-kicker">Making 10 for adding to 20</span><strong>'+d.a+' + '+d.b+' = ?</strong><p>'+(s.demo?E(talk):'Solve it first, then press Check Answer.')+'</p></div>'
+ +(s.demo?p1Make10Visual(d,s.step):'<div class="p1-pupil-try"><label><span>Your answer</span><input id="p1W20Answer" type="number" min="0" max="20" inputmode="numeric"></label><button type="button" class="primary" id="p1W20Check">Check Answer</button><p id="p1W20Feedback">'+(s.checked?(s.correct?'Correct! You can now show the teaching steps.':'Not quite. Show Making 10 to teach the strategy.'):'Try the question before the demonstration.')+'</p></div>')
+ +(s.demo?'<div class="p1-step-talk"><span>Step '+(s.step+1)+' / '+(last+1)+'</span><strong>'+E(talk)+'</strong></div><div class="p1-native-controls"><button id="p1W20Prev" '+(s.step===0?'disabled':'')+'>← Previous step</button><button class="primary" id="p1W20Next" '+(s.step>=last?'disabled':'')+'>Next step →</button><button id="p1W20Speak">🔊 Read step</button><button id="p1W20New">New question</button></div>':'<div class="p1-native-controls"><button id="p1W20Show" '+(!s.checked?'disabled':'')+'>Show Making 10</button><button id="p1W20New">New question</button></div>')
+ +'</div>';
+ p1BindWithin20Nav();
+ $('p1W20New').onclick=()=>{s.make10=p1Make10Question();s.step=0;s.demo=false;s.checked=false;s.correct=false;p1RenderMake10();};
+ if(!s.demo){
+  $('p1W20Check').onclick=()=>{const raw=$('p1W20Answer').value.trim();if(raw==='')return;const ok=Number(raw)===d.total;s.checked=true;s.correct=ok;if(ok)s.demo=true;p1RenderMake10();};
+  $('p1W20Show').onclick=()=>{s.demo=true;s.step=0;p1RenderMake10();p1Speak(p1Make10Talk(d,0));};
+ }else{
+  $('p1W20Prev').onclick=()=>{if(s.step>0)s.step--;p1RenderMake10();};
+  $('p1W20Next').onclick=()=>{if(s.step<last)s.step++;p1RenderMake10();p1Speak(p1Make10Talk(d,s.step));};
+  $('p1W20Speak').onclick=()=>p1Speak(talk);
+ }
+}
+function p1Subtract10Talk(d,step){
+ if(step===0)return 'Build '+d.a+' counters on the ten-frames.';
+ if(step===1)return 'Break '+d.b+' into '+d.toTen+' and '+d.remainder+'. '+d.toTen+' helps us get to 10.';
+ if(step===2)return 'Take away '+d.toTen+' to get 10.';
+ if(step===3)return 'Now take away '+d.remainder+' more from 10 to get '+d.result+'.';
+ if(step===4)return 'On the number line, start at '+d.a+' and jump back '+d.toTen+' to 10.';
+ if(step===5)return 'At 10, jump back '+d.remainder+' to '+d.result+'.';
+ if(step===6)return 'Prove it by counting back in ones. Press Next Step to show the first −1 jump.';
+ const shown=Math.min(step-6,d.b),target=d.a-shown;
+ return 'Count back by 1. '+shown+' jump'+(shown===1?'':'s')+' of −1 shown, down to '+target+'.';
+}
+function p1Subtract10Visual(d,step){
+ const ones=d.a-10,leftCross=step>=3?d.remainder:0,rightCross=step>=2?ones:0;
+ const bond=step>=1?'<div class="p1-strategy-bond">'+p1BondSvg(d.a+' − '+d.b,d.toTen,d.remainder,'→',step>=3?d.result:'?')+'</div>':'';
+ const line=step>=4?p1Line20Svg(d,step,'subtract10'):'';
+ return '<div class="p1-frame-row"><div><strong>First ten</strong>'+p1TenFrame(10,leftCross,'red')+'</div><div><strong>Ones: '+ones+'</strong>'+p1TenFrame(ones,rightCross,'gold')+'</div></div>'+bond+(line?'<div class="p1-line-card">'+line+'</div>':'');
+}
+function p1RenderSubtract10(){
+ const s=interaction.p1,d=s.subtract10,host=$('diagram'),last=6+d.b,talk=p1Subtract10Talk(d,s.step);
+ host.innerHTML='<div class="p1-native-wrap">'+p1Within20Nav('subtract10')
+ +'<div class="p1-equation-card"><span class="p1-kicker">Subtract to get 10</span><strong>'+d.a+' − '+d.b+' = ?</strong><p>'+(s.demo?E(talk):'Solve it first, then press Check Answer.')+'</p></div>'
+ +(s.demo?p1Subtract10Visual(d,s.step):'<div class="p1-pupil-try"><label><span>Your answer</span><input id="p1W20Answer" type="number" min="0" max="20" inputmode="numeric"></label><button type="button" class="primary" id="p1W20Check">Check Answer</button><p id="p1W20Feedback">'+(s.checked?(s.correct?'Correct! You can now show the teaching steps.':'Not quite. Show Get 10 to teach the strategy.'):'Try the question before the demonstration.')+'</p></div>')
+ +(s.demo?'<div class="p1-step-talk"><span>Step '+(s.step+1)+' / '+(last+1)+'</span><strong>'+E(talk)+'</strong></div><div class="p1-native-controls"><button id="p1W20Prev" '+(s.step===0?'disabled':'')+'>← Previous step</button><button class="primary" id="p1W20Next" '+(s.step>=last?'disabled':'')+'>Next step →</button><button id="p1W20Speak">🔊 Read step</button><button id="p1W20New">New question</button></div>':'<div class="p1-native-controls"><button id="p1W20Show" '+(!s.checked?'disabled':'')+'>Show Get 10</button><button id="p1W20New">New question</button></div>')
+ +'</div>';
+ p1BindWithin20Nav();
+ $('p1W20New').onclick=()=>{s.subtract10=p1Subtract10Question();s.step=0;s.demo=false;s.checked=false;s.correct=false;p1RenderSubtract10();};
+ if(!s.demo){
+  $('p1W20Check').onclick=()=>{const raw=$('p1W20Answer').value.trim();if(raw==='')return;const ok=Number(raw)===d.result;s.checked=true;s.correct=ok;if(ok)s.demo=true;p1RenderSubtract10();};
+  $('p1W20Show').onclick=()=>{s.demo=true;s.step=0;p1RenderSubtract10();p1Speak(p1Subtract10Talk(d,0));};
+ }else{
+  $('p1W20Prev').onclick=()=>{if(s.step>0)s.step--;p1RenderSubtract10();};
+  $('p1W20Next').onclick=()=>{if(s.step<last)s.step++;p1RenderSubtract10();p1Speak(p1Subtract10Talk(d,s.step));};
+  $('p1W20Speak').onclick=()=>p1Speak(talk);
+ }
+}
+
 const P1_FAMILY_PHRASES=['Parts add up, make the whole!','Switch the parts, same whole!','Big number subtract, find the part!','Big number subtract, other part!'];
 function p1NewFamily(){
  let a,b;do{a=1+Math.floor(Math.random()*9);b=1+Math.floor(Math.random()*(10-a));}while(a+b>10||a===b);
@@ -150,7 +272,8 @@ function showP1OperationReference(c){
  $('feedback').textContent='';$('hint').hidden=true;$('answerForm').hidden=true;$('checkButton').hidden=true;$('hintButton').hidden=true;$('nextButton').hidden=true;
  interaction={p1:{kind:ref.kind}};
  if(ref.kind==='count'){interaction.p1.mode='add';interaction.p1.question=p1CountQuestion('add');interaction.p1.step=0;interaction.p1.introDone=false;p1RenderCount();}
- else{interaction.p1.family=p1NewFamily();interaction.p1.familyIndex=0;p1RenderFamily();setTimeout(()=>p1Speak(P1_FAMILY_PHRASES[0]),120);}
+ else if(ref.kind==='family'){interaction.p1.family=p1NewFamily();interaction.p1.familyIndex=0;p1RenderFamily();setTimeout(()=>p1Speak(P1_FAMILY_PHRASES[0]),120);}
+ else{interaction.p1.strategy='count';interaction.p1.within20=true;interaction.p1.mode='add';interaction.p1.question=p1CountQuestion('add',true);interaction.p1.step=0;interaction.p1.introDone=false;p1RenderCount();}
  return true;
 }
 function populate(c){draft={...c};$('grade').replaceChildren();for(const g of engine==='area'?[3]:engine==='fraction'?[2,3]:[1,2,3]){const o=document.createElement('option');o.value=g;o.textContent='Primary '+g;$('grade').append(o);}$('grade').value=c.grade;$('task').replaceChildren();for(const [v,l]of tasks(engine,c.grade)){const o=document.createElement('option');o.value=v;o.textContent=l;$('task').append(o);}$('task').value=c.task;$('mode').value=c.mode;$('count').value=c.mode==='fixed'?8:c.count;populateFields();}
