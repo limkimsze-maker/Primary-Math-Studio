@@ -1,8 +1,8 @@
 # Primary Maths Studio
 
-15 engine tabs for Singapore P1–P3 classroom mathematics. Created by Lim Kim Sze.
+19 topic tabs for Singapore P1–P3 classroom mathematics. Created by Lim Kim Sze.
 
-The three measurement engines preserve the completed length, mass and volume activities. Twelve additional engines share a configuration, generation and checking core. Only the selected engine workspace is mounted.
+The three measurement engines preserve the completed length, mass and volume activities. Twelve shared engines use the common configuration, generation and checking core. Four dedicated topic hubs cover Comparing & ordering, Mental sum, Measurement conversion, and P3 More Word Problems. P3 More Word Problems loads the original Monster Quest reference directly so its diagrams and teaching sequence remain authoritative. Only the selected workspace is mounted.
 
 The grade presets were checked against MOE's 2021 Primary Mathematics syllabus, updated October 2025, pages 31–36. This toolkit covers selected reusable activity types, not every syllabus objective. Original questions and diagrams are used; exact textbook-page alignment is not claimed.
 
