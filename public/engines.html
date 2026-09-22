@@ -893,12 +893,42 @@ function lesson(config,r=Math.random){
   }else if(t==='subtract'){
    finish(a-b);question=`Subtract ${money(b)} from ${money(a)}.`;hint='Start with the cents. If needed, rename 1 dollar as 100 cents before subtracting.';
   }else if(t==='word'){
-   d.correctModel=c.wordType==='compare'?'compare':'part-whole';
-   const value=c.wordType==='total'?a+b:a-b;finish(value);
-   question=c.wordType==='total'?`A book costs ${money(a)} and a game costs ${money(b)}. What is their total cost?`:c.wordType==='change'?`Mei has ${money(a)}. She spends ${money(b)}. How much money does she have left?`:`A school bag costs ${money(a)}. A pencil case costs ${money(b)}. How much more does the school bag cost?`;
-   hint=c.wordType==='compare'?'Choose the comparison model. The difference is the longer amount minus the shorter amount.':'Choose the part–whole model. Decide whether the unknown is the whole or a part.';
-  }else{
-   finish(a);question='What is the total value of the notes and coins?';hint='Start with the largest value and count on to the smallest value.';
+   const wt=c.wordType;
+   let value=0;
+   if(wt==='total'){
+    value=a+b;d.correctModel='part-whole';d.wordOperation='+';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'part-whole',wholeLabel:'spent in all',wholeValue:value,unknown:'whole',parts:[{label:'price of book',value:a},{label:'price of game',value:b}]};
+    question=`Zara bought a book for ${money(a)}. Amir bought a game for ${money(b)}. How much did they spend in all?`;
+    explanation=`${money(a)} + ${money(b)} = ${money(value)}. They spent ${money(value)} in all.`;
+   }else if(wt==='change'){
+    value=a-b;d.correctModel='part-whole';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'part-whole',wholeLabel:'money at first',wholeValue:a,unknown:'part2',parts:[{label:'money spent',value:b},{label:'money left',value:value}]};
+    question=`Mei had ${money(a)}. She spent ${money(b)} on a storybook. How much money did she have left?`;
+    explanation=`${money(a)} − ${money(b)} = ${money(value)}. Mei had ${money(value)} left.`;
+   }else if(wt==='initial'){
+    value=a+b;d.correctModel='part-whole';d.wordOperation='+';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'part-whole',wholeLabel:'money at first',wholeValue:value,unknown:'whole',parts:[{label:'money spent',value:a},{label:'money left',value:b}]};
+    question=`Lenz spent ${money(a)} on snacks. After buying them, he had ${money(b)} left. How much money did Lenz have at first?`;
+    explanation=`${money(a)} + ${money(b)} = ${money(value)}. Lenz had ${money(value)} at first.`;
+   }else if(wt==='compare-more'){
+    value=a+b;d.correctModel='compare';d.wordOperation='+';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'compare',largerLabel:'thermos',smallerLabel:'water bottle',largerValue:value,smallerValue:a,differenceValue:b,unknown:'larger'};
+    question=`A water bottle costs ${money(a)}. A thermos costs ${money(b)} more than the water bottle. How much does the thermos cost?`;
+    explanation=`${money(a)} + ${money(b)} = ${money(value)}. The thermos costs ${money(value)}.`;
+   }else if(wt==='compare-less'){
+    value=a-b;d.correctModel='compare';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'compare',largerLabel:'school bag',smallerLabel:'pencil case',largerValue:a,smallerValue:value,differenceValue:b,unknown:'smaller'};
+    question=`A school bag costs ${money(a)}. A pencil case costs ${money(b)} less than the school bag. How much does the pencil case cost?`;
+    explanation=`${money(a)} − ${money(b)} = ${money(value)}. The pencil case costs ${money(value)}.`;
+   }else{
+    value=a-b;d.correctModel='compare';d.wordOperation='−';d.wordEquation={left:a,right:b};
+    d.wordModel={kind:'compare',largerLabel:'March savings',smallerLabel:'April savings',largerValue:a,smallerValue:b,differenceValue:value,unknown:'difference'};
+    question=`Yondu saved ${money(a)} in March and ${money(b)} in April. How much more did he save in March than in April?`;
+    explanation=`${money(a)} − ${money(b)} = ${money(value)}. The difference is ${money(value)}.`;
+   }
+   finish(value);
+   hint='First decide whether the story shows a comparison or a part–whole relationship. Check the model before choosing + or −.';
+  }else{hint='Start with the largest value and count on to the smallest value.';
   }
   break;
  }
