@@ -1835,10 +1835,13 @@ function drawMoneyAlgorithm(c,host){
  wireMoneyOperationSteps(host,plan);
 }
 function moneyPartWhole(c){
- const total=c.wordType==='total'?'?':moneyText(c.a),left=c.wordType==='total'?moneyText(c.a):moneyText(c.b),right=c.wordType==='total'?moneyText(c.b):'?';
- return `<div class="money-model part-whole-model"><div class="money-whole">Whole: ${E(total)}</div><div class="money-parts"><span>${E(left)}</span><span>${E(right)}</span></div></div>`;
+ const m=c.wordModel,show=value=>value===undefined?'?':moneyText(value),whole=m.unknown==='whole'?'?':show(m.wholeValue);
+ return `<div class="money-model part-whole-model"><span class="money-word-model-label">${E(m.wholeLabel)}</span><div class="money-whole">Whole: ${E(whole)}</div><div class="money-parts">${m.parts.map((part,i)=>`<span><small>${E(part.label)}</small><b>${E(m.unknown==='part'+(i+1)?'?':show(part.value))}</b></span>`).join('')}</div></div>`;
 }
-function moneyComparison(c){return `<div class="money-model comparison-model"><div class="money-compare-row"><strong>School bag</strong><span style="--bar:100%">${E(moneyText(c.a))}</span></div><div class="money-compare-row"><strong>Pencil case</strong><span style="--bar:${Math.max(12,Math.round(c.b/c.a*100))}%">${E(moneyText(c.b))}</span></div><div class="money-difference">Difference: ?</div></div>`;}
+function moneyComparison(c){
+ const m=c.wordModel,larger=m.unknown==='larger'?'?':moneyText(m.largerValue),smaller=m.unknown==='smaller'?'?':moneyText(m.smallerValue),diff=m.unknown==='difference'?'?':moneyText(m.differenceValue),pct=Math.max(18,Math.round(m.smallerValue/m.largerValue*100));
+ return `<div class="money-model comparison-model"><div class="money-compare-row"><strong>${E(m.largerLabel)}</strong><span style="--bar:100%">${E(larger)}</span></div><div class="money-compare-row"><strong>${E(m.smallerLabel)}</strong><span style="--bar:${pct}%">${E(smaller)}</span></div><div class="money-difference">Difference: ${E(diff)}</div></div>`;
+}
 function drawMoneyWord(c,host){
  host.innerHTML=`<div class="money-model-choices"><button type="button" data-money-model="compare" class="${interaction.moneyModel==='compare'?'selected':''}">Comparison model</button><button type="button" data-money-model="part-whole" class="${interaction.moneyModel==='part-whole'?'selected':''}">Part–whole model</button></div>${interaction.moneyModel?(interaction.moneyModel==='compare'?moneyComparison(c):moneyPartWhole(c)):'<div class="money-model-placeholder">Choose the model that matches the story.</div>'}${caption('Choose a model, use it to decide the operation, then enter the amount.')}`;
  host.querySelectorAll('[data-money-model]').forEach(button=>button.onclick=()=>{interaction.moneyModel=button.dataset.moneyModel;drawMoney();});
