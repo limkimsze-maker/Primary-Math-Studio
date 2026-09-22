@@ -400,3 +400,41 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
  body.pupil.fraction-engine #questionView{overflow:auto}
  body.pupil.fraction-engine #diagram{min-height:620px;margin:4px 8px}
 }
+
+
+/* Money word problems: use the original P3 reference activity exactly.
+   The reference owns the question -> model gate -> model completion -> equation -> answer flow. */
+.money-word-reference .activity-bar,
+.money-word-reference .question-block,
+.money-word-reference #answerForm,
+.money-word-reference .activity-bottom{display:none!important}
+.money-word-reference #questionView{height:auto;min-height:0}
+.money-word-reference #diagram{
+ display:block!important;
+ width:100%!important;
+ max-width:none!important;
+ min-height:900px!important;
+ max-height:none!important;
+ overflow:visible!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+}
+.money-word-reference-frame{
+ display:block;
+ width:100%;
+ min-height:900px;
+ border:0;
+ margin:0;
+ padding:0;
+ background:#fff;
+}
+.pupil.money-word-reference main,
+.pupil.money-word-reference .activity,
+.pupil.money-word-reference #questionView{height:auto!important;min-height:100dvh!important;overflow:visible!important}
+.pupil.money-word-reference #diagram{min-height:100dvh!important}
+@media(max-width:700px){
+ .money-word-reference #diagram,.money-word-reference-frame{min-height:1450px}
+}
