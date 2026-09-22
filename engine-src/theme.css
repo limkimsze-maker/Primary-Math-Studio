@@ -438,3 +438,40 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 @media(max-width:700px){
  .money-word-reference #diagram,.money-word-reference-frame{min-height:1450px}
 }
+
+
+/* P1 Operations reference activities live inside the normal Studio engine shell. */
+.p1-operation-reference .activity-bar{display:flex}
+.p1-operation-reference .question-block{padding-bottom:8px}
+.p1-operation-reference #answerForm,
+.p1-operation-reference .activity-bottom{display:none!important}
+.p1-operation-reference #questionView{height:auto;min-height:0}
+.p1-operation-reference #diagram{
+ display:block!important;
+ width:100%!important;
+ max-width:none!important;
+ min-height:900px!important;
+ max-height:none!important;
+ overflow:visible!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+}
+.p1-operation-reference-frame{
+ display:block;
+ width:100%;
+ min-height:900px;
+ border:0;
+ margin:0;
+ padding:0;
+ background:#fff;
+}
+.pupil.p1-operation-reference main,
+.pupil.p1-operation-reference .activity,
+.pupil.p1-operation-reference #questionView{height:auto!important;min-height:100dvh!important;overflow:visible!important}
+.pupil.p1-operation-reference #diagram{min-height:100dvh!important}
+@media(max-width:700px){
+ .p1-operation-reference #diagram,.p1-operation-reference-frame{min-height:1350px}
+}
