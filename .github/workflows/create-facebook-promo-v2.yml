@@ -1,0 +1,122 @@
+name: Create Facebook Promo V2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/create-facebook-promo-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-promo-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Teaching Engine
+        uses: actions/checkout@v4
+
+      - name: Install video tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Capture Teaching Engine screens
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p promo-v2
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/teaching-engine-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000/index.html >/dev/null; then break; fi
+            sleep 1
+          done
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          capture() {
+            local url="$1"
+            local out="$2"
+            "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars               --run-all-compositor-stages-before-draw --virtual-time-budget=5500               --window-size=1440,900 --screenshot="$out" "$url"
+          }
+          capture "http://127.0.0.1:8000/index.html" "promo-v2/01-home.png"
+          capture "http://127.0.0.1:8000/public/time.html?engine=time" "promo-v2/02-time.png"
+          capture "http://127.0.0.1:8000/public/measurement/volume.html?engine=volume" "promo-v2/03-volume.png"
+          capture "http://127.0.0.1:8000/public/place.html?engine=place" "promo-v2/04-builder.png"
+          capture "http://127.0.0.1:8000/public/fraction.html?engine=fraction" "promo-v2/05-fraction.png"
+          capture "http://127.0.0.1:8000/public/error.html?engine=error" "promo-v2/06-error-analysis.png"
+
+      - name: Create original music
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import math, wave, struct
+          sr=44100
+          duration=42.0
+          n=int(sr*duration)
+          chords=[
+              [261.63,329.63,392.00,523.25],
+              [196.00,246.94,293.66,392.00],
+              [220.00,261.63,329.63,440.00],
+              [174.61,220.00,261.63,349.23],
+          ]
+          melody=[523.25,587.33,659.25,783.99,659.25,587.33,523.25,659.25]
+          frames=[]
+          for i in range(n):
+              t=i/sr
+              ci=int(t/5.25)%4
+              chord=chords[ci]
+              pad=sum(math.sin(2*math.pi*f*t) for f in chord)/len(chord)
+              beat=t%0.75
+              mi=int(t/0.75)%len(melody)
+              env=math.exp(-6*beat)
+              bell=math.sin(2*math.pi*melody[mi]*t)*env
+              bass=math.sin(2*math.pi*(chord[0]/2)*t)
+              pulse=(1 if beat<0.10 else 0)*math.sin(2*math.pi*90*t)*math.exp(-25*beat)
+              fade=min(1,t/1.2,(duration-t)/2.0)
+              x=(0.085*pad+0.048*bell+0.045*bass+0.018*pulse)*max(0,fade)
+              x=max(-0.75,min(0.75,x))
+              frames.append(struct.pack('<h',int(x*32767)))
+          with wave.open('promo-v2/original-background-music-v2.wav','wb') as w:
+              w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes(b''.join(frames))
+          PY
+
+      - name: Build Facebook promo V2
+        shell: bash
+        run: |
+          set -euo pipefail
+          FONT=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
+          REG=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+          make_seg () {
+            IMG="$1"; OUT="$2"; TOP="$3"; BOTTOM="$4"; BOX="$5"
+            ffmpeg -y -loop 1 -t 5.25 -i "$IMG" -vf "              scale=1080:675:force_original_aspect_ratio=decrease,              pad=1080:1350:(ow-iw)/2:310:color=0xF2F5EF,              drawbox=x=0:y=0:w=1080:h=255:color=0x183C35:t=fill,              drawtext=fontfile=$FONT:text='$TOP':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=58,              drawtext=fontfile=$REG:text='$BOTTOM':fontcolor=0x183C35:fontsize=32:x=(w-text_w)/2:y=1040,              $BOX              fade=t=in:st=0:d=0.3,fade=t=out:st=4.95:d=0.3"               -r 30 -c:v libx264 -pix_fmt yuv420p "$OUT"
+          }
+
+          make_seg promo-v2/02-time.png promo-v2/s1.mp4             "STATIC SLIDES CANNOT ANTICIPATE EVERY QUESTION"             "A pupil asks for 2 a.m. but your slide only shows 2 p.m."             "drawbox=x=120:y=330:w=840:h=505:color=0xEFC66D@0.10:t=8,"
+
+          make_seg promo-v2/03-volume.png promo-v2/s2.mp4             "CHANGE THE REPRESENTATION WHILE YOU TEACH"             "Need 3 beakers instead of 4? Vary the example immediately."             "drawbox=x=120:y=330:w=840:h=505:color=0xEFC66D@0.10:t=8,"
+
+          make_seg promo-v2/04-builder.png promo-v2/s3.mp4             "TEACHER CONTROLS THE ACTIVITY"             "Choose level, task, exact values, random practice and question count."             "drawbox=x=98:y=325:w=305:h=520:color=0xEFC66D@0.12:t=10,"
+
+          make_seg promo-v2/04-builder.png promo-v2/s4.mp4             "GENERATE TARGETED PRACTICE"             "Preview exactly what pupils will see before you share it."             "drawbox=x=410:y=325:w=575:h=520:color=0x24735E@0.10:t=10,"
+
+          make_seg promo-v2/04-builder.png promo-v2/s5.mp4             "DOWNLOAD AS INTERACTIVE HTML"             "The configured activity can run in a browser, even offline."             "drawbox=x=760:y=270:w=260:h=65:color=0xEFC66D@0.18:t=10,"
+
+          make_seg promo-v2/05-fraction.png promo-v2/s6.mp4             "PUPILS DO MORE THAN ANSWER"             "Step-by-step models, hints and immediate feedback support learning."             "drawbox=x=420:y=325:w=560:h=520:color=0x24735E@0.10:t=10,"
+
+          make_seg promo-v2/06-error-analysis.png promo-v2/s7.mp4             "BUILD REASONING TOO"             "Explain thinking and error analysis go beyond drill and practice."             "drawbox=x=420:y=325:w=560:h=520:color=0xEFC66D@0.10:t=10,"
+
+          make_seg promo-v2/01-home.png promo-v2/s8.mp4             "TEACH  VARY  GENERATE  DOWNLOAD  PRACTISE  FEEDBACK"             "The resource adapts to the teaching, not the teaching to the resource."             "drawbox=x=145:y=345:w=790:h=455:color=0xEFC66D@0.08:t=8,"
+
+          printf "file 's1.mp4'\nfile 's2.mp4'\nfile 's3.mp4'\nfile 's4.mp4'\nfile 's5.mp4'\nfile 's6.mp4'\nfile 's7.mp4'\nfile 's8.mp4'\n" > promo-v2/concat.txt
+          (cd promo-v2 && ffmpeg -y -f concat -safe 0 -i concat.txt -c copy silent-v2.mp4)
+          ffmpeg -y -i promo-v2/silent-v2.mp4 -i promo-v2/original-background-music-v2.wav             -filter_complex "[1:a]volume=0.46,afade=t=in:st=0:d=1.0,afade=t=out:st=39.5:d=2.5[a]"             -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 160k -shortest             promo-v2/Primary-Math-Teaching-Engine-Facebook-Promo-V2.mp4
+          rm -f promo-v2/s?.mp4 promo-v2/silent-v2.mp4 promo-v2/concat.txt
+
+      - name: Upload promo V2
+        uses: actions/upload-artifact@v4
+        with:
+          name: primary-math-teaching-engine-facebook-promo-v2
+          path: promo-v2/
+          if-no-files-found: error
+          retention-days: 30
