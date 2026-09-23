@@ -1,0 +1,104 @@
+name: Create Facebook Promo Assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/create-facebook-promo.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-promo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Teaching Engine
+        uses: actions/checkout@v4
+
+      - name: Capture real Teaching Engine screens
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p promo-output
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/teaching-engine-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000/index.html >/dev/null; then break; fi
+            sleep 1
+          done
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          echo "Using $CHROME"
+          capture() {
+            local url="$1"
+            local out="$2"
+            "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars               --run-all-compositor-stages-before-draw --virtual-time-budget=5000               --window-size=1440,900 --screenshot="$out" "$url"
+          }
+          capture "http://127.0.0.1:8000/index.html" "promo-output/01-home.png"
+          capture "http://127.0.0.1:8000/public/time.html?engine=time" "promo-output/02-time.png"
+          capture "http://127.0.0.1:8000/public/measurement/volume.html?engine=volume" "promo-output/03-volume.png"
+          capture "http://127.0.0.1:8000/public/place.html?engine=place" "promo-output/04-place-value.png"
+
+      - name: Create original copyright-safe music
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import math, wave, struct
+          sr=44100
+          duration=30.0
+          n=int(sr*duration)
+          chords=[
+              [261.63,329.63,392.00,493.88],
+              [220.00,261.63,329.63,392.00],
+              [174.61,220.00,261.63,329.63],
+              [196.00,246.94,293.66,392.00],
+          ]
+          melody=[523.25,659.25,783.99,659.25,587.33,659.25,523.25,493.88]
+          data=[]
+          for i in range(n):
+              t=i/sr
+              ci=int(t/3.75)%len(chords)
+              chord=chords[ci]
+              pad=sum(math.sin(2*math.pi*f*t) for f in chord)/len(chord)
+              beat=t%0.75
+              mi=int(t/0.75)%len(melody)
+              env=math.exp(-5.0*beat)
+              bell=math.sin(2*math.pi*melody[mi]*t)*env
+              bass=math.sin(2*math.pi*(chord[0]/2)*t)
+              fade=min(1,t/1.3,(duration-t)/1.8)
+              x=(0.105*pad+0.055*bell+0.05*bass)*max(0,fade)
+              x=max(-0.75,min(0.75,x))
+              data.append(struct.pack('<h',int(x*32767)))
+          with wave.open('promo-output/original-background-music.wav','wb') as w:
+              w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes(b''.join(data))
+          PY
+
+      - name: Build Facebook-ready promo video
+        shell: bash
+        run: |
+          set -euo pipefail
+          FONT=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
+          REG=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+          make_seg () {
+            IMG="$1"; OUT="$2"; LINE1="$3"; LINE2="$4"
+            ffmpeg -y -loop 1 -t 5 -i "$IMG" -vf "              scale=1080:675:force_original_aspect_ratio=decrease,              pad=1080:1350:(ow-iw)/2:300:color=0xF2F5EF,              drawbox=x=0:y=0:w=1080:h=250:color=0x183C35:t=fill,              drawtext=fontfile=$FONT:text='$LINE1':fontcolor=white:fontsize=52:x=(w-text_w)/2:y=62,              drawtext=fontfile=$REG:text='$LINE2':fontcolor=0x183C35:fontsize=35:x=(w-text_w)/2:y=1040,              fade=t=in:st=0:d=0.35,fade=t=out:st=4.65:d=0.35"               -r 30 -c:v libx264 -pix_fmt yuv420p "$OUT"
+          }
+          make_seg promo-output/01-home.png promo-output/seg1.mp4 "PRIMARY MATH TEACHING ENGINE" "A responsive teaching resource for P1 to P3"
+          make_seg promo-output/02-time.png promo-output/seg2.mp4 "THE LESSON CHANGES" "Need 2:00 a.m. instead of the 2:00 p.m. example you prepared?"
+          make_seg promo-output/02-time.png promo-output/seg3.mp4 "CHANGE THE EXAMPLE" "Vary the time and context while the discussion is happening."
+          make_seg promo-output/03-volume.png promo-output/seg4.mp4 "MAKE THE MODEL FIT THE EXPLANATION" "Need 3 beakers instead of 4? Change the representation."
+          make_seg promo-output/04-place-value.png promo-output/seg5.mp4 "KEEP THE CONCEPT. VARY THE EXAMPLE." "Respond to pupils without rebuilding a slide."
+          make_seg promo-output/01-home.png promo-output/seg6.mp4 "THE RESOURCE ADAPTS TO THE TEACHING" "limkimsze-maker.github.io/Primary-Math-Teaching-Engine/"
+
+          printf "file 'seg1.mp4'\nfile 'seg2.mp4'\nfile 'seg3.mp4'\nfile 'seg4.mp4'\nfile 'seg5.mp4'\nfile 'seg6.mp4'\n" > promo-output/concat.txt
+          (cd promo-output && ffmpeg -y -f concat -safe 0 -i concat.txt -c copy silent.mp4)
+          ffmpeg -y -i promo-output/silent.mp4 -i promo-output/original-background-music.wav             -filter_complex "[1:a]volume=0.42,afade=t=in:st=0:d=1.2,afade=t=out:st=28:d=2[a]"             -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 160k -shortest             promo-output/Primary-Math-Teaching-Engine-Facebook-Promo.mp4
+          rm -f promo-output/seg*.mp4 promo-output/silent.mp4 promo-output/concat.txt
+
+      - name: Upload promo assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: primary-math-teaching-engine-facebook-promo
+          path: promo-output/
+          if-no-files-found: error
+          retention-days: 30
