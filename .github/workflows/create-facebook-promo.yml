@@ -15,6 +15,12 @@ jobs:
       - name: Check out Teaching Engine
         uses: actions/checkout@v4
 
+      - name: Install video tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Capture real Teaching Engine screens
         shell: bash
         run: |
