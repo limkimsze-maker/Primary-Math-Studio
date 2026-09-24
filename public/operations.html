@@ -1515,7 +1515,7 @@ async function animateSmallDivision(){
  }finally{interaction.smallDivisionBusy=false;}
 }
 async function showSmallDivisionCounters(){
- const run=interaction;if(run.smallDivisionBusy||run.smallDivisionShown||solved)return;
+ const run=interaction;if(run.smallDivisionBusy||run.smallDivisionShown)return;
  const saved=$('operationInput')?.value||'',show=$('smallDivShow');if(show)show.disabled=true;
  run.step=0;
  await animateSmallDivision();
@@ -1563,7 +1563,9 @@ function drawSmallDivision(){
   $('operationHelp').onclick=()=>{hints++;const f=$('stepFeedback');f.className='step-feedback';f.textContent=sharing?'Think: if the counters are shared equally, how many will each group get? You can tap Show sharing.':'Think: how many complete groups of '+c.b+' can be made? You can tap Show grouping.';};
   const input=$('operationInput');if(input)input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();advanceSmallDivision(false);}};
  }else{
-  const continueButton=$('smallDivContinue');if(continueButton)continueButton.onclick=()=>{index++;if(index>=config.count)summary();else showQuestion();};
+  const continueButton=$('smallDivContinue');
+  if(continueButton&&!shown){const showButton=document.createElement('button');showButton.type='button';showButton.id='smallDivShow';showButton.textContent=sharing?'Show counter movement':'Show grouping movement';showButton.onclick=()=>showSmallDivisionCounters();continueButton.parentElement.insertBefore(showButton,continueButton);}
+  if(continueButton)continueButton.onclick=()=>{index++;if(index>=config.count)summary();else showQuestion();};
  }
 }
 
