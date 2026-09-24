@@ -579,3 +579,9 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 .multip-model>.concept-number-sentence{margin:10px 0 0}
 .concept-answer-box{flex:0 0 auto;min-width:64px;min-height:52px;box-sizing:border-box}
 @media(max-width:620px){.small-div-concept-column>.concept-number-sentence,.multip-model>.concept-number-sentence{margin-top:10px}.concept-answer-box{min-width:58px;min-height:46px}}
+
+/* SINGLE EQUATION ANSWER INPUT v3 */
+.concept-answer-input{flex:0 0 auto;width:64px;height:52px;border:3px solid #d6a144;border-radius:9px;background:#fffdf4;box-sizing:border-box;font:inherit;font-size:30px;font-weight:900;text-align:center;color:#183c35;padding:0 4px;outline:none}
+.concept-answer-input:focus{border-color:#a92f2f;box-shadow:0 0 0 4px #d6a14444}
+.small-div-controls .step-actions{justify-content:center}
+@media(max-width:620px){.concept-answer-input{width:58px;height:46px;font-size:27px}}
