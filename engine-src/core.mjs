@@ -378,7 +378,7 @@ export function operationPlan(c){
  if(smallDiv){
   const q=c.a/c.b,sharing=c.task==='share';
   push({kind:'distribute',focus:0,title:sharing?'Share into equal groups':'Make equal groups',prompt:sharing?`Share ${c.a} counters among ${c.b} groups. How many counters go in each group?`:`Make groups of ${c.b} from ${c.a} counters. How many groups can you make?`,label:sharing?'Counters in each group':'Number of groups',expected:q,button:sharing?'Check and share':'Check and group',equation:sharing?`${c.b} equal groups of ${q} counters use all ${c.a} counters.`:`${q} groups of ${c.b} counters use all ${c.a} counters.`},()=>{state.groups=Array.from({length:sharing?c.b:q},()=>[sharing?q:c.b]);state.top[0]=0;});
-  push({kind:'record',focus:0,title:'Write the division answer',prompt:sharing?'Write the number of counters in each group.':'Write the number of groups.',label:'Division answer',expected:q,button:'Record answer',equation:`${c.a} ÷ ${c.b} = ${q}.`},()=>{state.result[0]=q;});
+  push({kind:'record',focus:0,title:'Check the division answer',prompt:sharing?'Write the number of counters in each group.':'Write the number of groups.',label:'Answer',expected:q,button:'Check',equation:`${c.a} ÷ ${c.b} = ${q}.`},()=>{state.result[0]=q;});
  }else if(div){
   state.groups=Array.from({length:c.b},()=>ps.map(()=>0));
   for(let i=ps.length-1;i>=0;i--){
