@@ -379,6 +379,32 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
  body.pupil.fraction-engine #questionView{overflow:auto}
  body.pupil.fraction-engine #diagram{min-height:620px;margin:4px 8px}
 }
+
+/* FRACTION ADDITION COMBINE ANIMATION */
+.fraction-combine-demo{margin:12px auto 14px;padding:12px 14px;border:2px dashed #b9cbbf;border-radius:14px;background:#f8fbf9;max-width:760px;text-align:center;overflow:hidden}
+.fraction-combine-heading{font-size:15px;font-weight:900;color:#285a4d;margin-bottom:8px}
+.fraction-combine-sources{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.fraction-combine-source,.fraction-combine-result{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.fraction-combine-source .fraction-strip,.fraction-combine-result .fraction-strip{width:min(250px,100%);height:54px}
+.fraction-combine-source .fraction-symbol,.fraction-combine-result .fraction-symbol{font-size:23px}
+.fraction-combine-plus{font-size:34px;color:#214f43}
+.fraction-combine-arrow{font-size:26px;color:#8c6a24;line-height:1;margin:3px 0}
+.fraction-combine-result{opacity:0;transform:scale(.92)}
+.fraction-combine-caption{opacity:0;margin:5px 0 8px;font-size:16px;font-weight:900;color:#214f43}
+#fractionCombineReplay{min-height:36px;padding:6px 12px;font-weight:800}
+.fraction-combine-demo.play .fraction-combine-left{animation:fractionCombineLeft 1.7s ease-in-out forwards}
+.fraction-combine-demo.play .fraction-combine-right{animation:fractionCombineRight 1.7s ease-in-out forwards}
+.fraction-combine-demo.play .fraction-combine-plus{animation:fractionCombineFade 1.7s ease-in-out forwards}
+.fraction-combine-demo.play .fraction-combine-result{animation:fractionCombineResult .95s ease-out 1.45s forwards}
+.fraction-combine-demo.play .fraction-combine-caption{animation:fractionCombineCaption .7s ease-out 2.05s forwards}
+@keyframes fractionCombineLeft{0%,20%{transform:translateX(0);opacity:1}75%{transform:translateX(46%);opacity:.72}100%{transform:translateX(58%);opacity:0}}
+@keyframes fractionCombineRight{0%,20%{transform:translateX(0);opacity:1}75%{transform:translateX(-46%);opacity:.72}100%{transform:translateX(-58%);opacity:0}}
+@keyframes fractionCombineFade{0%,45%{opacity:1}100%{opacity:0}}
+@keyframes fractionCombineResult{0%{opacity:0;transform:scale(.9)}70%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@keyframes fractionCombineCaption{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){.fraction-combine-demo{padding:10px 8px}.fraction-combine-sources{gap:5px}.fraction-combine-source .fraction-strip,.fraction-combine-result .fraction-strip{height:44px}.fraction-combine-plus{font-size:28px}.fraction-combine-source .fraction-symbol,.fraction-combine-result .fraction-symbol{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.fraction-combine-demo.play .fraction-combine-left,.fraction-combine-demo.play .fraction-combine-right,.fraction-combine-demo.play .fraction-combine-plus{opacity:.35}.fraction-combine-demo.play .fraction-combine-result,.fraction-combine-demo.play .fraction-combine-caption{opacity:1;transform:none;animation:none}}
+
 </style></head><body>
 <script id="saved-config" type="application/json">null</script>
 <header><div><p class="eyebrow">CONFIGURABLE CLASSROOM INTERACTIVE</p><h1 id="engineTitle">Teaching engine</h1></div><div class="header-buttons"><button type="button" id="guideButton">Teacher guide</button><button type="button" id="viewButton">Pupil view</button><button type="button" id="downloadButton" class="primary teacher-only">Download activity ↓</button></div></header>
@@ -1612,6 +1638,23 @@ function drawMoney(){
 function strip(n,den,interactive=false,second=false){return `<div class="fraction-strip" style="grid-template-columns:repeat(${den},1fr)">${Array.from({length:den},(_,i)=>`<${interactive?'button type="button"':'span'} class="fraction-cell ${i<n?'shaded':''} ${second?'second':''}" ${interactive?`data-cell="${i}" aria-label="Part ${i+1}"`:''}></${interactive?'button':'span'}>`).join('')}</div>`;}
 function fractionSymbol([n,d],extra=''){return d===1?`<span class="fraction-whole ${extra}" aria-label="${n}">${n}</span>`:`<span class="fraction-symbol ${extra}" aria-label="${n} over ${d}"><b>${n}</b><i></i><b>${d}</b></span>`;}
 function fractionModelCard(frac,label,index=0,extra=''){return `<div class="fraction-model-card ${extra}"><span>${E(label)}</span>${strip(frac[0],frac[1],false,index%2===1)}${fractionSymbol(frac)}</div>`;}
+function fractionCombineAnimation(c){
+ if(!['like-add','unlike-add'].includes(c.task))return '';
+ const left=c.changedFractions?.[0]||c.fractions?.[0],right=c.changedFractions?.[1]||c.fractions?.[1],result=c.rawResult;
+ if(!left||!right||!result||left[1]!==right[1])return '';
+ return `<div class="fraction-combine-demo" id="fractionCombineDemo" aria-label="Animation showing the two fractions combining to make ${result[0]} over ${result[1]}">
+  <div class="fraction-combine-heading">Bring the shaded parts together</div>
+  <div class="fraction-combine-sources">
+   <div class="fraction-combine-source fraction-combine-left">${strip(left[0],left[1],false,false)}${fractionSymbol(left)}</div>
+   <strong class="fraction-combine-plus">+</strong>
+   <div class="fraction-combine-source fraction-combine-right">${strip(right[0],right[1],false,true)}${fractionSymbol(right)}</div>
+  </div>
+  <div class="fraction-combine-arrow" aria-hidden="true">↓</div>
+  <div class="fraction-combine-result">${strip(result[0],result[1],false,false)}${fractionSymbol(result,'answer')}</div>
+  <p class="fraction-combine-caption">${left[0]}/${left[1]} + ${right[0]}/${right[1]} = ${result[0]}/${result[1]}</p>
+  <button type="button" id="fractionCombineReplay">↻ Replay animation</button>
+ </div>`;
+}
 function fractionEquation(c,finalStep,step=0){
  const original=c.fractions||[[c.a,c.den]],symbols=original.map(frac=>fractionSymbol(frac));
  if(['unit-compare','like-compare','unlike-compare'].includes(c.task)){
@@ -1636,13 +1679,18 @@ function drawFractions(){
  if(['equivalent','simplify'].includes(c.task)&&finalStep)shown=[c.fractions[0],c.changedFractions[0]];
  const labels=shown.length===1?['One whole']:shown.map((_,i)=>i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'Same value':i===0?'First fraction':i===1?'Second fraction':'Third fraction');
  let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'')).join('');
- const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2;
- if(showResultModel&&!finalStep)models+=fractionModelCard(c.rawResult,'Answer before simplifying',2,'fraction-result-card');
+ const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2,combineDemo=['like-add','unlike-add'].includes(c.task)&&step===2?fractionCombineAnimation(c):'',staticResult=showResultModel&&(!combineDemo||finalStep);
+ if(staticResult&&!finalStep)models+=fractionModelCard(c.rawResult,'Answer before simplifying',2,'fraction-result-card');
  if(showResultModel&&finalStep)models+=fractionModelCard(c.resultFraction,'Simplest answer',2,'fraction-result-card');
- host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(showResultModel?1:0))}">${models}</div><div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep,step)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
+ host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(staticResult?1:0))}">${models}</div>${combineDemo}<div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep,step)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
  $('fractionNext').onclick=()=>{if(finalStep)return;interaction.fractionStep=Math.min(steps.length-1,step+1);hints++;drawFractions();if(interaction.fractionStep===steps.length-1&&current.type==='choice'){selected=current.answer;const choices=Array.from($('answerFields').querySelectorAll('.choice'));choices.forEach(button=>button.classList.toggle('selected',button.textContent===String(current.answer)));$('feedback').textContent='';}};
  $('fractionBack').onclick=()=>{if(step>0){interaction.fractionStep=step-1;hints++;drawFractions();}};
  const oldControls=$('answerForm').querySelector('.fraction-step-controls');if(oldControls)oldControls.remove();$('answerForm').insertBefore(host.querySelector('.fraction-step-controls'),$('answerFields'));
+ if(combineDemo){
+  const playCombine=()=>{const demo=$('fractionCombineDemo');if(!demo)return;demo.classList.remove('play');void demo.offsetWidth;demo.classList.add('play');};
+  requestAnimationFrame(playCombine);
+  const replay=$('fractionCombineReplay');if(replay)replay.onclick=playCombine;
+ }
 }
 function clock(h,m){let s='<circle cx="150" cy="150" r="127" fill="#fff" stroke="#315a46" stroke-width="4"/>';for(let i=0;i<60;i++){const a=i*Math.PI/30,x1=150+Math.sin(a)*(i%5===0?110:119),y1=150-Math.cos(a)*(i%5===0?110:119);s+=line(x1,y1,150+Math.sin(a)*125,150-Math.cos(a)*125,'#315a46',i%5===0?3:1);if(i%5===0)s+=text(150+Math.sin(a)*93,156-Math.cos(a)*93,i===0?12:i/5,18);}
  const ha=(h%12+m/60)*Math.PI/6,ma=m*Math.PI/30;s+=line(150,150,150+Math.sin(ha)*65,150-Math.cos(ha)*65,'#183c35',7)+line(150,150,150+Math.sin(ma)*99,150-Math.cos(ma)*99,'#bc8c26',4)+'<circle cx="150" cy="150" r="7" fill="#183c35"/>';return svg(s,'0 0 300 300','svg-clock');}
