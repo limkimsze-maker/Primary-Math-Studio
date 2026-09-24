@@ -562,3 +562,14 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 @keyframes multipRegroupGlow{from{filter:brightness(1)}to{filter:brightness(1.22) drop-shadow(0 0 8px #efc66d)}}
 @media(max-width:620px){.multip-regroup-tray{width:min(150px,44vw);padding:6px}.multip-regroup-slots{grid-template-columns:repeat(5,21px);grid-auto-rows:21px;gap:3px}.multip-regroup-slot{width:21px;height:21px;font-size:9px}.multip-regroup-convert{height:36px}.multip-regroup-convert .multip-disc{--multip-size:33px;--multip-font:12px}}
 
+
+/* CONCEPT NUMBER SENTENCE v1 */
+.concept-number-sentence{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 10px;padding:10px 14px;border:2px solid #b9cabf;border-radius:12px;background:#fff;font-size:34px;font-weight:900;line-height:1;color:#183c35;box-shadow:0 2px 8px #183c3512}
+.concept-number-sentence .concept-operator{font-size:38px}
+.concept-answer-box{display:inline-block;width:64px;height:52px;border:3px solid #d6a144;border-radius:9px;background:#fffdf4;box-shadow:inset 0 0 0 2px #fff}
+.small-div-concept-column{display:flex;flex-direction:column;min-width:0}
+.pupil .concept-number-sentence{font-size:42px;gap:17px;padding:12px 16px}
+.pupil .concept-number-sentence .concept-operator{font-size:46px}
+.pupil .concept-answer-box{width:76px;height:60px}
+@media(max-width:620px){.concept-number-sentence,.pupil .concept-number-sentence{font-size:30px;gap:11px;padding:8px 10px;margin-bottom:8px}.concept-number-sentence .concept-operator,.pupil .concept-number-sentence .concept-operator{font-size:34px}.concept-answer-box,.pupil .concept-answer-box{width:58px;height:46px;border-width:3px}}
+
