@@ -454,10 +454,88 @@ function advanceOperation(reveal=false){
  if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent='Try this step again. Count the discs in the highlighted place.';$('stepFeedback').className='step-feedback retry';return;}
  if(reveal)hints++;interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
 }
+/* SMALL DIVISION CONCEPT ANIMATION v1 */
+function smallDivisionCounterHTML(extra=''){return `<span class="small-div-counter ${extra}" aria-hidden="true"></span>`;}
+function smallDivisionModel(c,plan,state){
+ const sharing=c.task==='share',groupCount=sharing?c.b:c.a/c.b,targetSize=sharing?c.a/c.b:c.b;
+ const counts=state.groups.length?state.groups.map(g=>g[0]):Array.from({length:groupCount},()=>0),remaining=state.top[0]??0;
+ const cue=sharing?`Make ${groupCount} groups first. Then share one counter to Group 1, Group 2${groupCount>2?', Group 3 …':''}, and repeat.`:`Take ${targetSize} counters at a time. Every ${targetSize} counters form one complete group.`;
+ return `<div class="small-div-concept">
+  <div class="small-div-cue"><strong>${sharing?'Share equally':'Make equal groups'}</strong><span>${E(cue)}</span></div>
+  <div class="small-div-stage">
+   <div class="small-div-bank-wrap"><div class="small-div-bank-title">Counters to use <b id="smallDivRemaining">${remaining}</b></div><div class="small-div-bank" id="smallDivCounterBank">${Array.from({length:remaining},()=>smallDivisionCounterHTML()).join('')}${remaining?'':'<span class="small-div-empty">All counters have been grouped.</span>'}</div></div>
+   <div class="small-div-flow" aria-hidden="true">→</div>
+   <div class="small-div-groups" style="--small-div-groups:${Math.min(groupCount,4)}">${Array.from({length:groupCount},(_,i)=>`<div class="small-div-group ${counts[i]===targetSize?'complete':''}" data-small-div-group="${i}"><div class="small-div-group-head"><strong>Group ${i+1}</strong><span class="small-div-group-count">${counts[i]} / ${targetSize}</span></div><div class="small-div-group-counters">${Array.from({length:counts[i]},()=>smallDivisionCounterHTML('small-div-landed')).join('')}</div></div>`).join('')}</div>
+  </div>
+  <p class="small-div-live" id="smallDivLive" role="status" aria-live="polite">${sharing?`There are ${groupCount} groups. Share one counter into each group in turn.`:`${targetSize} counters will form each group. Finish one group before starting the next.`}</p>
+ </div>`;
+}
+const smallDivWait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function animateSmallDivision(){
+ if(interaction.smallDivisionBusy)return;
+ const c=current.data,plan=interaction.plan,step=plan.steps[interaction.step];
+ if(!plan.smallDiv||step?.kind!=='distribute')return;
+ interaction.smallDivisionBusy=true;
+ const input=$('operationInput'),next=$('operationNext'),teacher=$('teacherNext'),help=$('operationHelp'),back=$('operationBack'),reset=$('operationReset');
+ [input,next,teacher,help,back,reset].forEach(el=>{if(el)el.disabled=true;});
+ const source=Array.from(document.querySelectorAll('#smallDivCounterBank .small-div-counter'));
+ const groups=Array.from(document.querySelectorAll('[data-small-div-group]'));
+ const sharing=c.task==='share',targetSize=sharing?c.a/c.b:c.b,groupCount=groups.length;
+ const order=source.map((_,i)=>sharing?i%groupCount:Math.floor(i/targetSize));
+ const live=$('smallDivLive'),remaining=$('smallDivRemaining');
+ const duration=Math.max(160,Math.min(520,Math.round(9000/Math.max(1,c.a))));
+ const pause=Math.max(20,Math.min(100,Math.round(1800/Math.max(1,c.a))));
+ try{
+  for(let i=0;i<source.length;i++){
+   const token=source[i],groupIndex=order[i],card=groups[groupIndex],target=card.querySelector('.small-div-group-counters');
+   card.classList.add('active');
+   if(live)live.textContent=sharing?`Counter ${i+1}: move to Group ${groupIndex+1}.`:`Group ${groupIndex+1}: place counter ${i%targetSize+1} of ${targetSize}.`;
+   const placeholder=document.createElement('span');placeholder.className='small-div-counter small-div-placeholder';placeholder.setAttribute('aria-hidden','true');target.append(placeholder);
+   const from=token.getBoundingClientRect(),to=placeholder.getBoundingClientRect(),flyer=token.cloneNode(true);
+   flyer.classList.add('small-div-flyer');Object.assign(flyer.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',zIndex:'9999',pointerEvents:'none'});
+   document.body.append(flyer);token.style.visibility='hidden';
+   const dx=to.left-from.left,dy=to.top-from.top;
+   const animation=flyer.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${dx}px,${dy}px) scale(1.08)`}],{duration,easing:'cubic-bezier(.2,.75,.25,1)',fill:'forwards'});
+   try{await animation.finished;}catch{}
+   flyer.remove();placeholder.classList.remove('small-div-placeholder');placeholder.classList.add('small-div-landed');
+   const count=target.querySelectorAll('.small-div-counter').length;card.querySelector('.small-div-group-count').textContent=`${count} / ${targetSize}`;
+   if(remaining)remaining.textContent=String(source.length-i-1);
+   if(count===targetSize){card.classList.add('complete');if(!sharing&&live)live.textContent=`${targetSize} counters form Group ${groupIndex+1}. Group ${groupIndex+1} is complete.`;await smallDivWait(280);}
+   await smallDivWait(pause);
+   card.classList.remove('active');
+   if(sharing&&(i+1)%groupCount===0&&i<source.length-1){if(live)live.textContent=`One counter has been shared to every group. Start the next round.`;await smallDivWait(180);}
+  }
+  if(live)live.textContent=sharing?`All ${c.a} counters have been shared equally. Each group has ${c.a/c.b}.`:`All ${c.a} counters have been used. ${c.a/c.b} equal groups were formed.`;
+  await smallDivWait(450);
+ }finally{interaction.smallDivisionBusy=false;}
+}
+async function advanceSmallDivision(reveal=false){
+ const step=interaction.plan.steps[interaction.step];if(!step||solved||interaction.smallDivisionBusy)return;
+ if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent=current.data.task==='share'?'Try again. Work out how many counters each group will receive.':'Try again. Work out how many complete groups can be made.';$('stepFeedback').className='step-feedback retry';return;}
+ if(reveal)hints++;
+ await animateSmallDivision();
+ interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
+}
+function drawSmallDivision(){
+ const c=current.data,plan=interaction.plan,pos=interaction.step,step=plan.steps[pos],state=step?step.before:plan.final,previous=pos?plan.steps[pos-1]:null,host=$('diagram'),sharing=c.task==='share';
+ interaction.operationComplete=!step;
+ const intro=sharing?'The number of groups is fixed first. Share counters one at a time around the groups.':'The number in each group is fixed first. Complete one group, then form the next group.';
+ host.innerHTML=`<div class="operation-workspace small-div-workspace"><div class="operation-top"><div class="step-heading"><span>${step?`Step ${pos+1} / ${plan.steps.length}`:'Completed'}</span><h3>${step?E(step.title):sharing?'Sharing complete':'Equal groups complete'}</h3></div><div class="small-div-key">${sharing?`${c.b} groups first`:`${c.b} in each group`}</div></div><div class="small-div-main">${smallDivisionModel(c,plan,state)}<div class="operation-writing small-div-writing"><h4>Number sentence</h4>${operationAlgorithm(state,step)}<p class="small-div-meaning">${E(intro)}</p></div></div><div class="operation-controls small-div-controls">${previous?`<p class="last-step" role="status">✓ ${E(previous.equation)}</p>`:`<p class="last-step">${E(intro)}</p>`}${step?`<p>${E(step.prompt)}</p><div class="step-actions"><label><span>${E(step.label)}</span><input id="operationInput" type="number" min="0" max="999" step="1" inputmode="numeric" autocomplete="off" aria-label="${E(step.label)}"></label><button type="button" class="primary" id="operationNext">${E(step.button)}</button><button type="button" class="teacher-only" id="teacherNext">Teacher: Next ▶</button><button type="button" id="operationHelp">Help me</button></div><p id="stepFeedback" class="step-feedback" role="status" aria-live="polite"></p>`:'<p class="operation-done">Now read the groups and write the whole answer below.</p>'}<div class="operation-rewind"><button type="button" id="operationBack" ${pos===0||solved?'disabled':''}>Previous step</button><button type="button" id="operationReset" ${pos===0||solved?'disabled':''}>Restart steps</button></div></div></div>`;
+ if(step){
+  $('operationNext').onclick=()=>step.kind==='distribute'?advanceSmallDivision(false):advanceOperation(false);
+  $('teacherNext').onclick=()=>step.kind==='distribute'?advanceSmallDivision(true):advanceOperation(true);
+  $('operationHelp').onclick=()=>{hints++;$('stepFeedback').className='step-feedback';$('stepFeedback').textContent=step.kind==='distribute'?intro:step.equation;};
+  $('operationInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();step.kind==='distribute'?advanceSmallDivision(false):advanceOperation(false);}};
+ }
+ $('operationBack').onclick=()=>{if(pos>0&&!solved&&!interaction.smallDivisionBusy){interaction.step--;hints++;$('feedback').textContent='';drawOperation();lockOperationAnswer();}};
+ $('operationReset').onclick=()=>{if(!solved&&!interaction.smallDivisionBusy){interaction.step=0;hints++;$('feedback').textContent='';drawOperation();lockOperationAnswer();}};
+}
+
 function drawOperation(){
  if(interaction.plan.division){drawDivision();return;}
  if(['add','subtract'].includes(current.data.task)){drawAddSub();return;}
  if(['multiply','multiply-column'].includes(current.data.task)){drawMultiplication();return;}
+ if(interaction.plan.smallDiv){drawSmallDivision();return;}
  const c=current.data,plan=interaction.plan,pos=interaction.step,step=plan.steps[pos],state=step?step.before:plan.final,previous=pos?plan.steps[pos-1]:null,host=$('diagram');interaction.operationComplete=!step;
  const order=plan.ps.map((_,i)=>i).reverse(),add=c.task==='add',sub=c.task==='subtract',mult=['multiply','multiply-column'].includes(c.task);
  const columns=order.map(i=>{
