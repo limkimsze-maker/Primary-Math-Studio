@@ -573,3 +573,9 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 .pupil .concept-answer-box{width:76px;height:60px}
 @media(max-width:620px){.concept-number-sentence,.pupil .concept-number-sentence{font-size:30px;gap:11px;padding:8px 10px;margin-bottom:8px}.concept-number-sentence .concept-operator,.pupil .concept-number-sentence .concept-operator{font-size:34px}.concept-answer-box,.pupil .concept-answer-box{width:58px;height:46px;border-width:3px}}
 
+
+/* CONCEPT NUMBER SENTENCE BOTTOM v2 */
+.small-div-concept-column>.concept-number-sentence{margin:12px 0 0}
+.multip-model>.concept-number-sentence{margin:10px 0 0}
+.concept-answer-box{flex:0 0 auto;min-width:64px;min-height:52px;box-sizing:border-box}
+@media(max-width:620px){.small-div-concept-column>.concept-number-sentence,.multip-model>.concept-number-sentence{margin-top:10px}.concept-answer-box{min-width:58px;min-height:46px}}
