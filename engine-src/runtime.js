@@ -678,13 +678,70 @@ function drawMultiplication(){
  $('operationReset').onclick=()=>{if(!solved){interaction.step=0;hints++;drawOperation();lockOperationAnswer();}};
  multiplicationResizeWatcher?.disconnect();multiplicationResizeWatcher?.observe(host.querySelector('.multip-mat'));requestAnimationFrame(fitMultiplicationPiles);
 }
-function advanceMultiplication(reveal=false){
- const run=interaction,step=run.plan.steps[run.step];if(!step||solved)return;
+
+/* MULTIPLICATION REGROUP ANIMATION v1 */
+const multiplicationRegroupWait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function animateMultiplicationRegroup(run,step){
+ if(!step?.carryOut||step.finalCarry||run.multiplicationBusy)return;
+ const p=run.plan.ps[step.focus],nextP=run.plan.ps[step.focus+1];
+ const host=$('diagram'),currentCol=host.querySelector(`.multip-column[data-place="${p}"]`),nextCol=host.querySelector(`.multip-column[data-place="${nextP}"]`);
+ if(!currentCol||!nextCol||currentCol.offsetParent===null||nextCol.offsetParent===null)return;
+ const source=Array.from(currentCol.querySelectorAll('.multip-disc')).filter(el=>el.getBoundingClientRect().width>0);
+ const needed=step.carryOut*10;
+ if(source.length<needed)return;
+ run.multiplicationBusy=true;
+ const controls=['operationNext','teacherNext','operationHelp','operationBack','operationReset','multipMatToggle','multipClear','multipErase'].map(id=>$(id)).filter(Boolean);
+ controls.forEach(el=>el.disabled=true);
+ host.querySelectorAll('[data-multip-digit],.multip-entry').forEach(el=>el.disabled=true);
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,moveMs=reduced?0:340,betweenMs=reduced?0:70,convertMs=reduced?0:900,pauseMs=reduced?0:650;
+ const feedback=$('stepFeedback'),singular=name=>name.replace(/s$/,'');
+ let tray=null;
+ try{
+  const nextSlot=nextCol.querySelector('.multip-carry-slot');
+  let destPile=nextSlot.querySelector('.multip-pile');
+  if(!destPile){destPile=document.createElement('div');destPile.className='multip-pile multip-regroup-live';destPile.dataset.place=String(nextP);nextSlot.append(destPile);}
+  for(let bundle=0;bundle<step.carryOut;bundle++){
+   tray?.remove();tray=document.createElement('div');tray.className='multip-regroup-tray';tray.innerHTML=`<strong>Make a group of 10 ${E(placeName(p))}</strong><div class="multip-regroup-slots">${Array.from({length:10},()=>'<span class="multip-regroup-slot"></span>').join('')}</div><div class="multip-regroup-equation">10 ${E(placeName(p))}</div><div class="multip-regroup-convert"></div>`;document.body.append(tray);
+   const colRect=currentCol.getBoundingClientRect(),trayRect=tray.getBoundingClientRect(),left=Math.max(6,Math.min(innerWidth-trayRect.width-6,colRect.left+(colRect.width-trayRect.width)/2)),top=Math.max(6,Math.min(innerHeight-trayRect.height-6,colRect.top+Math.max(52,(colRect.height-trayRect.height)/2)));
+   Object.assign(tray.style,{left:left+'px',top:top+'px'});
+   const slots=Array.from(tray.querySelectorAll('.multip-regroup-slot'));
+   if(feedback)feedback.textContent=`Regrouping: move 10 ${placeName(p)} together to make 1 ${singular(placeName(nextP))}.`;
+   for(let j=0;j<10;j++){
+    const token=source[bundle*10+j],from=token.getBoundingClientRect(),slot=slots[j],to=slot.getBoundingClientRect();
+    const flyer=token.cloneNode(true);flyer.classList.add('multip-regroup-flyer');Object.assign(flyer.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',zIndex:'10050',pointerEvents:'none'});
+    document.body.append(flyer);token.style.visibility='hidden';
+    try{await flyer.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${to.left-from.left}px,${to.top-from.top}px) scale(.78)`}],{duration:moveMs,easing:'cubic-bezier(.2,.72,.25,1)',fill:'forwards'}).finished;}catch{}
+    flyer.remove();slot.classList.add('filled');slot.dataset.place=String(p);slot.textContent=String(p);
+    await multiplicationRegroupWait(betweenMs);
+   }
+   tray.classList.add('complete');tray.querySelector('.multip-regroup-equation').textContent=`10 ${placeName(p)} = 1 ${singular(placeName(nextP))}`;
+   if(feedback)feedback.textContent=`10 ${placeName(p)} make 1 ${singular(placeName(nextP))}.`;
+   await multiplicationRegroupWait(pauseMs);
+   const target=document.createElement('span');target.className='multip-disc multip-regroup-arrived';target.dataset.place=String(nextP);target.textContent=String(nextP);target.style.visibility='hidden';destPile.append(target);fitMultiplicationPiles();
+   const convert=tray.querySelector('.multip-regroup-convert'),formed=document.createElement('span');formed.className='multip-disc multip-regroup-formed';formed.dataset.place=String(nextP);formed.textContent=String(nextP);convert.append(formed);
+   const from=formed.getBoundingClientRect(),to=target.getBoundingClientRect(),flyer=formed.cloneNode(true);Object.assign(flyer.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',zIndex:'10060',pointerEvents:'none'});document.body.append(flyer);formed.style.visibility='hidden';
+   try{await flyer.animate([{transform:'translate(0,0) scale(1.08)'},{transform:`translate(${to.left-from.left}px,${to.top-from.top}px) scale(1)`}],{duration:convertMs,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'}).finished;}catch{}
+   flyer.remove();target.style.visibility='visible';target.classList.add('multip-regroup-glow');
+   if(feedback)feedback.textContent=`Group ${bundle+1}: 10 ${placeName(p)} became 1 ${singular(placeName(nextP))}.`;
+   await multiplicationRegroupWait(pauseMs);
+  }
+  const remaining=step.digit;
+  if(feedback)feedback.textContent=remaining?`${step.total} ${placeName(p)} regroup as ${step.carryOut} ${placeName(nextP)} and ${remaining} ${placeName(p)}.`:`${step.total} ${placeName(p)} regroup exactly as ${step.carryOut} ${placeName(nextP)}.`;
+  await multiplicationRegroupWait(reduced?0:800);
+ }catch(e){
+  // If the visual animation is interrupted, still allow the checked arithmetic step to continue.
+ }finally{
+  tray?.remove();run.multiplicationBusy=false;
+ }
+}
+
+async function advanceMultiplication(reveal=false){
+ const run=interaction,step=run.plan.steps[run.step];if(!step||solved||run.multiplicationBusy)return;
  const typed=Object.fromEntries(Array.from($('diagram').querySelectorAll('.multip-entry')).map(i=>[i.dataset.field,i.value]));
  if(!reveal&&!checkOperationStep(step,typed)){
   attempts++;const wrong=step.inputs.find(f=>String(typed[f.key]??'')!==String(f.expected));$('stepFeedback').className='step-feedback retry';$('stepFeedback').textContent=wrong.key.startsWith('carry')?'Check the regrouping digit above the next column. Both highlighted boxes must be correct.':`Check the ${wrong.label}. Write one digit in each highlighted box.`;$('diagram').querySelector(`[data-field="${wrong.key}"]`).focus({preventScroll:true});return;
  }
- if(reveal)hints++;run.step++;$('hint').hidden=true;
+ if(reveal)hints++;await animateMultiplicationRegroup(run,step);run.step++;$('hint').hidden=true;
  if(run.step===run.plan.steps.length){
   run.operationComplete=true;
   if(checkAnswer(current,current.answer,run)){attempts++;solved=true;results.push({first:attempts===1&&hints===0,attempts,hints});$('feedback').style.color='#24735e';$('feedback').textContent='Correct! '+current.explanation;$('nextButton').hidden=false;$('hintButton').disabled=true;progress();}
