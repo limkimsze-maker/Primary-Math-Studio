@@ -1627,7 +1627,7 @@ function drawFractions(){
  const c=current.data,host=$('diagram');
  if(engine!=='fraction'){host.innerHTML=`<div class="fraction-wrap">${strip(c.a,c.den)}</div>`+caption('The denominator counts all equal parts.');return;}
  const steps=c.steps||[],step=Math.min(interaction.fractionStep,Math.max(0,steps.length-1)),finalStep=step===steps.length-1,teaching=steps[step]||{title:'Look at the model',text:'Each strip is one whole.'};let shown=c.fractions||[[c.a,c.den]];
- if(['unlike-add','unlike-subtract'].includes(c.task)&&step>=1)shown=c.changedFractions;
+ if(['unlike-compare','unlike-add','unlike-subtract'].includes(c.task)&&step>=1)shown=c.changedFractions;
  if(['equivalent','simplify'].includes(c.task)&&finalStep)shown=[c.fractions[0],c.changedFractions[0]];
  const labels=shown.length===1?['One whole']:shown.map((_,i)=>i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'Same value':i===0?'First fraction':i===1?'Second fraction':'Third fraction');
  let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'')).join('');
