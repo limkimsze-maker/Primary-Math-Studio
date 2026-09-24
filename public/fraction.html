@@ -405,6 +405,39 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 @media(max-width:620px){.fraction-combine-demo{padding:10px 8px}.fraction-combine-sources{gap:5px}.fraction-combine-source .fraction-strip,.fraction-combine-result .fraction-strip{height:44px}.fraction-combine-plus{font-size:28px}.fraction-combine-source .fraction-symbol,.fraction-combine-result .fraction-symbol{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.fraction-combine-demo.play .fraction-combine-left,.fraction-combine-demo.play .fraction-combine-right,.fraction-combine-demo.play .fraction-combine-plus{opacity:.35}.fraction-combine-demo.play .fraction-combine-result,.fraction-combine-demo.play .fraction-combine-caption{opacity:1;transform:none;animation:none}}
 
+/* FRACTION SUBTRACTION CROSS-OUT ANIMATION */
+.fraction-subtract-demo{margin:12px auto 14px;padding:12px 14px;border:2px dashed #d8b8b8;border-radius:14px;background:#fff9f9;max-width:760px;text-align:center;overflow:hidden}
+.fraction-subtract-heading{font-size:15px;font-weight:900;color:#8e2c2c;margin-bottom:8px}
+.fraction-subtract-equation{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:9px}
+.fraction-subtract-equation>strong{font-size:32px;color:#8e2c2c}
+.fraction-subtract-equation .fraction-symbol{font-size:23px}
+.fraction-subtract-work{display:flex;flex-direction:column;align-items:center;gap:6px}
+.fraction-subtract-strip{display:grid;grid-template-columns:repeat(var(--parts),minmax(0,1fr));width:min(430px,92%);height:62px;border:3px solid #315a46;border-radius:9px;overflow:hidden;background:#fff}
+.fraction-subtract-cell{position:relative;border-right:2px solid #315a46;background:#fff}
+.fraction-subtract-cell:last-child{border-right:0}
+.fraction-subtract-cell.shaded{background:#efd77e}
+.fraction-subtract-cell i,.fraction-subtract-cell b{position:absolute;left:8%;top:50%;width:84%;height:4px;border-radius:99px;background:#c62828;opacity:0;transform-origin:center}
+.fraction-subtract-cell i{transform:translateY(-50%) rotate(45deg)}
+.fraction-subtract-cell b{transform:translateY(-50%) rotate(-45deg)}
+.fraction-subtract-start-label .fraction-symbol{font-size:21px}
+.fraction-subtract-action{margin:7px 0 8px;font-size:14px;font-weight:800;color:#783232}
+.fraction-subtract-result{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transform:scale(.92)}
+.fraction-subtract-result .fraction-strip{width:min(300px,80%);height:48px}
+.fraction-subtract-result .fraction-symbol{font-size:23px}
+.fraction-subtract-caption{opacity:0;margin:5px 0 8px;font-size:16px;font-weight:900;color:#214f43}
+#fractionSubtractReplay{min-height:36px;padding:6px 12px;font-weight:800}
+.fraction-subtract-demo.play .fraction-subtract-cell.crossed i,.fraction-subtract-demo.play .fraction-subtract-cell.crossed b{animation:fractionCrossOn .42s ease-out forwards;animation-delay:calc(.45s + var(--cross-delay))}
+.fraction-subtract-demo.play .fraction-subtract-cell.crossed{animation:fractionCrossFade .65s ease-in forwards;animation-delay:1.65s}
+.fraction-subtract-demo.play .fraction-subtract-result{animation:fractionSubtractResult .9s ease-out 2.15s forwards}
+.fraction-subtract-demo.play .fraction-subtract-caption{animation:fractionSubtractCaption .7s ease-out 2.75s forwards}
+@keyframes fractionCrossOn{0%{opacity:0;scale:.5}100%{opacity:1;scale:1}}
+@keyframes fractionCrossFade{from{background:#efd77e}to{background:#fff2f2}}
+@keyframes fractionSubtractResult{0%{opacity:0;transform:scale(.9)}70%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@keyframes fractionSubtractCaption{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){.fraction-subtract-demo{padding:10px 8px}.fraction-subtract-strip{height:50px;width:96%}.fraction-subtract-equation{gap:9px}.fraction-subtract-equation .fraction-symbol,.fraction-subtract-result .fraction-symbol{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.fraction-subtract-demo.play .fraction-subtract-cell.crossed i,.fraction-subtract-demo.play .fraction-subtract-cell.crossed b{opacity:1;animation:none}.fraction-subtract-demo.play .fraction-subtract-cell.crossed{background:#fff2f2;animation:none}.fraction-subtract-demo.play .fraction-subtract-result,.fraction-subtract-demo.play .fraction-subtract-caption{opacity:1;transform:none;animation:none}}
+
+
 </style></head><body>
 <script id="saved-config" type="application/json">null</script>
 <header><div><p class="eyebrow">CONFIGURABLE CLASSROOM INTERACTIVE</p><h1 id="engineTitle">Teaching engine</h1></div><div class="header-buttons"><button type="button" id="guideButton">Teacher guide</button><button type="button" id="viewButton">Pupil view</button><button type="button" id="downloadButton" class="primary teacher-only">Download activity ↓</button></div></header>
@@ -1655,6 +1688,29 @@ function fractionCombineAnimation(c){
   <button type="button" id="fractionCombineReplay">↻ Replay animation</button>
  </div>`;
 }
+function fractionSubtractAnimation(c){
+ if(!['like-subtract','unlike-subtract'].includes(c.task))return '';
+ const left=c.changedFractions?.[0]||c.fractions?.[0],right=c.changedFractions?.[1]||c.fractions?.[1],result=c.rawResult;
+ if(!left||!right||!result||left[1]!==right[1])return '';
+ const total=left[1],crossCount=Math.min(right[0],left[0]),crossStart=Math.max(0,left[0]-crossCount);
+ const cells=Array.from({length:total},(_,i)=>{
+  const shaded=i<left[0],crossed=shaded&&i>=crossStart;
+  const delay=crossed?(i-crossStart)*180:0;
+  return `<span class="fraction-subtract-cell ${shaded?'shaded':''} ${crossed?'crossed':''}" style="--cross-delay:${delay}ms"><i></i><b></b></span>`;
+ }).join('');
+ return `<div class="fraction-subtract-demo" id="fractionSubtractDemo" aria-label="Animation showing ${right[0]} of the ${left[1]} equal parts crossed out">
+  <div class="fraction-subtract-heading">Cross out the parts being subtracted</div>
+  <div class="fraction-subtract-equation">${fractionSymbol(left)}<strong>−</strong>${fractionSymbol(right)}</div>
+  <div class="fraction-subtract-work">
+   <div class="fraction-subtract-strip" style="--parts:${total}">${cells}</div>
+   <div class="fraction-subtract-start-label">${fractionSymbol(left)}</div>
+  </div>
+  <p class="fraction-subtract-action">Cross out ${right[0]} ${right[0]===1?'part':'parts'} out of ${left[0]} shaded ${left[0]===1?'part':'parts'}.</p>
+  <div class="fraction-subtract-result">${strip(result[0],result[1],false,false)}${fractionSymbol(result,'answer')}</div>
+  <p class="fraction-subtract-caption">${left[0]}/${left[1]} − ${right[0]}/${right[1]} = ${result[0]}/${result[1]}</p>
+  <button type="button" id="fractionSubtractReplay">↻ Replay animation</button>
+ </div>`;
+}
 function fractionEquation(c,finalStep,step=0){
  const original=c.fractions||[[c.a,c.den]],symbols=original.map(frac=>fractionSymbol(frac));
  if(['unit-compare','like-compare','unlike-compare'].includes(c.task)){
@@ -1679,10 +1735,10 @@ function drawFractions(){
  if(['equivalent','simplify'].includes(c.task)&&finalStep)shown=[c.fractions[0],c.changedFractions[0]];
  const labels=shown.length===1?['One whole']:shown.map((_,i)=>i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'Same value':i===0?'First fraction':i===1?'Second fraction':'Third fraction');
  let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'')).join('');
- const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2,combineDemo=['like-add','unlike-add'].includes(c.task)&&step===2?fractionCombineAnimation(c):'',staticResult=showResultModel&&(!combineDemo||finalStep);
+ const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2,combineDemo=['like-add','unlike-add'].includes(c.task)&&step===2?fractionCombineAnimation(c):'',subtractDemo=['like-subtract','unlike-subtract'].includes(c.task)&&step===2?fractionSubtractAnimation(c):'',teachingDemo=combineDemo||subtractDemo,staticResult=showResultModel&&(!teachingDemo||finalStep);
  if(staticResult&&!finalStep)models+=fractionModelCard(c.rawResult,'Answer before simplifying',2,'fraction-result-card');
  if(showResultModel&&finalStep)models+=fractionModelCard(c.resultFraction,'Simplest answer',2,'fraction-result-card');
- host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(staticResult?1:0))}">${models}</div>${combineDemo}<div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep,step)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
+ host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(staticResult?1:0))}">${models}</div>${teachingDemo}<div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep,step)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
  $('fractionNext').onclick=()=>{if(finalStep)return;interaction.fractionStep=Math.min(steps.length-1,step+1);hints++;drawFractions();if(interaction.fractionStep===steps.length-1&&current.type==='choice'){selected=current.answer;const choices=Array.from($('answerFields').querySelectorAll('.choice'));choices.forEach(button=>button.classList.toggle('selected',button.textContent===String(current.answer)));$('feedback').textContent='';}};
  $('fractionBack').onclick=()=>{if(step>0){interaction.fractionStep=step-1;hints++;drawFractions();}};
  const oldControls=$('answerForm').querySelector('.fraction-step-controls');if(oldControls)oldControls.remove();$('answerForm').insertBefore(host.querySelector('.fraction-step-controls'),$('answerFields'));
@@ -1690,6 +1746,11 @@ function drawFractions(){
   const playCombine=()=>{const demo=$('fractionCombineDemo');if(!demo)return;demo.classList.remove('play');void demo.offsetWidth;demo.classList.add('play');};
   requestAnimationFrame(playCombine);
   const replay=$('fractionCombineReplay');if(replay)replay.onclick=playCombine;
+ }
+ if(subtractDemo){
+  const playSubtract=()=>{const demo=$('fractionSubtractDemo');if(!demo)return;demo.classList.remove('play');void demo.offsetWidth;demo.classList.add('play');};
+  requestAnimationFrame(playSubtract);
+  const replay=$('fractionSubtractReplay');if(replay)replay.onclick=playSubtract;
  }
 }
 function clock(h,m){let s='<circle cx="150" cy="150" r="127" fill="#fff" stroke="#315a46" stroke-width="4"/>';for(let i=0;i<60;i++){const a=i*Math.PI/30,x1=150+Math.sin(a)*(i%5===0?110:119),y1=150-Math.cos(a)*(i%5===0?110:119);s+=line(x1,y1,150+Math.sin(a)*125,150-Math.cos(a)*125,'#315a46',i%5===0?3:1);if(i%5===0)s+=text(150+Math.sin(a)*93,156-Math.cos(a)*93,i===0?12:i/5,18);}
