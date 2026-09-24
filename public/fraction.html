@@ -1612,13 +1612,18 @@ function drawMoney(){
 function strip(n,den,interactive=false,second=false){return `<div class="fraction-strip" style="grid-template-columns:repeat(${den},1fr)">${Array.from({length:den},(_,i)=>`<${interactive?'button type="button"':'span'} class="fraction-cell ${i<n?'shaded':''} ${second?'second':''}" ${interactive?`data-cell="${i}" aria-label="Part ${i+1}"`:''}></${interactive?'button':'span'}>`).join('')}</div>`;}
 function fractionSymbol([n,d],extra=''){return d===1?`<span class="fraction-whole ${extra}" aria-label="${n}">${n}</span>`:`<span class="fraction-symbol ${extra}" aria-label="${n} over ${d}"><b>${n}</b><i></i><b>${d}</b></span>`;}
 function fractionModelCard(frac,label,index=0,extra=''){return `<div class="fraction-model-card ${extra}"><span>${E(label)}</span>${strip(frac[0],frac[1],false,index%2===1)}${fractionSymbol(frac)}</div>`;}
-function fractionEquation(c,finalStep){
+function fractionEquation(c,finalStep,step=0){
  const original=c.fractions||[[c.a,c.den]],symbols=original.map(frac=>fractionSymbol(frac));
  if(['unit-compare','like-compare','unlike-compare'].includes(c.task)){
   if(c.orderMode==='compare')return `${symbols[0]}<strong class="fraction-relation">${finalStep?E(current.answer):'?'}</strong>${symbols[1]}`;
   return `<span class="fraction-order-answer ${finalStep?'revealed':''}">${finalStep?E(current.answer):'Arrange the three fractions'}</span>`;
  }
- if(['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task))return `${symbols[0]}<strong class="fraction-operation">${E(c.operation)}</strong>${symbols[1]}<strong class="fraction-operation">=</strong>${finalStep?fractionSymbol(c.resultFraction,'answer'):fractionSymbol(['?', '?'],'mystery')}`;
+ if(['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task)){
+  const op=`<strong class="fraction-operation">${E(c.operation)}</strong>`,eq='<strong class="fraction-operation">=</strong>',same=c.rawResult[0]===c.resultFraction[0]&&c.rawResult[1]===c.resultFraction[1];
+  if(finalStep)return same?`${symbols[0]}${op}${symbols[1]}${eq}${fractionSymbol(c.resultFraction,'answer')}`:`${symbols[0]}${op}${symbols[1]}${eq}${fractionSymbol(c.rawResult,'answer')}${eq}${fractionSymbol(c.resultFraction,'answer')}`;
+  if(step>=2)return `${symbols[0]}${op}${symbols[1]}${eq}${fractionSymbol(c.rawResult,'answer')}`;
+  return `${symbols[0]}${op}${symbols[1]}${eq}${fractionSymbol(['?','?'],'mystery')}`;
+ }
  if(c.task==='equivalent')return `${symbols[0]}<strong class="fraction-operation">=</strong>${finalStep?fractionSymbol(c.changedFractions[0],'answer'):fractionSymbol(['?',c.den*c.factor],'mystery')}`;
  if(c.task==='simplify')return `${symbols[0]}<strong class="fraction-operation">=</strong>${finalStep?fractionSymbol(c.changedFractions[0],'answer'):fractionSymbol(['?','?'],'mystery')}`;
  return finalStep?fractionSymbol(current.answer,'answer'):fractionSymbol(['?','?'],'mystery');
@@ -1631,8 +1636,10 @@ function drawFractions(){
  if(['equivalent','simplify'].includes(c.task)&&finalStep)shown=[c.fractions[0],c.changedFractions[0]];
  const labels=shown.length===1?['One whole']:shown.map((_,i)=>i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'Same value':i===0?'First fraction':i===1?'Second fraction':'Third fraction');
  let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'')).join('');
- if(finalStep&&['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task))models+=fractionModelCard(c.resultFraction,'Simplest answer',2,'fraction-result-card');
- host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(finalStep&&['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task)?1:0))}">${models}</div><div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
+ const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2;
+ if(showResultModel&&!finalStep)models+=fractionModelCard(c.rawResult,'Answer before simplifying',2,'fraction-result-card');
+ if(showResultModel&&finalStep)models+=fractionModelCard(c.resultFraction,'Simplest answer',2,'fraction-result-card');
+ host.innerHTML=`<div class="fraction-learning"><div class="fraction-model-grid" style="--fraction-models:${Math.min(3,shown.length+(showResultModel?1:0))}">${models}</div><div class="fraction-equation" aria-label="Fraction working">${fractionEquation(c,finalStep,step)}</div><div class="fraction-step-card" role="status"><span>STEP ${step+1} OF ${steps.length}</span><strong>${E(teaching.title)}</strong><p>${E(teaching.text)}</p></div><div class="fraction-step-controls" aria-label="Teaching steps"><button type="button" id="fractionBack" aria-keyshortcuts="ArrowLeft" ${step===0?'disabled':''}>← Previous</button><button type="button" class="primary" id="fractionNext" aria-keyshortcuts="ArrowRight" ${finalStep?'disabled':''}>${finalStep?'All steps shown ✓':'Next step →'}</button></div><p class="numberline-caption">Predict each step before revealing it. Use ← and → on the keyboard, or the fixed buttons.</p></div>`;
  $('fractionNext').onclick=()=>{if(finalStep)return;interaction.fractionStep=Math.min(steps.length-1,step+1);hints++;drawFractions();if(interaction.fractionStep===steps.length-1&&current.type==='choice'){selected=current.answer;const choices=Array.from($('answerFields').querySelectorAll('.choice'));choices.forEach(button=>button.classList.toggle('selected',button.textContent===String(current.answer)));$('feedback').textContent='';}};
  $('fractionBack').onclick=()=>{if(step>0){interaction.fractionStep=step-1;hints++;drawFractions();}};
  const oldControls=$('answerForm').querySelector('.fraction-step-controls');if(oldControls)oldControls.remove();$('answerForm').insertBefore(host.querySelector('.fraction-step-controls'),$('answerFields'));
