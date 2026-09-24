@@ -510,11 +510,24 @@ async function animateSmallDivision(){
  }finally{interaction.smallDivisionBusy=false;}
 }
 async function advanceSmallDivision(reveal=false){
- const step=interaction.plan.steps[interaction.step];if(!step||solved||interaction.smallDivisionBusy)return;
+ const run=interaction,step=run.plan.steps[run.step];if(!step||solved||run.smallDivisionBusy)return;
  if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent=current.data.task==='share'?'Try again. Work out how many counters each group will receive.':'Try again. Work out how many complete groups can be made.';$('stepFeedback').className='step-feedback retry';return;}
  if(reveal)hints++;
  await animateSmallDivision();
- interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
+ if(interaction!==run)return;
+ run.step++;$('hint').hidden=true;
+ if(run.step===run.plan.steps.length){
+  run.operationComplete=true;
+  attempts++;
+  solved=true;
+  results.push({first:attempts===1&&hints===0,attempts,hints});
+  $('feedback').style.color='#24735e';
+  $('feedback').textContent='Correct! '+current.explanation;
+  $('nextButton').hidden=false;
+  $('hintButton').disabled=true;
+  progress();
+ }
+ drawOperation();lockOperationAnswer();
 }
 /* CONCEPT NUMBER SENTENCE v1 */
 function conceptNumberSentence(c,step=null){
