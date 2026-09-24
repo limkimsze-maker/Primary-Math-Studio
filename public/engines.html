@@ -537,6 +537,10 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
   .duration-workspace{width:min(100%,1120px);display:flex;flex-direction:column;gap:10px}.duration-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.duration-head strong{font-size:15px}.duration-head span{font-size:12px;color:#627566}.duration-timeline{width:100%;border:1px solid #c7d8c2;border-radius:10px;overflow:auto;background:#fff}.duration-timeline svg{display:block;min-width:680px;width:100%;height:auto}.duration-period-panel{border:1px dashed #acc6aa;border-radius:9px;background:#f9fcf7;padding:9px}.duration-period-panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12px;font-weight:800}.duration-periods{display:grid;gap:7px}.duration-period-row{display:grid;grid-template-columns:74px minmax(106px,1fr) minmax(106px,1fr) minmax(185px,1.4fr) auto;gap:7px;align-items:center;padding:7px;border:1px solid #d4e0cf;border-radius:8px;background:#fff}.duration-period-badge{font-size:11px;font-weight:900;color:#315a46}.duration-period-row label{display:grid;gap:3px;font-size:10px;font-weight:800;color:#526d59}.duration-time-input{display:flex;align-items:center;gap:5px}.duration-period-row .duration-time-input input{width:100%;min-height:34px;border:1px solid #b9cfb6;border-radius:6px;padding:5px 7px;font:800 15px/1 Arial,Helvetica,sans-serif;color:#183c35;background:#fff}.duration-time-input b{font-size:12px;color:#496454}.duration-period-readout{font-size:11px;line-height:1.35;color:#405b4a}.duration-period-readout strong{color:#183c35}.duration-period-remove{min-width:34px!important;padding:4px!important;font-size:17px!important}.clock24-workspace{width:min(100%,640px);display:flex;flex-direction:column;align-items:center;gap:9px}.sky-clue{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:9px 14px;border:1px solid #c6d6c2;border-radius:10px;background:#edf7e8}.sky-clue.night,.sky-clue.overnight{background:#eaf0fa;border-color:#aebed8}.sky-clue-icon{font-size:35px;line-height:1}.sky-clue strong{display:block;font-size:14px}.sky-clue span:last-child{display:block;font-size:11px;color:#536b5b}.sky-clue.night span:last-child,.sky-clue.overnight span:last-child{color:#51627c}.clock24-workspace .svg-clock{max-height:310px}.clock24-note{margin:0;text-align:center;font-size:12px;color:#526d59}.time24-source{margin:0;padding:7px 12px;border-radius:8px;background:#edf7e8;font-size:14px;color:#315a46}.time24-source strong{font-size:20px;color:#183c35}.time-conversion-workspace,.time-calculation-workspace{width:min(100%,720px);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}.time-conversion-card,.time-calculation-card{min-width:150px;padding:18px 22px;border:2px solid #b8cdb5;border-radius:12px;background:#fff;font-size:24px;font-weight:900;text-align:center;color:#183c35}.time-conversion-card.question-mark{border-style:dashed;background:#f9fcf7}.time-conversion-arrow{font-size:34px;font-weight:900;color:#315a46}.time-calculation-arrow{display:grid;gap:3px;justify-items:center;font-size:14px;color:#496454}.time-calculation-arrow strong{font-size:21px;color:#183c35}.time-calculation-arrow span{font-size:12px;font-weight:800}
   @media(max-width:700px){.duration-period-row{grid-template-columns:1fr 1fr}.duration-period-badge,.duration-period-readout{grid-column:1/-1}.duration-period-remove{grid-column:2;justify-self:end}.duration-timeline svg{min-width:600px}.time-answer-colon{font-size:30px}.duration-answer-entry{gap:5px}}@media(max-width:520px){.time-ampm-answer-entry{gap:9px}.time-ampm-answer-entry .time-answer-entry{width:100%}.ampm-choice{width:100%}.time-conversion-card,.time-calculation-card{min-width:130px;font-size:20px}.time-conversion-arrow,.time-calculation-arrow{width:100%;line-height:1}}
   .time-scene{position:relative;isolation:isolate;width:100%;min-height:220px;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;border:1px solid #b8cdb5;border-radius:14px;background-color:#e8f5ff;background-repeat:no-repeat;background-position:center;background-size:cover;box-shadow:inset 0 0 0 1px #ffffff8c}.time-scene::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at center,transparent 0 28%,#ffffff0d 56%,#102e2012 100%)}.time-scene.morning{background-image:url('assets/time-forest/morning-sun.webp')}.time-scene.afternoon{background-image:url('assets/time-forest/afternoon-sun.webp')}.time-scene.night{background-color:#142d57;background-image:url('assets/time-forest/night-moon.webp');border-color:#8094b1}.time-scene.overnight{background-color:#263761;background-image:url('assets/time-forest/early-morning-moon-owl.webp');border-color:#98a4c5}.time-scene .svg-clock{position:relative;z-index:1;width:min(50%,300px);height:auto;max-height:none;filter:drop-shadow(0 8px 10px #102c224d)}
+
+/* SMALL DIVISION CONCEPT ANIMATION v1 */
+.small-div-workspace{--small-counter:38px}.small-div-main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(220px,.75fr);gap:14px;min-height:0}.small-div-concept{min-width:0;display:flex;flex-direction:column;gap:10px}.small-div-cue{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #cbd9c7;border-radius:12px;background:#f7faf5}.small-div-cue strong{flex:none;padding:5px 9px;border-radius:999px;background:#183c35;color:#fff}.small-div-cue span{font-weight:700}.small-div-stage{display:grid;grid-template-columns:minmax(150px,.72fr) 34px minmax(0,1.7fr);gap:9px;align-items:stretch;min-height:260px}.small-div-bank-wrap{display:flex;flex-direction:column;min-width:0;border:2px solid #8ca79a;border-radius:14px;background:#fff;overflow:hidden}.small-div-bank-title{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:#eaf1e5;font-weight:800}.small-div-bank-title b{display:grid;place-items:center;min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:#183c35;color:#fff}.small-div-bank{display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;gap:6px;padding:12px;overflow:auto}.small-div-flow{display:grid;place-items:center;font-size:28px;font-weight:900;color:#24735e}.small-div-groups{display:grid;grid-template-columns:repeat(var(--small-div-groups),minmax(110px,1fr));gap:8px;align-content:start;min-width:0}.small-div-group{min-height:122px;border:3px dashed #9bb4a7;border-radius:16px;background:#fff;padding:8px;transition:border-color .2s,box-shadow .2s,transform .2s}.small-div-group.active{border-color:#efb83e;box-shadow:0 0 0 4px #efc66d55;transform:translateY(-2px)}.small-div-group.complete{border-style:solid;border-color:#24735e;background:#f4faf6}.small-div-group-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px;font-size:13px}.small-div-group-count{padding:2px 6px;border-radius:999px;background:#edf2ec;font-weight:800}.small-div-group.complete .small-div-group-count{background:#dcefe5}.small-div-group-counters{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:5px;min-height:64px}.small-div-counter{display:block;flex:none;width:var(--small-counter);height:var(--small-counter);border-radius:50%;border:3px solid #176596;background:radial-gradient(circle at 34% 30%,#a9e5ff 0 18%,#4fb7e8 19% 100%);box-shadow:0 2px 4px #183c3522}.small-div-counter.small-div-landed{animation:smallDivLand .34s ease-out both}.small-div-counter.small-div-placeholder{visibility:hidden}.small-div-flyer{box-shadow:0 8px 18px #183c3545}.small-div-live{margin:0;min-height:26px;padding:6px 10px;border-radius:9px;background:#fff8df;border:1px solid #efd58f;font-weight:800;text-align:center}.small-div-empty{align-self:center;color:#687b6d;font-weight:700}.small-div-key{padding:6px 10px;border-radius:999px;background:#efc66d;color:#183c35;font-weight:900}.small-div-writing{align-self:stretch}.small-div-meaning{margin:10px 0 0;padding:9px;border-radius:9px;background:#eef4eb;font-weight:700;line-height:1.4}@keyframes smallDivLand{0%{transform:scale(.65);filter:brightness(1.25)}65%{transform:scale(1.14)}100%{transform:scale(1)}}@media(max-width:900px){.small-div-main{grid-template-columns:1fr}.small-div-writing{display:none}.small-div-stage{grid-template-columns:minmax(120px,.62fr) 28px minmax(0,1.5fr)}.small-div-groups{grid-template-columns:repeat(2,minmax(100px,1fr))}}@media(max-width:600px){.small-div-workspace{--small-counter:30px}.small-div-cue{align-items:flex-start;flex-direction:column;gap:5px}.small-div-stage{grid-template-columns:1fr;min-height:0}.small-div-flow{transform:rotate(90deg);height:22px}.small-div-bank{max-height:150px}.small-div-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.small-div-group{min-height:100px;padding:6px}.small-div-group-head{font-size:11px}.small-div-live{font-size:12px}}
+
 </style><script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head><body>
 <script id="saved-config" type="application/json">null</script>
@@ -1616,10 +1620,88 @@ function advanceOperation(reveal=false){
  if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent='Try this step again. Count the discs in the highlighted place.';$('stepFeedback').className='step-feedback retry';return;}
  if(reveal)hints++;interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
 }
+/* SMALL DIVISION CONCEPT ANIMATION v1 */
+function smallDivisionCounterHTML(extra=''){return `<span class="small-div-counter ${extra}" aria-hidden="true"></span>`;}
+function smallDivisionModel(c,plan,state){
+ const sharing=c.task==='share',groupCount=sharing?c.b:c.a/c.b,targetSize=sharing?c.a/c.b:c.b;
+ const counts=state.groups.length?state.groups.map(g=>g[0]):Array.from({length:groupCount},()=>0),remaining=state.top[0]??0;
+ const cue=sharing?`Make ${groupCount} groups first. Then share one counter to Group 1, Group 2${groupCount>2?', Group 3 …':''}, and repeat.`:`Take ${targetSize} counters at a time. Every ${targetSize} counters form one complete group.`;
+ return `<div class="small-div-concept">
+  <div class="small-div-cue"><strong>${sharing?'Share equally':'Make equal groups'}</strong><span>${E(cue)}</span></div>
+  <div class="small-div-stage">
+   <div class="small-div-bank-wrap"><div class="small-div-bank-title">Counters to use <b id="smallDivRemaining">${remaining}</b></div><div class="small-div-bank" id="smallDivCounterBank">${Array.from({length:remaining},()=>smallDivisionCounterHTML()).join('')}${remaining?'':'<span class="small-div-empty">All counters have been grouped.</span>'}</div></div>
+   <div class="small-div-flow" aria-hidden="true">→</div>
+   <div class="small-div-groups" style="--small-div-groups:${Math.min(groupCount,4)}">${Array.from({length:groupCount},(_,i)=>`<div class="small-div-group ${counts[i]===targetSize?'complete':''}" data-small-div-group="${i}"><div class="small-div-group-head"><strong>Group ${i+1}</strong><span class="small-div-group-count">${counts[i]} / ${targetSize}</span></div><div class="small-div-group-counters">${Array.from({length:counts[i]},()=>smallDivisionCounterHTML('small-div-landed')).join('')}</div></div>`).join('')}</div>
+  </div>
+  <p class="small-div-live" id="smallDivLive" role="status" aria-live="polite">${sharing?`There are ${groupCount} groups. Share one counter into each group in turn.`:`${targetSize} counters will form each group. Finish one group before starting the next.`}</p>
+ </div>`;
+}
+const smallDivWait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function animateSmallDivision(){
+ if(interaction.smallDivisionBusy)return;
+ const c=current.data,plan=interaction.plan,step=plan.steps[interaction.step];
+ if(!plan.smallDiv||step?.kind!=='distribute')return;
+ interaction.smallDivisionBusy=true;
+ const input=$('operationInput'),next=$('operationNext'),teacher=$('teacherNext'),help=$('operationHelp'),back=$('operationBack'),reset=$('operationReset');
+ [input,next,teacher,help,back,reset].forEach(el=>{if(el)el.disabled=true;});
+ const source=Array.from(document.querySelectorAll('#smallDivCounterBank .small-div-counter'));
+ const groups=Array.from(document.querySelectorAll('[data-small-div-group]'));
+ const sharing=c.task==='share',targetSize=sharing?c.a/c.b:c.b,groupCount=groups.length;
+ const order=source.map((_,i)=>sharing?i%groupCount:Math.floor(i/targetSize));
+ const live=$('smallDivLive'),remaining=$('smallDivRemaining');
+ const duration=Math.max(160,Math.min(520,Math.round(9000/Math.max(1,c.a))));
+ const pause=Math.max(20,Math.min(100,Math.round(1800/Math.max(1,c.a))));
+ try{
+  for(let i=0;i<source.length;i++){
+   const token=source[i],groupIndex=order[i],card=groups[groupIndex],target=card.querySelector('.small-div-group-counters');
+   card.classList.add('active');
+   if(live)live.textContent=sharing?`Counter ${i+1}: move to Group ${groupIndex+1}.`:`Group ${groupIndex+1}: place counter ${i%targetSize+1} of ${targetSize}.`;
+   const placeholder=document.createElement('span');placeholder.className='small-div-counter small-div-placeholder';placeholder.setAttribute('aria-hidden','true');target.append(placeholder);
+   const from=token.getBoundingClientRect(),to=placeholder.getBoundingClientRect(),flyer=token.cloneNode(true);
+   flyer.classList.add('small-div-flyer');Object.assign(flyer.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',zIndex:'9999',pointerEvents:'none'});
+   document.body.append(flyer);token.style.visibility='hidden';
+   const dx=to.left-from.left,dy=to.top-from.top;
+   const animation=flyer.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${dx}px,${dy}px) scale(1.08)`}],{duration,easing:'cubic-bezier(.2,.75,.25,1)',fill:'forwards'});
+   try{await animation.finished;}catch{}
+   flyer.remove();placeholder.classList.remove('small-div-placeholder');placeholder.classList.add('small-div-landed');
+   const count=target.querySelectorAll('.small-div-counter').length;card.querySelector('.small-div-group-count').textContent=`${count} / ${targetSize}`;
+   if(remaining)remaining.textContent=String(source.length-i-1);
+   if(count===targetSize){card.classList.add('complete');if(!sharing&&live)live.textContent=`${targetSize} counters form Group ${groupIndex+1}. Group ${groupIndex+1} is complete.`;await smallDivWait(280);}
+   await smallDivWait(pause);
+   card.classList.remove('active');
+   if(sharing&&(i+1)%groupCount===0&&i<source.length-1){if(live)live.textContent=`One counter has been shared to every group. Start the next round.`;await smallDivWait(180);}
+  }
+  if(live)live.textContent=sharing?`All ${c.a} counters have been shared equally. Each group has ${c.a/c.b}.`:`All ${c.a} counters have been used. ${c.a/c.b} equal groups were formed.`;
+  await smallDivWait(450);
+ }finally{interaction.smallDivisionBusy=false;}
+}
+async function advanceSmallDivision(reveal=false){
+ const step=interaction.plan.steps[interaction.step];if(!step||solved||interaction.smallDivisionBusy)return;
+ if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent=current.data.task==='share'?'Try again. Work out how many counters each group will receive.':'Try again. Work out how many complete groups can be made.';$('stepFeedback').className='step-feedback retry';return;}
+ if(reveal)hints++;
+ await animateSmallDivision();
+ interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
+}
+function drawSmallDivision(){
+ const c=current.data,plan=interaction.plan,pos=interaction.step,step=plan.steps[pos],state=step?step.before:plan.final,previous=pos?plan.steps[pos-1]:null,host=$('diagram'),sharing=c.task==='share';
+ interaction.operationComplete=!step;
+ const intro=sharing?'The number of groups is fixed first. Share counters one at a time around the groups.':'The number in each group is fixed first. Complete one group, then form the next group.';
+ host.innerHTML=`<div class="operation-workspace small-div-workspace"><div class="operation-top"><div class="step-heading"><span>${step?`Step ${pos+1} / ${plan.steps.length}`:'Completed'}</span><h3>${step?E(step.title):sharing?'Sharing complete':'Equal groups complete'}</h3></div><div class="small-div-key">${sharing?`${c.b} groups first`:`${c.b} in each group`}</div></div><div class="small-div-main">${smallDivisionModel(c,plan,state)}<div class="operation-writing small-div-writing"><h4>Number sentence</h4>${operationAlgorithm(state,step)}<p class="small-div-meaning">${E(intro)}</p></div></div><div class="operation-controls small-div-controls">${previous?`<p class="last-step" role="status">✓ ${E(previous.equation)}</p>`:`<p class="last-step">${E(intro)}</p>`}${step?`<p>${E(step.prompt)}</p><div class="step-actions"><label><span>${E(step.label)}</span><input id="operationInput" type="number" min="0" max="999" step="1" inputmode="numeric" autocomplete="off" aria-label="${E(step.label)}"></label><button type="button" class="primary" id="operationNext">${E(step.button)}</button><button type="button" class="teacher-only" id="teacherNext">Teacher: Next ▶</button><button type="button" id="operationHelp">Help me</button></div><p id="stepFeedback" class="step-feedback" role="status" aria-live="polite"></p>`:'<p class="operation-done">Now read the groups and write the whole answer below.</p>'}<div class="operation-rewind"><button type="button" id="operationBack" ${pos===0||solved?'disabled':''}>Previous step</button><button type="button" id="operationReset" ${pos===0||solved?'disabled':''}>Restart steps</button></div></div></div>`;
+ if(step){
+  $('operationNext').onclick=()=>step.kind==='distribute'?advanceSmallDivision(false):advanceOperation(false);
+  $('teacherNext').onclick=()=>step.kind==='distribute'?advanceSmallDivision(true):advanceOperation(true);
+  $('operationHelp').onclick=()=>{hints++;$('stepFeedback').className='step-feedback';$('stepFeedback').textContent=step.kind==='distribute'?intro:step.equation;};
+  $('operationInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();step.kind==='distribute'?advanceSmallDivision(false):advanceOperation(false);}};
+ }
+ $('operationBack').onclick=()=>{if(pos>0&&!solved&&!interaction.smallDivisionBusy){interaction.step--;hints++;$('feedback').textContent='';drawOperation();lockOperationAnswer();}};
+ $('operationReset').onclick=()=>{if(!solved&&!interaction.smallDivisionBusy){interaction.step=0;hints++;$('feedback').textContent='';drawOperation();lockOperationAnswer();}};
+}
+
 function drawOperation(){
  if(interaction.plan.division){drawDivision();return;}
  if(['add','subtract'].includes(current.data.task)){drawAddSub();return;}
  if(['multiply','multiply-column'].includes(current.data.task)){drawMultiplication();return;}
+ if(interaction.plan.smallDiv){drawSmallDivision();return;}
  const c=current.data,plan=interaction.plan,pos=interaction.step,step=plan.steps[pos],state=step?step.before:plan.final,previous=pos?plan.steps[pos-1]:null,host=$('diagram');interaction.operationComplete=!step;
  const order=plan.ps.map((_,i)=>i).reverse(),add=c.task==='add',sub=c.task==='subtract',mult=['multiply','multiply-column'].includes(c.task);
  const columns=order.map(i=>{
