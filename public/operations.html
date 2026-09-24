@@ -851,7 +851,7 @@ function operationPlan(c){
  if(smallDiv){
   const q=c.a/c.b,sharing=c.task==='share';
   push({kind:'distribute',focus:0,title:sharing?'Share into equal groups':'Make equal groups',prompt:sharing?`Share ${c.a} counters among ${c.b} groups. How many counters go in each group?`:`Make groups of ${c.b} from ${c.a} counters. How many groups can you make?`,label:sharing?'Counters in each group':'Number of groups',expected:q,button:sharing?'Check and share':'Check and group',equation:sharing?`${c.b} equal groups of ${q} counters use all ${c.a} counters.`:`${q} groups of ${c.b} counters use all ${c.a} counters.`},()=>{state.groups=Array.from({length:sharing?c.b:q},()=>[sharing?q:c.b]);state.top[0]=0;});
-  push({kind:'record',focus:0,title:'Write the division answer',prompt:sharing?'Write the number of counters in each group.':'Write the number of groups.',label:'Division answer',expected:q,button:'Record answer',equation:`${c.a} ÷ ${c.b} = ${q}.`},()=>{state.result[0]=q;});
+  push({kind:'record',focus:0,title:'Check the division answer',prompt:sharing?'Write the number of counters in each group.':'Write the number of groups.',label:'Answer',expected:q,button:'Check',equation:`${c.a} ÷ ${c.b} = ${q}.`},()=>{state.result[0]=q;});
  }else if(div){
   state.groups=Array.from({length:c.b},()=>ps.map(()=>0));
   for(let i=ps.length-1;i>=0;i--){
@@ -1515,11 +1515,24 @@ async function animateSmallDivision(){
  }finally{interaction.smallDivisionBusy=false;}
 }
 async function advanceSmallDivision(reveal=false){
- const step=interaction.plan.steps[interaction.step];if(!step||solved||interaction.smallDivisionBusy)return;
+ const run=interaction,step=run.plan.steps[run.step];if(!step||solved||run.smallDivisionBusy)return;
  if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent=current.data.task==='share'?'Try again. Work out how many counters each group will receive.':'Try again. Work out how many complete groups can be made.';$('stepFeedback').className='step-feedback retry';return;}
  if(reveal)hints++;
  await animateSmallDivision();
- interaction.step++;$('hint').hidden=true;drawOperation();lockOperationAnswer();
+ if(interaction!==run)return;
+ run.step++;$('hint').hidden=true;
+ if(run.step===run.plan.steps.length){
+  run.operationComplete=true;
+  attempts++;
+  solved=true;
+  results.push({first:attempts===1&&hints===0,attempts,hints});
+  $('feedback').style.color='#24735e';
+  $('feedback').textContent='Correct! '+current.explanation;
+  $('nextButton').hidden=false;
+  $('hintButton').disabled=true;
+  progress();
+ }
+ drawOperation();lockOperationAnswer();
 }
 /* CONCEPT NUMBER SENTENCE v1 */
 function conceptNumberSentence(c,step=null){
