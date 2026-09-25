@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" href="https://limkimsze-maker.github.io/Times-Table-Fact-Builder/kimsze_sharp16.ico" sizes="any">
+  <link rel="shortcut icon" href="https://limkimsze-maker.github.io/Times-Table-Fact-Builder/kimsze_sharp16.ico">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Times Table Builder</title>
+  <style>
+    :root{
+      --bg1:#eef6ff;
+      --bg2:#fff9ef;
+      --card:#ffffff;
+      --ink:#16324f;
+      --muted:#6a7b90;
+      --line:#d9e5f2;
+      --blue:#4c89e8;
+      --blue2:#2f6fd7;
+      --green:#27ae60;
+      --red:#e15a5a;
+      --gold:#f4b840;
+      --shadow:0 18px 42px rgba(22,50,79,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;overflow:hidden}
+    body{
+      font-family:"Comic Sans MS","Trebuchet MS",system-ui,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.95), rgba(255,255,255,.35) 30%, transparent 31%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:manipulation;
+    }
+    .viewport{position:fixed;inset:0;overflow:hidden}
+    .fitbox{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center}
+    .stage{width:1600px;height:900px;padding:10px}
+    .app{
+      height:100%;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.75);
+      background:rgba(255,255,255,.78);
+      backdrop-filter: blur(5px);
+      box-shadow:0 18px 42px rgba(22,50,79,.12);
+      overflow:hidden;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      position:relative;
+    }
+    .topbar{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:12px;
+      align-items:center;
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.82));
+    }
+    .titlebox h1{margin:0;font-size:42px;line-height:1.02}
+    .subtitle{margin-top:6px;color:var(--muted);font-size:20px;line-height:1.1}
+    .modebar{display:flex;align-items:center;gap:10px;justify-self:center}
+    .label{font-size:18px;font-weight:900;white-space:nowrap}
+    select,.sound-btn,.settings-btn{
+      font:inherit;font-weight:900;border:2px solid var(--line);border-radius:18px;
+      background:#fff;color:var(--ink);outline:none;
+    }
+    select{padding:10px 16px;min-width:300px;font-size:18px}
+    .top-actions{display:flex;gap:10px;align-items:center;justify-self:end}
+    .settings-btn,.sound-btn{
+      padding:10px 16px;cursor:pointer;box-shadow:0 8px 16px rgba(30,70,120,.12);
+      transition:transform .08s ease;font-size:18px;
+    }
+    .settings-btn:hover,.sound-btn:hover{transform:translateY(-1px)}
+    .content{
+      min-height:0;
+      display:grid;
+      grid-template-columns:760px 1fr;
+      grid-template-rows:1fr auto;
+      gap:12px;
+      padding:12px;
+    }
+    .card{
+      background:#fff;border:2px solid var(--line);border-radius:24px;
+      box-shadow:0 10px 22px rgba(20,50,80,.05);overflow:hidden;min-height:0;
+    }
+    .prompt-card{display:grid;grid-template-rows:auto 1fr auto auto;padding:22px 24px 18px;background:linear-gradient(180deg,#ffffff,#f9fbff)}
+    .prompt-card h2{margin:0 0 12px;font-size:32px}
+    .equations{display:grid;align-content:start;gap:16px;min-height:0}
+    .sumline{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:58px;font-weight:900;line-height:1.03;min-height:76px}
+    .lhs{display:inline-block;min-width:230px;text-align:right;padding-right:2px}
+    .eq{display:inline-block;min-width:28px;text-align:center}
+    .known{padding-left:6px}
+    .answer{
+      width:210px;text-align:center;font:inherit;font-weight:900;color:var(--blue2);
+      border:4px solid #7aa8f1;border-radius:22px;padding:8px 12px;background:#fff;outline:none;
+    }
+    .answer:focus{box-shadow:0 0 0 6px rgba(76,137,232,.18)}
+    .answer:disabled{background:#f5f8fd;color:#8ea1b8;border-color:#c4d5f0}
+    .mode-tip{margin-top:6px;color:var(--muted);font-size:20px;font-weight:900;min-height:28px}
+    .prompt-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:10px}
+    button.action{
+      border:none;border-radius:20px;padding:16px 18px;font:inherit;font-weight:900;font-size:24px;
+      cursor:pointer;transition:transform .08s ease, box-shadow .18s ease, opacity .18s ease;
+      color:#fff;box-shadow:0 10px 18px rgba(30,70,120,.14);
+    }
+    button.action:hover{transform:translateY(-1px)}
+    button.action:active{transform:translateY(1px)}
+    button.action:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .success{background:linear-gradient(180deg,#46c97a,#24a95d)}
+    .primary{background:linear-gradient(180deg,#69a0ff,#3b7df1)}
+    .danger{background:linear-gradient(180deg,#f08383,#df5b5b)}
+    .ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+    .drawer .ghost{color:var(--ink)!important;background:#fff!important;border:2px solid var(--line)!important}
+
+    .visual-card{display:grid;grid-template-rows:auto 1fr;padding:18px;gap:10px}
+    .visual-head h2{margin:0;font-size:30px}
+    .visual-sub{margin-top:4px;color:var(--muted);font-size:18px;font-weight:900}
+    .visual-body{
+      min-height:0;border:2px solid var(--line);background:#fbfdff;border-radius:22px;
+      padding:12px;display:grid;gap:10px;align-content:start;overflow:hidden;
+    }
+    .visual-split{grid-template-columns:1fr 280px}
+    .section-title{font-size:16px;font-weight:900;color:var(--muted);margin-bottom:6px}
+    .groups-grid{display:grid;gap:8px;align-content:start}
+    .compact-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .split-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .group{
+      background:#f8fbff;border:2px solid #dbe8fb;border-radius:16px;padding:6px 4px 8px;
+      min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;
+      position:relative;transition:transform 1.28s ease,opacity 1.28s ease,box-shadow .55s ease,border-color .55s ease,background .55s ease,filter .55s ease;
+      transform-origin:center center;
+    }
+    .group-label{font-size:13px;font-weight:900;color:var(--muted);line-height:1}
+    .dots{display:grid;grid-template-columns:repeat(3,12px);gap:6px;justify-content:center;align-content:start;padding-top:0;min-height:60px}
+    .dot{width:12px;height:12px;border-radius:50%;background:#4f8fe8;box-shadow: inset 0 -2px 0 rgba(0,0,0,.12)}
+    .group.highlight{background:linear-gradient(180deg,#fffdf0,#fff7c7);border-color:#f4c94f;box-shadow:0 0 0 6px rgba(244,185,64,.18),0 14px 28px rgba(244,185,64,.22)}
+    .group.highlight .group-label{color:#9a6a00}
+    .group.incoming{transform:translateX(86px);opacity:.08;filter:blur(1px)}
+    .group.incoming.arrive{transform:translateX(0);opacity:1;filter:none}
+    .group.removing{transform:translateY(90px) scale(.88) rotate(-4deg);opacity:.12;background:linear-gradient(180deg,#fff8f8,#fff1f1);border-color:#efbcbc;box-shadow:none}
+    .group.settle{animation:settleIn .44s ease both}
+    .take-zone{border:3px dashed #efbcbc;background:linear-gradient(180deg,#fff8f8,#fff2f2);border-radius:22px;padding:10px;display:grid;grid-template-rows:auto 1fr;min-height:0}
+    .take-title{font-size:16px;font-weight:900;color:#a74f4f}
+    .take-wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-content:start;padding-top:8px}
+    .group.removed-preview{background:linear-gradient(180deg,#fff4f4,#ffeaea);border-color:#efbcbc;box-shadow: inset 0 0 0 4px rgba(225,90,90,.06);min-height:96px}
+    .group.removed-preview .group-label{color:#a74f4f}
+    .status-row{grid-column:1 / -1;display:grid;grid-template-columns:1fr repeat(6,170px);gap:12px;align-items:stretch}
+    .feedback{
+      border:2px dashed var(--line);background:#fff;border-radius:20px;min-height:88px;display:flex;
+      align-items:center;justify-content:center;text-align:center;padding:16px 20px;font-size:25px;font-weight:900;
+    }
+    .feedback.good{background:#f1fff4;border-color:#7fd29a;color:#167a3d}
+    .feedback.bad{background:#fff3f3;border-color:#f3a6a6;color:#a84242}
+    .stat{border:2px solid var(--line);background:#fff;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+    .stat .num{font-size:40px;font-weight:900;line-height:1;color:var(--blue2)}
+    .stat .txt{margin-top:6px;font-size:18px;font-weight:900;color:var(--muted)}
+
+    .drawer{
+      position:absolute;inset:0 auto 0 0;width:350px;background:rgba(255,255,255,.98);border-right:2px solid var(--line);
+      box-shadow:20px 0 34px rgba(20,50,80,.12);z-index:20;transform:translateX(-102%);transition:transform .22s ease;display:grid;grid-template-rows:auto 1fr;
+    }
+    .drawer.open{transform:translateX(0)}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+    .drawer-head h3{margin:0;font-size:28px}
+    .drawer-body{padding:16px 18px 18px;display:grid;grid-template-rows:auto auto auto 1fr;gap:14px}
+    .drawer-label{font-size:20px;font-weight:900}
+    .checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .check{display:flex;align-items:center;gap:8px;padding:10px 8px;border:2px solid var(--line);border-radius:16px;background:#fff;font-size:18px;font-weight:900;min-height:64px}
+    .check input{transform:scale(1.2)}
+    .drawer-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
+    .drawer .action{font-size:18px;padding:14px 12px;line-height:1.15;min-height:86px;display:flex;align-items:center;justify-content:center;text-align:center;white-space:normal}
+    .drawer-note{color:var(--muted);font-size:18px;line-height:1.35;font-weight:900;align-self:start}
+    .backdrop{position:absolute;inset:0;background:rgba(18,38,64,.18);z-index:15;opacity:0;pointer-events:none;transition:opacity .18s ease}
+    .backdrop.show{opacity:1;pointer-events:auto}
+    .celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+    .confetti{position:absolute;width:14px;height:22px;border-radius:5px;animation:fall linear forwards;opacity:.95}
+    .credit{position:absolute;left:18px;bottom:18px;font-size:18px;font-weight:900;color:#49627f;z-index:5}
+
+    @keyframes fall{from{transform:translateY(-10vh) rotate(0deg)}to{transform:translateY(110vh) rotate(760deg)}}
+    @keyframes settleIn{from{transform:translateY(10px);opacity:.55}to{transform:translateY(0);opacity:1}}
+  </style>
+  <script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
+</head>
+<body>
+  <div class="viewport">
+    <div class="fitbox" id="fitBox">
+      <div class="stage">
+        <div class="app">
+          <div class="topbar">
+            <div class="titlebox">
+              <h1>Times Table Practice Modes</h1>
+              <div class="subtitle" id="subtitle">Choose a mode, watch the slow animation, then solve the equations.</div>
+            </div>
+            <div class="modebar">
+              <span class="label">Mode</span>
+              <select id="modeSelect" aria-label="Choose practice mode">
+                <option value="build">Build Up</option>
+                <option value="take1">Take Away 1 Group</option>
+                <option value="subtract">Subtracting Groups</option>
+                <option value="bridge">Bridge Facts</option>
+                <option value="random">Random Mix</option>
+              </select>
+            </div>
+            <div class="top-actions">
+              <button class="sound-btn" id="soundBtn" type="button">🔊 Sound On</button>
+              <button class="settings-btn" id="settingsBtn" type="button">⚙️ Settings</button>
+            </div>
+          </div>
+
+          <div class="content">
+            <section class="card prompt-card">
+              <h2>Complete the equations.</h2>
+              <div class="equations" id="equations"></div>
+              <div class="mode-tip" id="modeTip"></div>
+              <div class="prompt-actions">
+                <button class="action success" id="checkBtn" type="button">Check Answer</button>
+                <button class="action primary" id="nextBtn" type="button">New Question</button>
+              </div>
+            </section>
+
+            <section class="card visual-card">
+              <div class="visual-head">
+                <h2 id="visualTitle">See the groups</h2>
+                <div class="visual-sub" id="visualSub">Watch the movement slowly.</div>
+              </div>
+              <div class="visual-body" id="visualBody"></div>
+            </section>
+
+            <div class="status-row">
+              <div class="feedback" id="feedback">Press <span style="margin-left:6px;">New Question</span> to begin.</div>
+              <div class="stat"><div class="num" id="tableBadge">—</div><div class="txt">Table</div></div>
+              <div class="stat"><div class="num"><span id="qBadge">0</span>/<span id="totalBadge">12</span></div><div class="txt">Question</div></div>
+              <div class="stat"><div class="num" id="scoreBadge">0</div><div class="txt">Score</div></div>
+              <div class="stat"><div class="num" id="correctStat">0</div><div class="txt">Correct</div></div>
+              <div class="stat"><div class="num" id="attemptStat">0</div><div class="txt">Attempts</div></div>
+              <div class="stat"><div class="num" id="accuracyStat">0%</div><div class="txt">Accuracy</div></div>
+            </div>
+          </div>
+
+          <div class="credit">Designed by Lim Kim Sze © 2026</div>
+
+          <aside class="drawer" id="drawer" aria-hidden="true">
+            <div class="drawer-head">
+              <h3>Teacher Settings</h3>
+              <button class="settings-btn" id="closeDrawerBtn" type="button">✕ Hide</button>
+            </div>
+            <div class="drawer-body">
+              <div class="drawer-label">Choose tables to include</div>
+              <div class="checks" id="tableChecks"></div>
+              <div class="drawer-buttons">
+                <button class="action primary" id="startBtn" type="button">Start New Game</button>
+                <button class="action ghost" id="selectAllBtn" type="button">Select All</button>
+                <button class="action ghost" id="clearAllBtn" type="button">Clear All</button>
+                <button class="action ghost" id="randomBtn" type="button">Random Question</button>
+                <button class="action danger" id="resetScoreBtn" type="button">Reset Score</button>
+              </div>
+              <div class="drawer-note" id="drawerNote">
+                Settings are hidden by default so pupils get a full-screen, no-scroll view. Open this panel only when you want to change tables.
+              </div>
+            </div>
+          </aside>
+          <div class="backdrop" id="backdrop"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="celebrate" id="celebrate"></div>
+
+  <audio id="audioCorrect" src="https://limkimsze-maker.github.io/Times-Table-Fact-Builder/correct.mp3" preload="auto"></audio>
+  <audio id="audioWrong" src="https://limkimsze-maker.github.io/Times-Table-Fact-Builder/wrong.mp3" preload="auto"></audio>
+  <audio id="audioSwish" preload="none"></audio>
+
+  <script>
+    const TOTAL_QUESTIONS = 12;
+    const state = { mode:'build', questionNo:0, score:0, attempts:0, correct:0, current:null, soundOn:true, animating:false };
+    const MODE_INFO = {
+      build:{ subtitle:'Known fact plus one more group.', tip:'Watch the new group swish in slowly, then add one more group.', note:'Example: 4 × 6 = 24, then 5 × 6 = 24 + 6 = 30.', visualSub:'The last group arrives slowly with a swishing sound.' },
+      take1:{ subtitle:'Known fact minus one whole group.', tip:'Watch one whole group get taken away slowly.', note:'Example: 6 × 4 = 24, then 5 × 4 = 24 − 4 = 20.', visualSub:'The last group glows, swishes away, and lands in the take-away zone.' },
+      subtract:{ subtitle:'Find the larger fact, then subtract some groups.', tip:'Watch the groups being taken away one by one slowly.', note:'Example: 10 × 6 = 60, 2 × 6 = 12, then 8 × 6 = 60 − 12 = 48.', visualSub:'The removable groups swish away slowly so pupils can follow the subtraction.' },
+      bridge:{ subtitle:'Use one known fact, then bridge forward with more groups.', tip:'Find the missing groups first, then add them to make the later fact.', note:'Example: 4 × 6 = 24, 3 × 6 = 18, then 7 × 6 = 24 + 18 = 42.', visualSub:'The extra groups arrive slowly to show how the later fact is built.' },
+      random:{ subtitle:'Mixed practice from all four modes.', tip:'Each new question can change mode. Watch the animation carefully.', note:'Random Mix chooses from Build Up, Take Away 1 Group, Subtracting Groups, and Bridge Facts.', visualSub:'Each question will show a slow animation for the current mode.' }
+    };
+    const tableSet = new Set(Array.from({length:12}, (_,i)=>i+1));
+    let audioCtx = null;
+
+    const fitBox = document.getElementById('fitBox');
+    const modeSelect = document.getElementById('modeSelect');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const drawer = document.getElementById('drawer');
+    const backdrop = document.getElementById('backdrop');
+    const soundBtn = document.getElementById('soundBtn');
+
+    const subtitle = document.getElementById('subtitle');
+    const equations = document.getElementById('equations');
+    const modeTip = document.getElementById('modeTip');
+    const visualTitle = document.getElementById('visualTitle');
+    const visualSub = document.getElementById('visualSub');
+    const visualBody = document.getElementById('visualBody');
+    const feedback = document.getElementById('feedback');
+    const tableChecks = document.getElementById('tableChecks');
+    const drawerNote = document.getElementById('drawerNote');
+
+    const startBtn = document.getElementById('startBtn');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const resetScoreBtn = document.getElementById('resetScoreBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    const tableBadge = document.getElementById('tableBadge');
+    const qBadge = document.getElementById('qBadge');
+    const totalBadge = document.getElementById('totalBadge');
+    const scoreBadge = document.getElementById('scoreBadge');
+    const correctStat = document.getElementById('correctStat');
+    const attemptStat = document.getElementById('attemptStat');
+    const accuracyStat = document.getElementById('accuracyStat');
+    const celebrate = document.getElementById('celebrate');
+
+    const audioCorrect = document.getElementById('audioCorrect');
+    const audioWrong = document.getElementById('audioWrong');
+    const audioSwish = document.getElementById('audioSwish');
+
+    function fitStage(){
+      const scale = Math.min(window.innerWidth/1600, window.innerHeight/900);
+      fitBox.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    }
+    window.addEventListener('resize', fitStage);
+    fitStage();
+
+    function ensureAudio(){
+      if(!audioCtx){
+        try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(err){}
+      }
+      if(audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(()=>{});
+      }
+    }
+    document.addEventListener('pointerdown', ensureAudio, {once:false});
+
+    function buildTableChecks(){
+      tableChecks.innerHTML = '';
+      for(let n=1;n<=12;n++){
+        const label = document.createElement('label');
+        label.className = 'check';
+        label.innerHTML = `<input type="checkbox" value="${n}" ${tableSet.has(n) ? 'checked' : ''}> <span>${n} times table</span>`;
+        tableChecks.appendChild(label);
+      }
+      tableChecks.querySelectorAll('input').forEach(input=>{
+        input.addEventListener('change', ()=>{
+          const val = Number(input.value);
+          if(input.checked) tableSet.add(val); else tableSet.delete(val);
+        });
+      });
+    }
+
+    const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+    const randInt = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+    const readTables = () => Array.from(tableSet).sort((a,b)=>a-b);
+    const sleep = ms => new Promise(resolve=>setTimeout(resolve, ms));
+
+    function requireSelectedTables(){
+      if(readTables().length) return true;
+      setFeedback('Please choose at least one times table first.', 'bad');
+      openDrawer();
+      return false;
+    }
+
+    function openDrawer(){ drawer.classList.add('open'); backdrop.classList.add('show'); drawer.setAttribute('aria-hidden','false'); }
+    function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('show'); drawer.setAttribute('aria-hidden','true'); }
+    settingsBtn.addEventListener('click', ()=>{ ensureAudio(); openDrawer(); });
+    closeDrawerBtn.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    soundBtn.addEventListener('click', async ()=>{
+      ensureAudio();
+      state.soundOn = !state.soundOn;
+      soundBtn.textContent = state.soundOn ? '🔊 Sound On' : '🔇 Sound Off';
+      if(state.soundOn) await playFx('correct');
+    });
+
+    function syncModeUI(displayMode = state.mode){
+      const info = MODE_INFO[displayMode];
+      if(state.mode === 'random' && displayMode !== 'random'){
+        subtitle.textContent = `Random Mix — current mode: ${displayMode === 'build' ? 'Build Up' : displayMode === 'take1' ? 'Take Away 1 Group' : displayMode === 'subtract' ? 'Subtracting Groups' : 'Bridge Facts'}.`;
+      } else {
+        subtitle.textContent = info.subtitle;
+      }
+      modeTip.textContent = info.tip;
+      visualSub.textContent = info.visualSub;
+      drawerNote.textContent = info.note + ' Settings are hidden by default so pupils get a full-screen, no-scroll view.';
+    }
+
+    function updateStats(){
+      tableBadge.textContent = state.current ? state.current.table : '—';
+      qBadge.textContent = state.questionNo;
+      totalBadge.textContent = TOTAL_QUESTIONS;
+      scoreBadge.textContent = state.score;
+      correctStat.textContent = state.correct;
+      attemptStat.textContent = state.attempts;
+      accuracyStat.textContent = `${state.attempts ? Math.round((state.correct/state.attempts)*100) : 0}%`;
+    }
+
+    function setFeedback(msg, kind=''){
+      feedback.className = `feedback${kind ? ' ' + kind : ''}`;
+      feedback.innerHTML = msg;
+    }
+
+    function generateQuestion(mode){
+      if(mode === 'random'){
+        const actual = pick(['build','take1','subtract','bridge']);
+        return generateQuestion(actual);
+      }
+      const table = pick(readTables());
+      if(mode === 'build'){
+        const groups = randInt(2,12);
+        return {mode, table, prevGroups:groups-1, groups, prevTotal:(groups-1)*table, addTotal:table, finalTotal:groups*table};
+      }
+      if(mode === 'take1'){
+        const groups = randInt(2,12);
+        return {mode, table, groups, keepGroups:groups-1, total:groups*table, subTotal:table, finalTotal:(groups-1)*table};
+      }
+      if(mode === 'subtract'){
+        const larger = randInt(3,12);
+        const subGroups = randInt(1, Math.min(4, larger-1));
+        const remainGroups = larger - subGroups;
+        return {mode, table, larger, subGroups, remainGroups, largerTotal:larger*table, subTotal:subGroups*table, remainTotal:remainGroups*table};
+      }
+      const knownGroups = randInt(2,9);
+      const extraGroups = randInt(1, Math.min(4, 12-knownGroups));
+      const laterGroups = knownGroups + extraGroups;
+      return {mode, table, knownGroups, extraGroups, laterGroups, knownTotal:knownGroups*table, extraTotal:extraGroups*table, finalTotal:laterGroups*table};
+    }
+
+    function renderEquations(q){
+      let html = '';
+      if(q.mode === 'build'){
+        html = `
+          <div class="sumline"><span class="lhs">${q.prevGroups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.prevTotal}</span></div>
+          <div class="sumline"><span class="lhs">${q.groups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.prevTotal}</span><span>+</span><input class="answer ans" data-key="add" type="number" inputmode="numeric" /></div>
+          <div class="sumline"><span class="lhs"></span><span class="eq">=</span><input class="answer ans" data-key="final" type="number" inputmode="numeric" /></div>`;
+      } else if(q.mode === 'take1'){
+        html = `
+          <div class="sumline"><span class="lhs">${q.groups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.total}</span></div>
+          <div class="sumline"><span class="lhs">${q.keepGroups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.total}</span><span>−</span><input class="answer ans" data-key="sub" type="number" inputmode="numeric" /></div>
+          <div class="sumline"><span class="lhs"></span><span class="eq">=</span><input class="answer ans" data-key="final" type="number" inputmode="numeric" /></div>`;
+      } else if(q.mode === 'subtract'){
+        html = `
+          <div class="sumline"><span class="lhs">${q.larger} × ${q.table}</span><span class="eq">=</span><input class="answer ans" data-key="top" type="number" inputmode="numeric" /></div>
+          <div class="sumline"><span class="lhs">${q.subGroups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.subTotal}</span></div>
+          <div class="sumline"><span class="lhs">${q.remainGroups} × ${q.table}</span><span class="eq">=</span><input class="answer ans" data-key="again" type="number" inputmode="numeric" /><span>−</span><span class="known">${q.subTotal}</span></div>
+          <div class="sumline"><span class="lhs"></span><span class="eq">=</span><input class="answer ans" data-key="final" type="number" inputmode="numeric" /></div>`;
+      } else {
+        html = `
+          <div class="sumline"><span class="lhs">${q.knownGroups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.knownTotal}</span></div>
+          <div class="sumline"><span class="lhs">${q.extraGroups} × ${q.table}</span><span class="eq">=</span><input class="answer ans" data-key="extra" type="number" inputmode="numeric" /></div>
+          <div class="sumline"><span class="lhs">${q.laterGroups} × ${q.table}</span><span class="eq">=</span><span class="known">${q.knownTotal}</span><span>+</span><input class="answer ans" data-key="again" type="number" inputmode="numeric" /></div>
+          <div class="sumline"><span class="lhs"></span><span class="eq">=</span><input class="answer ans" data-key="final" type="number" inputmode="numeric" /></div>`;
+      }
+      equations.innerHTML = html;
+      disableAnswers(true);
+    }
+
+    function disableAnswers(disabled){
+      equations.querySelectorAll('.ans').forEach(inp=>{
+        inp.disabled = disabled;
+        if(disabled) inp.blur();
+      });
+      checkBtn.disabled = disabled;
+    }
+
+    function renderGroup(groupNum, dotCount, classes=''){
+      const dots = Array.from({length:dotCount}, ()=>'<span class="dot"></span>').join('');
+      return `<div class="group ${classes}" data-group="${groupNum}"><div class="group-label">Group ${groupNum}</div><div class="dots">${dots}</div></div>`;
+    }
+
+    function renderVisual(q){
+      visualTitle.textContent = 'See the groups';
+      if(q.mode === 'build'){
+        const groups = [];
+        for(let i=1;i<=q.groups;i++) groups.push(renderGroup(i, q.table, i===q.groups ? 'incoming highlight' : ''));
+        visualBody.className = 'visual-body';
+        visualBody.innerHTML = `<div class="section-title">Build from the previous fact</div><div class="groups-grid compact-grid" id="mainGroups">${groups.join('')}</div>`;
+      } else if(q.mode === 'take1'){
+        const groups = [];
+        for(let i=1;i<=q.groups;i++) groups.push(renderGroup(i, q.table, i===q.groups ? 'highlight removable' : ''));
+        visualBody.className = 'visual-body visual-split';
+        visualBody.innerHTML = `<div><div class="section-title">Known fact</div><div class="groups-grid split-grid" id="mainGroups">${groups.join('')}</div></div><div class="take-zone"><div class="take-title">Taken away group</div><div class="take-wrap" id="takeWrap"></div></div>`;
+      } else if(q.mode === 'subtract'){
+        const groups = [];
+        for(let i=1;i<=q.larger;i++) groups.push(renderGroup(i, q.table, i>q.remainGroups ? 'highlight removable' : ''));
+        visualBody.className = 'visual-body visual-split';
+        visualBody.innerHTML = `<div><div class="section-title">Larger fact</div><div class="groups-grid split-grid" id="mainGroups">${groups.join('')}</div></div><div class="take-zone"><div class="take-title">Taken away groups</div><div class="take-wrap" id="takeWrap"></div></div>`;
+      } else {
+        const known = [];
+        const later = [];
+        for(let i=1;i<=q.knownGroups;i++) known.push(renderGroup(i, q.table));
+        for(let i=1;i<=q.laterGroups;i++) later.push(renderGroup(i, q.table, i>q.knownGroups ? 'incoming highlight' : ''));
+        visualBody.className = 'visual-body';
+        visualBody.innerHTML = `<div><div class="section-title">Known fact</div><div class="groups-grid compact-grid" id="knownGroups">${known.join('')}</div></div><div><div class="section-title">Later fact</div><div class="groups-grid compact-grid" id="laterGroups">${later.join('')}</div></div>`;
+      }
+    }
+
+    async function playAudioElement(el){
+      if(!state.soundOn) return false;
+      try{
+        el.pause();
+        el.currentTime = 0;
+        const p = el.play();
+        if(p) await p;
+        return !el.error;
+      }catch(err){
+        return false;
+      }
+    }
+
+    function tone(freq, duration, type='sine', gain=.08, ramp='exp'){
+      if(!audioCtx || !state.soundOn) return Promise.resolve();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(.0001, audioCtx.currentTime);
+      if(ramp === 'exp'){
+        g.gain.exponentialRampToValueAtTime(gain, audioCtx.currentTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + duration);
+      } else {
+        g.gain.linearRampToValueAtTime(gain, audioCtx.currentTime + 0.02);
+        g.gain.linearRampToValueAtTime(.0001, audioCtx.currentTime + duration);
+      }
+      osc.connect(g).connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration + 0.03);
+      return sleep((duration + 0.04) * 1000);
+    }
+
+    function noiseSwish(duration=.34){
+      if(!audioCtx || !state.soundOn) return Promise.resolve();
+      const bufferSize = Math.floor(audioCtx.sampleRate * duration);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<bufferSize;i++) data[i] = (Math.random()*2 - 1) * (1 - i/bufferSize);
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1600, audioCtx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(420, audioCtx.currentTime + duration);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.22, audioCtx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + duration);
+      source.connect(filter).connect(gain).connect(audioCtx.destination);
+      source.start();
+      source.stop(audioCtx.currentTime + duration + 0.03);
+      return sleep((duration + 0.04) * 1000);
+    }
+
+    async function playFx(kind){
+      if(!state.soundOn) return;
+      ensureAudio();
+      if(kind === 'correct'){
+        const ok = await playAudioElement(audioCorrect);
+        if(!ok){
+          await tone(660, .12, 'triangle', .08);
+          await tone(880, .12, 'triangle', .07);
+          await tone(990, .18, 'triangle', .08);
+        }
+      } else if(kind === 'wrong'){
+        const ok = await playAudioElement(audioWrong);
+        if(!ok){
+          await tone(280, .16, 'square', .07, 'lin');
+          await tone(200, .22, 'square', .07, 'lin');
+        }
+      } else if(kind === 'swish'){
+        playAudioElement(audioSwish).catch(()=>{});
+        await noiseSwish(.48);
+      }
+    }
+
+    function launchConfetti(){
+      const colors = ['#4c89e8','#27ae60','#f4b840','#e15a5a','#8a6cff','#24c1c8'];
+      celebrate.innerHTML = '';
+      for(let i=0;i<96;i++){
+        const conf = document.createElement('span');
+        conf.className = 'confetti';
+        conf.style.left = `${Math.random()*100}%`;
+        conf.style.background = colors[i % colors.length];
+        conf.style.animationDuration = `${2.6 + Math.random()*1.4}s`;
+        conf.style.animationDelay = `${Math.random()*0.2}s`;
+        celebrate.appendChild(conf);
+      }
+      setTimeout(()=>celebrate.innerHTML = '', 4200);
+    }
+
+    async function animateCurrent(){
+      state.animating = true;
+      disableAnswers(true);
+      const activeMode = state.current ? state.current.mode : state.mode;
+      if(activeMode === 'build'){
+        const group = visualBody.querySelector('.group.incoming');
+        if(group){
+          setFeedback('Watch the new group swish in slowly.');
+          await sleep(320);
+          await playFx('swish');
+          group.classList.add('arrive');
+          await sleep(1180);
+        }
+      } else if(activeMode === 'take1'){
+        const removable = visualBody.querySelector('.group.removable');
+        const takeWrap = visualBody.querySelector('#takeWrap');
+        if(removable && takeWrap){
+          setFeedback('Watch one whole group get taken away slowly.');
+          await sleep(520);
+          removable.classList.add('highlight');
+          await sleep(640);
+          await playFx('swish');
+          removable.classList.add('removing');
+          await sleep(1200);
+          takeWrap.innerHTML = renderGroup(Number(removable.dataset.group), state.current.table, 'removed-preview');
+          visualBody.querySelectorAll('#mainGroups .group:not(.removable)').forEach(g=>g.classList.add('settle'));
+          await sleep(420);
+        }
+      } else if(activeMode === 'subtract'){
+        const removable = Array.from(visualBody.querySelectorAll('.group.removable'));
+        const takeWrap = visualBody.querySelector('#takeWrap');
+        if(removable.length && takeWrap){
+          setFeedback('Watch the groups being taken away one by one slowly.');
+          for(const g of removable){
+            g.classList.add('highlight');
+            await sleep(520);
+            await playFx('swish');
+            g.classList.add('removing');
+            takeWrap.insertAdjacentHTML('beforeend', renderGroup(Number(g.dataset.group), state.current.table, 'removed-preview'));
+            await sleep(1120);
+          }
+          visualBody.querySelectorAll('#mainGroups .group:not(.removable)').forEach(g=>g.classList.add('settle'));
+          await sleep(420);
+        }
+      } else if(activeMode === 'bridge'){
+        const incoming = Array.from(visualBody.querySelectorAll('#laterGroups .group.incoming'));
+        if(incoming.length){
+          setFeedback('Watch the extra groups arrive slowly.');
+          for(const g of incoming){
+            await sleep(280);
+            await playFx('swish');
+            g.classList.add('arrive');
+            await sleep(980);
+          }
+        }
+      }
+      state.animating = false;
+      disableAnswers(false);
+      const first = equations.querySelector('.ans');
+      if(first) first.focus();
+      setFeedback('Type the answers, then press Check Answer.');
+    }
+
+    function parseAnswers(){
+      const values = {};
+      equations.querySelectorAll('.ans').forEach(inp=>values[inp.dataset.key] = Number(inp.value));
+      return values;
+    }
+
+    function allAnswersFilled(){
+      return Array.from(equations.querySelectorAll('.ans')).every(inp => inp.value.trim() !== '');
+    }
+
+    function answersCorrect(values, q){
+      if(q.mode === 'build') return values.add === q.addTotal && values.final === q.finalTotal;
+      if(q.mode === 'take1') return values.sub === q.subTotal && values.final === q.finalTotal;
+      if(q.mode === 'subtract') return values.top === q.largerTotal && values.again === q.largerTotal && values.final === q.remainTotal;
+      return values.extra === q.extraTotal && values.again === q.extraTotal && values.final === q.finalTotal;
+    }
+
+    function successMessage(q){
+      if(q.mode === 'build') return `Good job! ${q.groups} × ${q.table} = ${q.prevTotal} + ${q.addTotal} = ${q.finalTotal}.`;
+      if(q.mode === 'take1') return `Good job! ${q.keepGroups} × ${q.table} = ${q.total} − ${q.subTotal} = ${q.finalTotal}.`;
+      if(q.mode === 'subtract') return `Good job! ${q.remainGroups} × ${q.table} = ${q.largerTotal} − ${q.subTotal} = ${q.remainTotal}.`;
+      return `Good job! ${q.laterGroups} × ${q.table} = ${q.knownTotal} + ${q.extraTotal} = ${q.finalTotal}.`;
+    }
+
+    async function checkAnswer(){
+      ensureAudio();
+      if(state.animating || !state.current) return;
+      if(!allAnswersFilled()){
+        setFeedback('Please fill in every box first.', 'bad');
+        await playFx('wrong');
+        return;
+      }
+      state.attempts += 1;
+      const values = parseAnswers();
+      if(answersCorrect(values, state.current)){
+        state.correct += 1;
+        state.score += 1;
+        updateStats();
+        setFeedback(successMessage(state.current), 'good');
+        launchConfetti();
+        await playFx('correct');
+      } else {
+        updateStats();
+        setFeedback('Not yet. Try again and use the groups to help you.', 'bad');
+        await playFx('wrong');
+      }
+    }
+
+    async function loadQuestion(resetQuestionNo=false){
+      ensureAudio();
+      if(!requireSelectedTables()) return;
+      if(resetQuestionNo || state.questionNo >= TOTAL_QUESTIONS) state.questionNo = 0;
+      state.questionNo += 1;
+      state.current = generateQuestion(state.mode);
+      syncModeUI(state.mode === 'random' ? state.current.mode : state.mode);
+      renderEquations(state.current);
+      renderVisual(state.current);
+      updateStats();
+      await animateCurrent();
+    }
+
+    async function startNewGame(fullReset=true){
+      ensureAudio();
+      state.questionNo = 0;
+      if(fullReset){
+        state.score = 0;
+        state.attempts = 0;
+        state.correct = 0;
+      }
+      updateStats();
+      closeDrawer();
+      await loadQuestion(true);
+    }
+
+    modeSelect.addEventListener('change', async ()=>{
+      ensureAudio();
+      state.mode = modeSelect.value;
+      syncModeUI();
+      await startNewGame(true);
+    });
+    startBtn.addEventListener('click', ()=>startNewGame(true));
+    nextBtn.addEventListener('click', ()=>loadQuestion(false));
+    randomBtn.addEventListener('click', ()=>loadQuestion(true));
+    checkBtn.addEventListener('click', checkAnswer);
+    resetScoreBtn.addEventListener('click', ()=>{
+      ensureAudio();
+      state.score = 0;
+      state.attempts = 0;
+      state.correct = 0;
+      updateStats();
+      setFeedback('Score has been reset.');
+    });
+    selectAllBtn.addEventListener('click', ()=>{
+      ensureAudio();
+      tableSet.clear();
+      for(let n=1;n<=12;n++) tableSet.add(n);
+      buildTableChecks();
+    });
+    clearAllBtn.addEventListener('click', ()=>{
+      ensureAudio();
+      tableSet.clear();
+      buildTableChecks();
+      setFeedback('All tables cleared. Tick the tables you want, then start a new game.', 'bad');
+    });
+    equations.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' && !state.animating) checkAnswer();
+    });
+
+    function boot(){
+      buildTableChecks();
+      syncModeUI();
+      updateStats();
+      equations.innerHTML = '';
+      visualBody.innerHTML = '';
+      setFeedback('Press New Question to begin.');
+    }
+    boot();
+  </script>
+</body>
+</html>
