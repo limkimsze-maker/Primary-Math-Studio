@@ -2006,7 +2006,7 @@ function smallDivisionModel(c,plan,state){
   <div class="small-div-stage">
    <div class="small-div-bank-wrap"><div class="small-div-bank-title">Counters to use <b id="smallDivRemaining">${remaining}</b></div><div class="small-div-bank" id="smallDivCounterBank">${Array.from({length:remaining},()=>smallDivisionCounterHTML()).join('')}${remaining?'':'<span class="small-div-empty">All counters have been grouped.</span>'}</div></div>
    <div class="small-div-flow" aria-hidden="true">→</div>
-   <div class="small-div-groups" style="--small-div-groups:${Math.min(groupCount,4)}">${Array.from({length:groupCount},(_,i)=>`<div class="small-div-group ${counts[i]===targetSize?'complete':''}" data-small-div-group="${i}"><div class="small-div-group-head"><strong>Group ${i+1}</strong><span class="small-div-group-count">${counts[i]} / ${targetSize}</span></div><div class="small-div-group-counters">${Array.from({length:counts[i]},()=>smallDivisionCounterHTML('small-div-landed')).join('')}</div></div>`).join('')}</div>
+   <div class="small-div-groups" style="--small-div-groups:${Math.min(groupCount,4)}">${Array.from({length:groupCount},(_,i)=>`<div class="small-div-group ${counts[i]===targetSize?'complete':''}" data-small-div-group="${i}"><div class="small-div-group-head"><strong>Group ${i+1}</strong></div><div class="small-div-group-counters">${Array.from({length:counts[i]},()=>smallDivisionCounterHTML('small-div-landed')).join('')}</div></div>`).join('')}</div>
   </div>
   <p class="small-div-live" id="smallDivLive" role="status" aria-live="polite">${sharing?`There are ${groupCount} groups. Share one counter into each group in turn.`:`${targetSize} counters will form each group. Finish one group before starting the next.`}</p>
  </div>`;
@@ -2039,7 +2039,7 @@ async function animateSmallDivision(){
    const animation=flyer.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${dx}px,${dy}px) scale(1.08)`}],{duration,easing:'cubic-bezier(.2,.75,.25,1)',fill:'forwards'});
    try{await animation.finished;}catch{}
    flyer.remove();placeholder.classList.remove('small-div-placeholder');placeholder.classList.add('small-div-landed');
-   const count=target.querySelectorAll('.small-div-counter').length;card.querySelector('.small-div-group-count').textContent=`${count} / ${targetSize}`;
+   const count=target.querySelectorAll('.small-div-counter').length;
    if(remaining)remaining.textContent=String(source.length-i-1);
    if(count===targetSize){card.classList.add('complete');if(!sharing&&live)live.textContent=`${targetSize} counters form Group ${groupIndex+1}. Group ${groupIndex+1} is complete.`;await smallDivWait(280);}
    await smallDivWait(pause);
