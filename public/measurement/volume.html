@@ -35,7 +35,9 @@ select,input[type=text],input[type=number]{width:100%;padding:9px 10px;border:1p
 .answer-inputs input{width:90px;font-size:28px;font-weight:700;padding:8px 10px}.answer-inputs span{font-size:21px}
 .response-panel,.response-controls{display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}.response-controls{flex-shrink:0}.response-controls .field{margin:0}
 .response-support{display:flex;flex-direction:column;gap:9px;min-height:0;min-width:0;padding:2px;overscroll-behavior:contain}
-.feedback{padding:9px 11px;border-radius:8px;background:var(--bg);font-size:16px;line-height:1.35}.feedback strong{display:block;margin-bottom:2px}.feedback.error{background:#fff0e8;color:#883f20}.feedback.success{background:#e5f3d4;color:#254a22}
+.feedback{padding:11px 13px;border-radius:9px;font-size:16px;line-height:1.35;font-weight:700;border:2px solid transparent}.feedback strong{display:block;margin-bottom:3px;font-size:18px}.feedback.error{background:#fff0f0;color:#a12626;border-color:#d84a4a}.feedback.success{background:#e8f7e8;color:#1f6b31;border-color:#3aa35a}
+#sessionNote.feedback-success{color:#1f7a39;font-weight:900;font-size:16px}
+#sessionNote.feedback-error{color:#b32626;font-weight:900;font-size:16px}
 .hint{border-left:3px solid var(--gold);background:#fff9e9;padding:9px 11px;font-size:16px;line-height:1.35}.hint p{margin:0}.hint-detail{margin-top:6px!important;font-weight:700}
 .activity-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 16px;border-top:1px solid var(--line);border-radius:0 0 14px 14px;background:#fafcfb;color:var(--muted);font-size:14px;flex-shrink:0}
 .progress-dots{display:flex;gap:5px;flex-wrap:wrap;max-width:110px}.progress-dots span{width:9px;height:9px;background:#dce5e1;border-radius:50%}.progress-dots .done{background:var(--green)}.progress-dots .current{background:var(--gold)}
@@ -505,7 +507,7 @@ function showQuestion(continuing=false){
   if(single){q.a=q.beakers[beakerIndex].ml;q.aTick=q.beakers[beakerIndex].tick;q.target=q.a;}
   const spec=currentSpec();hintLevel=0;attempts=0;solved=false;fillTick=fillTicks[beakerIndex];dragging=false;
   $('answer').value='';$('answerMl').value='';for(const id of ['answer','answerMl','responseFormat','fillRange','check','hintBtn','less','more'])$(id).disabled=false;
-  $('check').classList.remove('hidden');$('next').classList.add('hidden');$('feedback').classList.add('hidden');$('hint').classList.add('hidden');$('hintBtn').classList.toggle('hidden',!config.hints);$('hintBtn').textContent='Help me';
+  $('check').classList.remove('hidden');$('next').classList.add('hidden');$('feedback').classList.add('hidden');$('hint').classList.add('hidden');$('hintBtn').classList.toggle('hidden',!config.hints);$('hintBtn').textContent='Help me';$('sessionNote').classList.remove('feedback-success','feedback-error');
   $('questionMeta').textContent=`Question ${index+1} of ${config.count}`+(single&&config.beakerCount>1?` · Beaker ${beakerIndex+1} of ${config.beakerCount}`:'');
   $('skillChip').textContent={read:'Read the volume',set:'Fill the beaker','compare-direct':'Compare volumes','order-direct':'Order volumes',compare:'Find the difference',total:'Find the total volume'}[q.mode];
   $('intervalChip').textContent=!config.showInterval?'Find the smallest intervals':config.beakerSetup==='individual'&&!single?'Each beaker has its own scale':`1 space = ${scaleText(spec.step,spec)}`;
@@ -563,7 +565,7 @@ function renderBeakers(){
 function updateScaleNote(){let text=active().mode==='total'?'All but one beaker are full. Read the partly filled beaker, then add every beaker’s liquid volume.':'Read the liquid level at eye level.';if(active().mode==='set'){if(fillTick===0)text='The beaker is empty. Raise the liquid level.';else if(fillTick===currentSpec().max/currentSpec().step)text='The liquid is at the maximum marked volume.';}$('scaleNote').textContent=text;$('fillRange').setAttribute('aria-valuetext',answerText(fillTick*currentSpec().step));}
 function setFill(tick){if(solved||active().mode!=='set')return;const c=currentSpec();fillTick=Math.max(0,Math.min(c.max/c.step,Math.round(tick)));fillTicks[beakerIndex]=fillTick;$('fillRange').value=fillTick;updateScaleNote();renderBeakers();}
 function updateProgress(){$('progress').replaceChildren();for(let i=0;i<config.count;i++){const dot=document.createElement('span');dot.className=i<results.length?'done':i===index?'current':'';$('progress').append(dot);}$('progress').setAttribute('aria-label',`${results.length} of ${config.count} questions completed`);}
-function feedback(title,body,type){const strong=document.createElement('strong');strong.textContent=title;$('feedback').replaceChildren(strong,document.createTextNode(body));$('feedback').className=`feedback ${type}`;}
+function feedback(title,body,type){const strong=document.createElement('strong');strong.textContent=title;$('feedback').replaceChildren(strong,document.createTextNode(' '+body));$('feedback').className=`feedback ${type}`;const note=$('sessionNote');note.classList.remove('feedback-success','feedback-error');if(type==='success'){note.classList.add('feedback-success');note.textContent='✓ Correct! Well done.';}else if(type==='error'){note.classList.add('feedback-error');note.textContent='✗ Please try again.';}}
 function readAnswer(){if(active().mode==='set')return fillTick*currentSpec().step;const raw=$('answer').value.trim();if(currentAnswerFormat()==='mixed'){const rest=$('answerMl').value.trim();if(!/^\d+$/.test(raw)||!/^\d+$/.test(rest)||Number(rest)>=1000)throw Error('Enter whole numbers in both boxes. Use 0 to 999 in the ml box.');return Number(raw)*1000+Number(rest);}if(!/^\d+$/.test(raw))throw Error('Give the volume as a whole number of millilitres.');return Number(raw);}
 function checkAnswer(){
   if(solved)return;const q=active();let value;
@@ -583,7 +585,7 @@ function checkAnswer(){
     $('volumeCompareChoice').querySelectorAll('button').forEach(b=>b.disabled=true);
     $('check').classList.add('hidden');$('next').classList.remove('hidden');$('next').textContent=!groupComplete?`Next beaker: ${BEAKER_IDS[beakerIndex+1]} →`:index===questions.length-1?'Finish activity →':'Next question →';
     const explanation=q.mode==='compare-direct'?`Beaker ${q.compareAnswer} has more liquid: ${answerText(q.compareAnswer==='A'?q.beakers[0].ml:q.beakers[1].ml)} is greater than ${answerText(q.compareAnswer==='A'?q.beakers[1].ml:q.beakers[0].ml)}.`:q.mode==='order-direct'?`Least to greatest: ${q.orderAnswer}. ${q.beakers.map((b,i)=>BEAKER_IDS[i]+' = '+answerText(b.ml)).join(', ')}.`:q.mode==='total'?`Total: ${q.beakers.map(b=>`${b.ml} ml`).join(' + ')} = ${q.target} ml = ${answerText(q.target,'mixed')}.`:q.mode==='compare'?`${answerText(Math.max(...q.beakers.map(b=>b.ml)))} − ${answerText(Math.min(...q.beakers.map(b=>b.ml)))} = ${answerText(q.target)}.`:`The liquid volume is ${answerText(q.target)}.`;
-    feedback('You got it!',explanation,'success');$('next').focus({preventScroll:true});renderBeakers();updateProgress();$('sessionNote').textContent='Well done. You checked the level and the unit.';
+    feedback('✓ Correct!',explanation,'success');$('next').focus({preventScroll:true});renderBeakers();updateProgress();
   }else{
     let msg;
     if(q.mode==='compare-direct')msg='Read both liquid levels and choose the beaker with the greater volume.';
@@ -595,7 +597,7 @@ function checkAnswer(){
     else if(q.mode==='compare'&&q.beakers.some(b=>value===b.ml))msg='That is one beaker’s volume. Subtract the smallest volume from the largest volume.';
     else if(currentAnswerFormat()==='ml'&&value===q.target/1000)msg='Your answer is in litres. Convert it to millilitres: 1 ℓ = 1000 ml.';
     else msg=config.showInterval?`Each small space is ${scaleText(currentSpec().step)}. Count upwards from a numbered reading.`:'Find the value of one small space first. Divide the gap between numbered readings by the number of spaces.';
-    feedback('Have another look.',msg,'error');
+    feedback('✗ Please try again.',msg,'error');
   }
 }
 function showHint(){if(solved||hintLevel>=3)return;hintLevel++;renderHint();}
