@@ -4,10 +4,164 @@ export const LIMITS = {1:100,2:1000,3:10000};
 const pair=(v,label,min,max,step=1)=>({key:v,label,min,max,step,type:'number'});
 const select=(key,label,options)=>({key,label,options,type:'select'});
 const time24Field=(key,label)=>({key,label,type:'time24',maxLength:4});
+
+export const OPERATION_SKILLS={
+  1:{
+    add:[['p1-add-2d1-no','2-digit + 1-digit — no renaming'],['p1-add-tens-no','2-digit + tens — no renaming'],['p1-add-2d2-no','2-digit + 2-digit — no renaming'],['p1-add-2d1-rename','2-digit + 1-digit — with renaming'],['p1-add-2d2-rename','2-digit + 2-digit — with renaming'],['p1-add-mixed','Mixed P1 Addition']],
+    subtract:[['p1-sub-2d1-no','2-digit − 1-digit — no renaming'],['p1-sub-tens-no','2-digit − tens — no renaming'],['p1-sub-2d2-no','2-digit − 2-digit — no renaming'],['p1-sub-2d1-rename','2-digit − 1-digit — with renaming'],['p1-sub-2d2-rename','2-digit − 2-digit — with renaming'],['p1-sub-mixed','Mixed P1 Subtraction']]
+  },
+  2:{
+    add:[['p2-add-revision','Revision: 2-digit addition'],['p2-add-3d1-no','3-digit + 1-digit — no renaming'],['p2-add-tens-no','3-digit + tens — no renaming'],['p2-add-hundreds-no','3-digit + hundreds — no renaming'],['p2-add-3d2-no','3-digit + 2-digit — no renaming'],['p2-add-3d3-no','3-digit + 3-digit — no renaming'],['p2-add-ones','Rename ones only'],['p2-add-tens','Rename tens only'],['p2-add-ones-tens','Rename ones and tens'],['p2-add-1000','Addition resulting in 1000'],['p2-add-mixed','Mixed P2 Addition']],
+    subtract:[['p2-sub-revision','Revision: 2-digit subtraction'],['p2-sub-3d1-no','3-digit − 1-digit — no renaming'],['p2-sub-tens-no','3-digit − tens — no renaming'],['p2-sub-hundreds-no','3-digit − hundreds — no renaming'],['p2-sub-3d2-no','3-digit − 2-digit — no renaming'],['p2-sub-3d3-no','3-digit − 3-digit — no renaming'],['p2-sub-ones','Rename tens to ones only'],['p2-sub-tens','Rename hundreds to tens only'],['p2-sub-two','Two renamings'],['p2-sub-zero','Renaming across a zero'],['p2-sub-1000','Subtraction from 1000'],['p2-sub-mixed','Mixed P2 Subtraction']]
+  },
+  3:{
+    add:[['p3-add-revision','Revision: 3-digit addition'],['p3-add-4d1-no','4-digit + 1-digit — no renaming'],['p3-add-tens-no','4-digit + tens — no renaming'],['p3-add-hundreds-no','4-digit + hundreds — no renaming'],['p3-add-thousands-no','4-digit + thousands — no renaming'],['p3-add-4d2-no','4-digit + 2-digit — no renaming'],['p3-add-4d3-no','4-digit + 3-digit — no renaming'],['p3-add-4d4-no','4-digit + 4-digit — no renaming'],['p3-add-ones','Rename ones only'],['p3-add-tens','Rename tens only'],['p3-add-hundreds','Rename hundreds only'],['p3-add-two','Two renamings'],['p3-add-three','Three renamings'],['p3-add-10000','Addition resulting in 10 000'],['p3-add-mixed','Mixed P3 Addition']],
+    subtract:[['p3-sub-revision','Revision: 3-digit subtraction'],['p3-sub-4d1-no','4-digit − 1-digit — no renaming'],['p3-sub-tens-no','4-digit − tens — no renaming'],['p3-sub-hundreds-no','4-digit − hundreds — no renaming'],['p3-sub-thousands-no','4-digit − thousands — no renaming'],['p3-sub-4d2-no','4-digit − 2-digit — no renaming'],['p3-sub-4d3-no','4-digit − 3-digit — no renaming'],['p3-sub-4d4-no','4-digit − 4-digit — no renaming'],['p3-sub-ones','Rename tens to ones only'],['p3-sub-tens','Rename hundreds to tens only'],['p3-sub-hundreds','Rename thousands to hundreds only'],['p3-sub-two','Two renamings'],['p3-sub-three','Three renamings'],['p3-sub-zero-one','Renaming across one zero'],['p3-sub-zero-multiple','Renaming across multiple zeros'],['p3-sub-10000','Subtraction from 10 000'],['p3-sub-mixed','Mixed P3 Subtraction']]
+  }
+};
+export function operationSkillOptions(grade,task){return OPERATION_SKILLS[Number(grade)]?.[task]||[];}
+function opSame(a,b){return a.length===b.length&&a.every((v,i)=>v===b[i]);}
+function operationAddCarries(a,b,places=6){
+ let carry=0;const out=[];
+ for(let i=0;i<places;i++){const p=10**i,total=Math.floor(a/p)%10+Math.floor(b/p)%10+carry;if(total>=10){out.push(i);carry=1;}else carry=0;}
+ return out;
+}
+function operationSubRenames(a,b,places=6){
+ const top=Array.from({length:places},(_,i)=>Math.floor(a/10**i)%10),bottom=Array.from({length:places},(_,i)=>Math.floor(b/10**i)%10),ops=[],chains=[];
+ if(b>a)return {invalid:true,ops,chains};
+ for(let i=0;i<places;i++){
+  if(top[i]<bottom[i]){
+   let donor=i+1;while(donor<places&&top[donor]===0)donor++;
+   if(donor>=places)return {invalid:true,ops,chains};
+   chains.push({target:i,donor,length:donor-i});
+   for(let k=donor;k>i;k--){top[k]--;top[k-1]+=10;ops.push(k-1);}
+  }
+  top[i]-=bottom[i];
+ }
+ return {invalid:false,ops,chains};
+}
+export function operationSkillMatches(grade,task,skill,a,b){
+ grade=Number(grade);a=Number(a);b=Number(b);
+ const between=(n,lo,hi)=>Number.isInteger(n)&&n>=lo&&n<=hi;
+ if(task==='add'){
+  const carries=operationAddCarries(a,b),no=()=>carries.length===0;
+  switch(skill){
+   case 'p1-add-2d1-no':return between(a,10,99)&&between(b,1,9)&&a+b<=100&&no();
+   case 'p1-add-tens-no':return between(a,10,99)&&between(b,10,90)&&b%10===0&&a+b<=100&&no();
+   case 'p1-add-2d2-no':return between(a,10,99)&&between(b,10,99)&&a+b<=100&&no();
+   case 'p1-add-2d1-rename':return between(a,10,99)&&between(b,1,9)&&a+b<=100&&opSame(carries,[0]);
+   case 'p1-add-2d2-rename':return between(a,10,99)&&between(b,10,99)&&a+b<=100&&carries.length>=1;
+   case 'p1-add-mixed':return between(a,10,99)&&between(b,1,99)&&a+b<=100;
+   case 'p2-add-revision':return between(a,10,99)&&between(b,10,99)&&a+b<=100;
+   case 'p2-add-3d1-no':return between(a,100,999)&&between(b,1,9)&&a+b<=999&&no();
+   case 'p2-add-tens-no':return between(a,100,999)&&between(b,10,90)&&b%10===0&&a+b<=999&&no();
+   case 'p2-add-hundreds-no':return between(a,100,999)&&between(b,100,900)&&b%100===0&&a+b<=999&&no();
+   case 'p2-add-3d2-no':return between(a,100,999)&&between(b,10,99)&&a+b<=999&&no();
+   case 'p2-add-3d3-no':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&no();
+   case 'p2-add-ones':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[0]);
+   case 'p2-add-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[1]);
+   case 'p2-add-ones-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[0,1]);
+   case 'p2-add-1000':return between(a,100,999)&&between(b,100,999)&&a+b===1000;
+   case 'p2-add-mixed':return between(a,100,999)&&between(b,1,999)&&a+b<=1000;
+   case 'p3-add-revision':return between(a,100,999)&&between(b,100,999)&&a+b<=1000;
+   case 'p3-add-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&a+b<=9999&&no();
+   case 'p3-add-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&a+b<=9999&&no();
+   case 'p3-add-hundreds-no':return between(a,1000,9999)&&between(b,100,900)&&b%100===0&&a+b<=9999&&no();
+   case 'p3-add-thousands-no':return between(a,1000,9999)&&between(b,1000,9000)&&b%1000===0&&a+b<=9999&&no();
+   case 'p3-add-4d2-no':return between(a,1000,9999)&&between(b,10,99)&&a+b<=9999&&no();
+   case 'p3-add-4d3-no':return between(a,1000,9999)&&between(b,100,999)&&a+b<=9999&&no();
+   case 'p3-add-4d4-no':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&no();
+   case 'p3-add-ones':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[0]);
+   case 'p3-add-tens':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[1]);
+   case 'p3-add-hundreds':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[2]);
+   case 'p3-add-two':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&carries.length===2&&carries.every(i=>i<3);
+   case 'p3-add-three':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[0,1,2]);
+   case 'p3-add-10000':return between(a,1000,9999)&&between(b,1000,9999)&&a+b===10000;
+   case 'p3-add-mixed':return between(a,1000,9999)&&between(b,1,9999)&&a+b<=10000;
+  }
+ }
+ if(task==='subtract'){
+  const r=operationSubRenames(a,b),no=()=>!r.invalid&&r.ops.length===0,direct=n=>!r.invalid&&r.ops.length===n&&r.chains.every(x=>x.length===1);
+  if(r.invalid)return false;
+  const oneZero=r.chains.some(x=>x.length===2)&&!r.chains.some(x=>x.length>2),manyZeros=r.chains.some(x=>x.length>=3);
+  switch(skill){
+   case 'p1-sub-2d1-no':return between(a,10,99)&&between(b,1,9)&&no();
+   case 'p1-sub-tens-no':return between(a,10,99)&&between(b,10,90)&&b%10===0&&no();
+   case 'p1-sub-2d2-no':return between(a,10,99)&&between(b,10,99)&&no();
+   case 'p1-sub-2d1-rename':return between(a,10,99)&&between(b,1,9)&&r.ops.length>=1;
+   case 'p1-sub-2d2-rename':return between(a,10,99)&&between(b,10,99)&&r.ops.length>=1;
+   case 'p1-sub-mixed':return between(a,10,99)&&between(b,1,99);
+   case 'p2-sub-revision':return between(a,10,99)&&between(b,10,99);
+   case 'p2-sub-3d1-no':return between(a,100,999)&&between(b,1,9)&&no();
+   case 'p2-sub-tens-no':return between(a,100,999)&&between(b,10,90)&&b%10===0&&no();
+   case 'p2-sub-hundreds-no':return between(a,100,999)&&between(b,100,900)&&b%100===0&&no();
+   case 'p2-sub-3d2-no':return between(a,100,999)&&between(b,10,99)&&no();
+   case 'p2-sub-3d3-no':return between(a,100,999)&&between(b,100,999)&&no();
+   case 'p2-sub-ones':return between(a,100,999)&&between(b,100,999)&&r.ops.length===1&&r.chains[0]?.target===0&&r.chains[0]?.length===1;
+   case 'p2-sub-tens':return between(a,100,999)&&between(b,100,999)&&r.ops.length===1&&r.chains[0]?.target===1&&r.chains[0]?.length===1;
+   case 'p2-sub-two':return between(a,100,999)&&between(b,100,999)&&direct(2);
+   case 'p2-sub-zero':return between(a,100,999)&&between(b,1,999)&&oneZero;
+   case 'p2-sub-1000':return a===1000&&between(b,1,999);
+   case 'p2-sub-mixed':return between(a,100,1000)&&between(b,1,999);
+   case 'p3-sub-revision':return between(a,100,999)&&between(b,100,999);
+   case 'p3-sub-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&no();
+   case 'p3-sub-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&no();
+   case 'p3-sub-hundreds-no':return between(a,1000,9999)&&between(b,100,900)&&b%100===0&&no();
+   case 'p3-sub-thousands-no':return between(a,1000,9999)&&between(b,1000,9000)&&b%1000===0&&no();
+   case 'p3-sub-4d2-no':return between(a,1000,9999)&&between(b,10,99)&&no();
+   case 'p3-sub-4d3-no':return between(a,1000,9999)&&between(b,100,999)&&no();
+   case 'p3-sub-4d4-no':return between(a,1000,9999)&&between(b,1000,9999)&&no();
+   case 'p3-sub-ones':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===0&&r.chains[0]?.length===1;
+   case 'p3-sub-tens':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===1&&r.chains[0]?.length===1;
+   case 'p3-sub-hundreds':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===2&&r.chains[0]?.length===1;
+   case 'p3-sub-two':return between(a,1000,9999)&&between(b,1000,9999)&&direct(2);
+   case 'p3-sub-three':return between(a,1000,9999)&&between(b,1000,9999)&&direct(3);
+   case 'p3-sub-zero-one':return between(a,1000,9999)&&between(b,1,9999)&&oneZero;
+   case 'p3-sub-zero-multiple':return between(a,1000,9999)&&between(b,1,9999)&&manyZeros;
+   case 'p3-sub-10000':return a===10000&&between(b,1,9999);
+   case 'p3-sub-mixed':return between(a,1000,10000)&&between(b,1,9999);
+  }
+ }
+ return false;
+}
+const OPERATION_SKILL_EXAMPLES={
+ 'p1-add-2d1-no':[24,5],'p1-add-tens-no':[34,20],'p1-add-2d2-no':[23,45],'p1-add-2d1-rename':[28,7],'p1-add-2d2-rename':[28,17],'p1-add-mixed':[28,17],
+ 'p1-sub-2d1-no':[28,5],'p1-sub-tens-no':[78,20],'p1-sub-2d2-no':[68,25],'p1-sub-2d1-rename':[32,7],'p1-sub-2d2-rename':[42,16],'p1-sub-mixed':[42,16],
+ 'p2-add-revision':[48,37],'p2-add-3d1-no':[324,5],'p2-add-tens-no':[324,30],'p2-add-hundreds-no':[324,200],'p2-add-3d2-no':[324,52],'p2-add-3d3-no':[324,152],'p2-add-ones':[326,157],'p2-add-tens':[351,172],'p2-add-ones-tens':[268,157],'p2-add-1000':[645,355],'p2-add-mixed':[587,246],
+ 'p2-sub-revision':[73,48],'p2-sub-3d1-no':[328,5],'p2-sub-tens-no':[378,20],'p2-sub-hundreds-no':[728,200],'p2-sub-3d2-no':[786,24],'p2-sub-3d3-no':[786,324],'p2-sub-ones':[354,127],'p2-sub-tens':[563,281],'p2-sub-two':[532,268],'p2-sub-zero':[402,175],'p2-sub-1000':[1000,376],'p2-sub-mixed':[643,278],
+ 'p3-add-revision':[478,356],'p3-add-4d1-no':[3241,5],'p3-add-tens-no':[3241,30],'p3-add-hundreds-no':[3241,200],'p3-add-thousands-no':[3241,2000],'p3-add-4d2-no':[3241,52],'p3-add-4d3-no':[3241,652],'p3-add-4d4-no':[3241,4528],'p3-add-ones':[3246,1527],'p3-add-tens':[3251,1572],'p3-add-hundreds':[3541,2726],'p3-add-two':[2678,1257],'p3-add-three':[2786,1587],'p3-add-10000':[6543,3457],'p3-add-mixed':[4875,2316],
+ 'p3-sub-revision':[745,368],'p3-sub-4d1-no':[3286,5],'p3-sub-tens-no':[3786,20],'p3-sub-hundreds-no':[7286,200],'p3-sub-thousands-no':[7286,2000],'p3-sub-4d2-no':[7865,24],'p3-sub-4d3-no':[7865,324],'p3-sub-4d4-no':[8765,4321],'p3-sub-ones':[7354,2127],'p3-sub-tens':[7563,1281],'p3-sub-hundreds':[6254,3413],'p3-sub-two':[4532,1268],'p3-sub-three':[5321,2786],'p3-sub-zero-one':[5203,1118],'p3-sub-zero-multiple':[5000,1768],'p3-sub-10000':[10000,3768],'p3-sub-mixed':[6432,2789]
+};
+export function operationSkillExample(grade,task,skill){const fallback=task==='add'?(grade===1?[28,17]:grade===2?[587,246]:[4875,2316]):(grade===1?[42,16]:grade===2?[643,278]:[6432,2789]);const [a,b]=OPERATION_SKILL_EXAMPLES[skill]||fallback;return {a,b};}
+export function randomOperationPair(grade,task,skill,r=Math.random){
+ const options=operationSkillOptions(grade,task),rnd=(lo,hi)=>Math.floor(r()*(hi-lo+1))+lo;
+ if(String(skill).endsWith('-mixed')){const pool=options.filter(([k])=>!k.endsWith('-mixed'));return randomOperationPair(grade,task,pool[rnd(0,pool.length-1)][0],r);}
+ if(skill==='p2-add-1000'){const a=rnd(100,900);return [a,1000-a];}
+ if(skill==='p3-add-10000'){const a=rnd(1000,9000);return [a,10000-a];}
+ if(skill==='p2-sub-1000')return [1000,rnd(1,999)];
+ if(skill==='p3-sub-10000')return [10000,rnd(1,9999)];
+ let aMin=grade===1?10:grade===2?100:1000,aMax=grade===1?99:grade===2?999:9999,bMin=1,bMax=aMax;
+ if(skill.includes('revision')){aMin=grade===2?10:100;aMax=grade===2?99:999;bMin=aMin;bMax=aMax;}
+ if(skill.includes('2d1')||skill.includes('3d1')||skill.includes('4d1'))bMax=9;
+ else if(skill.includes('tens-no')){bMin=10;bMax=90;}
+ else if(skill.includes('hundreds-no')){bMin=100;bMax=900;}
+ else if(skill.includes('thousands-no')){bMin=1000;bMax=9000;}
+ else if(skill.includes('2d2')||skill.includes('3d2')||skill.includes('4d2')){bMin=10;bMax=99;}
+ else if(skill.includes('3d3')||skill.includes('4d3')){bMin=100;bMax=999;}
+ else if(skill.includes('4d4')){bMin=1000;bMax=9999;}
+ for(let tries=0;tries<6000;tries++){
+  const a=rnd(aMin,aMax);
+  let b=skill.includes('tens-no')?rnd(1,9)*10:skill.includes('hundreds-no')?rnd(1,9)*100:skill.includes('thousands-no')?rnd(1,9)*1000:rnd(bMin,bMax);
+  if(task==='subtract'&&b>a)continue;
+  if(operationSkillMatches(grade,task,skill,a,b))return [a,b];
+ }
+ const e=operationSkillExample(grade,task,skill);return [e.a,e.b];
+}
+
 export function tasks(engine,grade) {
  const all={
  place:[['read','Read blocks or discs'],['hundred','Explore numbers to 100 · Hundred chart & flip chart'],['digit','Value of a digit'],['more','More than a number'],['less','Less than a number']],
- operations:[...(grade===1?[['count-on-back','Addition / subtraction within 10 · Count on / count back'],['fact-family','Fact family'],['within-20','Adding & subtracting within 20 · Strategies']]:[]),['add','Add step by step'],['subtract','Subtract step by step'],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
+ operations:[...(grade===1?[['count-on-back','Addition / subtraction within 10 · Count on / count back'],['fact-family','Fact family'],['within-20','Adding & subtracting within 20 · Strategies']]:[]),['add','Add step by step'],['subtract','Subtract step by step'],['mixed-add-sub',`Mixed P${grade} Addition & Subtraction`],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
  numberline:[['point','Find the missing number'],['add','Find a number more'],['subtract','Find a number less'],['pattern','Complete a number pattern']],
  bar:[['whole','Part–whole: find the whole'],['part','Part–whole: find a part'],['compare','Comparison: find the difference'],['change','Change: find what remains'],['groups','Equal groups: find the total']],
  money:[['count','Count money · Big to small'],['convert','Convert cents ↔ dollars'],['make','Saving Quest · $1 / $10 / $100'],['add','Add money · Step by step'],['subtract','Subtract money · Step by step'],['word','Money word problems · Model']],
@@ -24,7 +178,11 @@ export function fields(c) {
  const max=LIMITS[c.grade], small=c.grade===1?20:c.grade===2?100:1000;
  switch(c.engine){
  case 'place':return c.task==='hundred'?[pair('a','Starting number (0–100)',0,100),pair('leftAmount','Yellow-button amount',1,100),pair('rightAmount','Blue-button amount',1,100)]:[pair('a',['more','less'].includes(c.task)?'Starting number':'Number to show',0,max),...(['more','less'].includes(c.task)?[pair('b',c.task==='more'?'How much more?':'How much less?',1,max)]:[]),...(c.task==='digit'?[select('place','Place to focus on',[['1','Ones'],['10','Tens'],...(c.grade>=2?[['100','Hundreds']]:[]),...(c.grade===3?[['1000','Thousands']]:[])])]:[]),select('representation','Model',[['blocks','Base-ten blocks'],['discs','Place-value discs']])];
- case 'operations':if(['count-on-back','fact-family','within-20'].includes(c.task))return [];return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',c.task==='add'||c.task==='subtract'?0:1,['add','subtract'].includes(c.task)?max:c.task.endsWith('-column')?9:10),...(['add','subtract'].includes(c.task)?[select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])]:[])];
+ case 'operations':
+  if(['count-on-back','fact-family','within-20'].includes(c.task))return [];
+  if(c.task==='mixed-add-sub')return [select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])];
+  if(['add','subtract'].includes(c.task))return [select('skill','Skill focus',operationSkillOptions(c.grade,c.task)),pair('a','First number',0,max),pair('b','Second number',0,max),select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])];
+  return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',1,c.task.endsWith('-column')?9:10)];
  case 'numberline':return c.task==='pattern'?[pair('a','Start number',0,max),select('patternType','Pattern type',[['constant','Constant change'],['alternating','Alternating changes']]),pair('b',c.patternType==='alternating'?'First change (+ or −)':'Change each time (+ or −)',-small,small),...(c.patternType==='alternating'?[pair('b2','Second change (+ or −)',-small,small)]:[]),select('missing','Missing numbers',[['2','2 · Easy'],['3','3 · Medium'],['4','4 · Hard']])]:[pair('a',c.task==='point'?'Missing number':'Start number',0,max),pair('b',c.task==='point'?'Tick interval':'Jump size',1,c.task==='point'?Math.max(10,max/10):small)];
  case 'bar':return [pair('a',c.task==='groups'?'Number of groups':c.task==='whole'?'First part':c.task==='part'?'Whole':'Starting / larger amount',1,c.task==='groups'?10:max),pair('b',c.task==='groups'?'Amount in each group':c.task==='whole'?'Second part':c.task==='part'?'Known part':c.task==='compare'?'Smaller amount':'Amount removed',1,c.task==='groups'?10:max),{key:'context',label:'Objects in the story',type:'text',maxLength:30}];
  case 'money':{
@@ -70,10 +228,15 @@ export function fields(c) {
 export function defaults(engine,grade=3,task){
  if(engine==='fraction'&&grade===1)grade=2;if(engine==='area')grade=3;
  const t=task||tasks(engine,grade)[0][0];
- let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
+ let c={version:1,engine,grade,task:t,mode:'fixed',count:1,skill:'mixed',a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
  if(engine==='place'){c.a=t==='more'?grade===1?29:grade===2?199:999:t==='less'?grade===1?30:grade===2?200:1000:grade===1?34:grade===2?234:2034;c.b=1;}
  if(engine==='place'&&t==='hundred'){c.a=50;c.leftAmount=10;c.rightAmount=1;}
- if(engine==='operations'){c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}}
+ if(engine==='operations'){
+  c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;
+  if(['add','subtract'].includes(t)){c.skill=operationSkillOptions(grade,t).at(-1)?.[0]||'mixed';Object.assign(c,operationSkillExample(grade,t,c.skill));}
+  if(t==='mixed-add-sub'){c.mode='random';c.count=8;c.representation='discs';}
+  if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}
+}
  if(engine==='operations'&&t==='multiply-column'){c.a=348;c.b=4;}if(engine==='operations'&&t==='divide-column'){c.a=246;c.b=2;}
  if(engine==='numberline'){c.a=grade===1?24:grade===2?240:2400;c.b=t==='point'?grade===1?1:grade===2?10:100:grade===1?5:grade===2?20:200;c.b2=grade===1?2:grade===2?10:100;c.patternType='constant';c.missing='2';}
  if(engine==='bar'){c.a=t==='groups'?4:24;c.b=t==='groups'?6:8;}
@@ -164,6 +327,10 @@ export function validate(raw){
  if(c.engine==='operations'){
   if(c.task==='add'&&c.a+c.b>cap)throw Error(`The total must stay within ${cap}.`);
   if(c.task==='subtract'&&c.b>c.a)throw Error('The second number must not exceed the first.');
+  if(['add','subtract'].includes(c.task)&&!operationSkillMatches(g,c.task,c.skill,c.a,c.b)){
+   const label=operationSkillOptions(g,c.task).find(([key])=>key===c.skill)?.[1]||'chosen skill focus';
+   throw Error(`These numbers do not match “${label}”. Change the numbers or choose Random practice.`);
+  }
   if(['share','group'].includes(c.task)&&(c.a===0||c.a%c.b!==0||c.a/c.b>10))throw Error('Use equal groups with no remainder and at most 10 counters or groups in the answer.');
   if(g===1&&c.task==='multiply'&&c.a*c.b>40)throw Error('P1 multiplication presets stay within 40.');
   if(g===1&&['share','group'].includes(c.task)&&c.a>20)throw Error('P1 division presets stay within 20 counters.');
@@ -224,12 +391,19 @@ export function validate(raw){
 const int=(r,min,max)=>Math.floor(r()*(max-min+1))+min;
 const choose=(r,a)=>a[int(r,0,a.length-1)];
 export function generatedConfig(c,r=Math.random){
+ if(c.engine==='operations'&&c.task==='mixed-add-sub'){
+  const task=r()<.5?'add':'subtract',skill=operationSkillOptions(c.grade,task).at(-1)[0];
+  return generatedConfig({...c,task,skill,mode:'random'},r);
+ }
  if(c.mode==='fixed')return {...c};const p={...c},g=c.grade,cap=LIMITS[g];
  const small=g===1?40:g===2?400:4000,fieldSmall=g===1?100:g===2?1000:10000;
  switch(c.engine){
  case 'place':if(['more','less'].includes(c.task)){p.b=c.b;p.a=int(r,c.task==='less'?p.b:0,c.task==='more'?cap-p.b:cap);}else p.a=int(r,1,cap-1);break;
  case 'operations':
-  if(c.task.endsWith('-column')){p.a=int(r,10,999);p.b=int(r,2,9);}else if(['multiply','share','group'].includes(c.task)){const ns=g===1?[2,5,10]:[2,3,4,5,6,7,8,9,10];const b=choose(r,g===1?[2,5,10]:g===2?[2,3,4,5,10]:ns),a=int(r,1,g===1?Math.min(10,Math.floor((c.task==='multiply'?40:20)/b)):10);p.b=b;p.a=c.task==='multiply'?a:a*b;}else{p.a=int(r,1,small);p.b=int(r,1,c.task==='subtract'?p.a:small);}break;
+  if(['add','subtract'].includes(c.task)){[p.a,p.b]=randomOperationPair(g,c.task,c.skill,r);}
+  else if(c.task.endsWith('-column')){p.a=int(r,10,999);p.b=int(r,2,9);}
+  else if(['multiply','share','group'].includes(c.task)){const ns=g===1?[2,5,10]:[2,3,4,5,6,7,8,9,10];const b=choose(r,g===1?[2,5,10]:g===2?[2,3,4,5,10]:ns),a=int(r,1,g===1?Math.min(10,Math.floor((c.task==='multiply'?40:20)/b)):10);p.b=b;p.a=c.task==='multiply'?a:a*b;}
+  else{p.a=int(r,1,small);p.b=int(r,1,c.task==='subtract'?p.a:small);}break;
  case 'numberline':{
   if(c.task==='pattern'){
    const offsets=sequenceValues({...c,a:0}),lo=-Math.min(...offsets),hi=cap-Math.max(...offsets);p.a=int(r,lo,hi);
