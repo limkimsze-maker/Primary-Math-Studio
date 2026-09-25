@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" href="https://limkimsze-maker.github.io/P1_Fact_Family/kimsze_sharp16.ico" sizes="any">
+  <link rel="shortcut icon" href="https://limkimsze-maker.github.io/P1_Fact_Family/kimsze_sharp16.ico">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>P1 Fact Family</title>
+  <style>
+    :root{
+      --bg1:#eef7ff;
+      --bg2:#fff7ea;
+      --card:#ffffff;
+      --ink:#16324f;
+      --muted:#607086;
+      --line:#dbe7f3;
+      --blue:#4a90ff;
+      --green:#25b46b;
+      --red:#ef5b5b;
+      --gold:#ffb938;
+      --purple:#8f67ff;
+      --shadow:0 18px 40px rgba(22,50,79,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Trebuchet MS","Comic Sans MS","Segoe UI",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,.92), transparent 20%),
+        radial-gradient(circle at 85% 18%, rgba(255,255,255,.76), transparent 18%),
+        radial-gradient(circle at 20% 88%, rgba(255,255,255,.8), transparent 22%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow:hidden;
+    }
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+    .app{
+      width:min(1200px,100%);
+      height:min(92vh,860px);
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.7);
+      box-shadow:var(--shadow);
+      border-radius:30px;
+      padding:20px;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar{
+      display:grid;
+      grid-template-columns:1.1fr .8fr .9fr;
+      gap:12px;
+      align-items:stretch;
+    }
+    .titleCard,.scoreCard,.soundCard{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px 16px;
+      box-shadow:0 10px 20px rgba(22,50,79,.06);
+    }
+    .titleCard h1{
+      margin:0 0 6px;
+      font-size:clamp(1.5rem,2vw,2rem);
+      line-height:1.05;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:.98rem;
+    }
+    .scoreCard{
+      text-align:center;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+    }
+    .scoreGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    .pill{
+      border-radius:18px;
+      padding:10px 12px;
+      background:#f3f8ff;
+      border:1px solid var(--line);
+    }
+    .pill .label{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-bottom:2px;
+    }
+    .pill .value{
+      font-size:1.55rem;
+      font-weight:900;
+      color:var(--purple);
+    }
+    .soundCard{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:stretch;
+      justify-content:center;
+    }
+    .soundStatus{
+      font-size:.92rem;
+      color:var(--muted);
+      text-align:center;
+    }
+    button{
+      border:0;
+      border-radius:16px;
+      padding:12px 16px;
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    button:active{transform:translateY(1px)}
+    button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .primaryBtn{
+      background:linear-gradient(180deg,#56a0ff,#3278f3);
+      color:#fff;
+      box-shadow:0 10px 18px rgba(50,120,243,.28);
+    }
+    .secondaryBtn{
+      background:#eef5ff;
+      color:#2458b8;
+      border:1px solid #d6e5ff;
+    }
+
+    .mainGrid{
+      min-height:0;
+      display:grid;
+      grid-template-columns:360px minmax(0,1fr);
+      gap:16px;
+      align-items:stretch;
+    }
+    .leftCol,.rightCol{
+      min-height:0;
+      display:grid;
+      gap:16px;
+    }
+    .bondCard,.board,.helpCard,.miniCard{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:18px;
+      box-shadow:0 10px 20px rgba(22,50,79,.06);
+    }
+    .bondCard{
+      display:grid;
+      place-items:center;
+      align-content:start;
+      gap:8px;
+    }
+    .bondTitle{
+      margin:0;
+      color:var(--muted);
+      font-size:1rem;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .bond{
+      position:relative;
+      width:260px;
+      height:180px;
+      margin:0 auto;
+    }
+    .bond svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      overflow:visible;
+    }
+    .node{
+      position:absolute;
+      width:82px;
+      height:82px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:2rem;
+      color:#fff;
+      box-shadow:0 10px 18px rgba(22,50,79,.15);
+      text-shadow:0 1px 0 rgba(0,0,0,.1);
+    }
+    .whole{top:0;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#8a67ff,#6c46ea)}
+    .partA{left:18px;bottom:0;background:linear-gradient(180deg,#50c3ff,#2d98e8)}
+    .partB{right:18px;bottom:0;background:linear-gradient(180deg,#ffbf4d,#ff9d1f)}
+
+    .board{
+      display:grid;
+      grid-template-rows:auto 1fr auto auto;
+      gap:14px;
+      min-height:0;
+    }
+    .sectionTitle{
+      margin:0;
+      font-size:1.2rem;
+    }
+    .rows{
+      display:grid;
+      gap:12px;
+      align-content:start;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .row{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px;
+      display:grid;
+      grid-template-columns:260px minmax(0,1fr) auto 54px;
+      gap:12px;
+      align-items:center;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+      transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+      min-width:0;
+    }
+    .row.active{
+      border-color:#8ec2ff;
+      box-shadow:0 0 0 4px rgba(74,144,255,.12);
+      transform:translateY(-1px);
+    }
+    .row.done{
+      border-color:#b7e8cc;
+      background:linear-gradient(180deg,#fbfffd,#f3fff8);
+    }
+    .row.locked{opacity:.86}
+    .phrase{
+      font-weight:900;
+      line-height:1.15;
+      font-size:1.03rem;
+    }
+    .equation{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:900;
+      font-size:1.35rem;
+      white-space:nowrap;
+      min-width:0;
+    }
+    .eqBox,.eqFixed{
+      width:60px;
+      height:54px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:1.45rem;
+      text-align:center;
+      flex:0 0 auto;
+    }
+    .eqBox{
+      border:2px solid #bfd6ef;
+      background:#fffefb;
+      color:var(--ink);
+      outline:none;
+    }
+    .eqBox:focus{
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(74,144,255,.15);
+    }
+    .eqBox[disabled]{background:#f3f7fb;color:#9aa9bb}
+    .eqFixed{
+      border:2px solid #e2ecf6;
+      background:#f7fbff;
+    }
+    .tick{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:1.15rem;
+      font-weight:900;
+      background:#e9fff2;
+      color:var(--green);
+      border:2px solid #b7e8cc;
+    }
+    .rowCheckBtn{
+      padding:10px 14px;
+      min-width:96px;
+      height:44px;
+      border-radius:14px;
+      display:inline-grid;
+      place-items:center;
+      white-space:nowrap;
+    }
+    .rowSpacer{
+      width:96px;
+      height:44px;
+    }
+    .speakerBtn{
+      padding:10px 12px;
+      width:42px;
+      height:42px;
+      min-width:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:#fff3d8;
+      color:#9a5a00;
+      border:1px solid #ffe0a7;
+      box-shadow:none;
+    }
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .feedback{
+      min-height:58px;
+      border-radius:18px;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:900;
+      font-size:1.05rem;
+      border:1px solid var(--line);
+      background:#f6fbff;
+    }
+    .feedback.good{background:#eefcf3;border-color:#b7e8cc;color:#177748}
+    .feedback.bad{background:#fff2f2;border-color:#ffd0d0;color:#c13b3b}
+    .feedback.info{background:#f6f8ff;border-color:#dbe3ff;color:#495fc5}
+
+    .chantList{
+      display:grid;
+      gap:10px;
+    }
+    .chantItem{
+      border-radius:16px;
+      padding:10px 12px;
+      background:#f5f8fc;
+      border:1px solid #e0e9f2;
+      font-weight:800;
+      line-height:1.15;
+    }
+    .chantItem.active{
+      background:#eef6ff;
+      border-color:#b7d7ff;
+      color:#2458b8;
+      box-shadow:0 0 0 3px rgba(74,144,255,.12) inset;
+    }
+    .chantItem.done{
+      background:#eefcf3;
+      border-color:#b7e8cc;
+      color:#177748;
+    }
+    .helpCard h3,.miniCard h3{margin:0 0 10px;font-size:1.05rem}
+    .miniGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .miniStat{
+      border-radius:18px;
+      padding:12px;
+      background:#f6faff;
+      border:1px solid #e1ebf5;
+      text-align:center;
+    }
+    .miniStat .num{font-size:1.65rem;font-weight:900}
+    .miniStat .txt{font-size:.86rem;color:var(--muted)}
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      font-size:.9rem;
+      font-weight:700;
+    }
+
+    .confettiLayer{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:50;
+    }
+    .startOverlay{
+      position:fixed;
+      inset:0;
+      display:grid;
+      place-items:center;
+      background:rgba(240,247,255,.74);
+      backdrop-filter:blur(8px);
+      z-index:60;
+      padding:20px;
+    }
+    .startOverlay.hidden{display:none}
+    .startPanel{
+      width:min(560px,100%);
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid var(--line);
+      border-radius:30px;
+      box-shadow:0 20px 44px rgba(22,50,79,.16);
+      padding:28px 24px;
+      text-align:center;
+    }
+    .startTitle{
+      font-size:clamp(1.8rem,3vw,2.5rem);
+      font-weight:900;
+      margin-bottom:10px;
+      color:var(--ink);
+    }
+    .startText{
+      color:var(--muted);
+      font-size:1.05rem;
+      font-weight:700;
+      line-height:1.45;
+      margin-bottom:18px;
+    }
+    .startGameBtn{
+      font-size:1.15rem;
+      padding:18px 24px;
+      border-radius:22px;
+      min-width:min(360px,100%);
+    }
+
+    .confettiPiece{
+      position:absolute;
+      top:-40px;
+      width:14px;
+      height:24px;
+      border-radius:5px;
+      opacity:.95;
+      animation:fall linear forwards;
+    }
+    @keyframes fall{
+      0%{transform:translate3d(0,-40px,0) rotate(0deg);opacity:1}
+      100%{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:.9}
+    }
+
+    @media (max-width: 1120px){
+      .mainGrid{grid-template-columns:320px minmax(0,1fr)}
+      .row{grid-template-columns:230px minmax(0,1fr) auto 54px}
+      .equation{font-size:1.2rem;gap:6px}
+      .eqBox,.eqFixed{width:54px;height:50px;font-size:1.3rem}
+    }
+    @media (max-width: 900px){
+      body{overflow:auto}
+      .app{height:auto;min-height:100vh;border-radius:0;padding:16px}
+      .topbar{grid-template-columns:1fr}
+      .mainGrid{grid-template-columns:1fr}
+      .leftCol{order:1}
+      .rightCol{order:2}
+      .row{grid-template-columns:1fr}
+      .equation{justify-content:flex-start;overflow-x:auto;padding-bottom:4px}
+      .row > :last-child{justify-self:start}
+    }
+  </style>
+  <script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
+</head>
+<body>
+  <div class="wrap">
+    <main class="app" aria-label="Fact Family interactive game">
+      <section class="topbar">
+        <div class="titleCard">
+          <h1>Fact Family Streak</h1>
+          <p class="subtitle">Listen to the chant, build the equation, and grow your winning streak.</p>
+        </div>
+
+        <div class="scoreCard">
+          <div style="font-weight:900;font-size:1.1rem">Winning Streak</div>
+          <div class="scoreGrid">
+            <div class="pill">
+              <div class="label">Current</div>
+              <div class="value" id="streakNow">0</div>
+            </div>
+            <div class="pill">
+              <div class="label">Best</div>
+              <div class="value" id="streakBest">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="soundCard">
+          <button id="newFamilyBtn" class="secondaryBtn">🎲 New Fact Family</button>
+          <div class="soundStatus" id="soundStatus">Press the centre start button so each phrase is read before the pupil answers.</div>
+        </div>
+      </section>
+
+      <section class="mainGrid">
+        <div class="leftCol">
+          <section class="bondCard">
+            <p class="bondTitle">Number Bond</p>
+            <div class="bond" aria-label="number bond">
+              <svg viewBox="0 0 260 180" aria-hidden="true">
+                <path d="M130 78 L60 124" fill="none" stroke="#b3c8dd" stroke-width="7" stroke-linecap="round"/>
+                <path d="M130 78 L200 124" fill="none" stroke="#b3c8dd" stroke-width="7" stroke-linecap="round"/>
+              </svg>
+              <div class="node whole" id="wholeNode">8</div>
+              <div class="node partA" id="partANode">3</div>
+              <div class="node partB" id="partBNode">5</div>
+            </div>
+          </section>
+
+          <section class="helpCard">
+            <h3>The chant</h3>
+            <div class="chantList" id="chantList"></div>
+          </section>
+
+          <section class="miniCard">
+            <h3>Round info</h3>
+            <div class="miniGrid">
+              <div class="miniStat">
+                <div class="num" id="roundCount">1</div>
+                <div class="txt">Round</div>
+              </div>
+              <div class="miniStat">
+                <div class="num">≤ 10</div>
+                <div class="txt">Whole</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="rightCol">
+          <section class="board">
+            <h2 class="sectionTitle">All 4 equations</h2>
+            <div class="rows" id="rows"></div>
+            <div class="controls">
+              <button id="replayBtn" class="secondaryBtn">🔁 Read Phrase Again</button>
+            </div>
+            <div id="feedback" class="feedback info">Press <strong style="margin-left:4px">Start the Fact Family Game!</strong><span style="margin-left:4px">to begin.</span></div>
+          </section>
+        </div>
+      </section>
+
+      <footer class="footer">Designed by Lim Kim Sze © 2026</footer>
+    </main>
+  </div>
+
+  <div class="confettiLayer" id="confettiLayer" aria-hidden="true"></div>
+
+  <audio id="correctSfx" preload="auto" playsinline src="https://limkimsze-maker.github.io/P1_Fact_Family/correct.mp3"></audio>
+  <audio id="wrongSfx" preload="auto" playsinline src="https://limkimsze-maker.github.io/P1_Fact_Family/wrong.mp3"></audio>
+
+  <div class="startOverlay" id="startOverlay" aria-hidden="false">
+    <div class="startPanel">
+      <div class="startTitle">Fact Family Streak</div>
+      <div class="startText">Press the button to begin. The phrase will be read before each equation.</div>
+      <button id="startBtn" class="primaryBtn startGameBtn">Start the Fact Family Game!</button>
+    </div>
+  </div>
+
+  <script>
+    const phrases = [
+      "Parts add up, make the whole!",
+      "Switch the parts, same whole!",
+      "Big number subtract, find the part!",
+      "Big number subtract, other part!"
+    ];
+
+    const rowsEl = document.getElementById('rows');
+    const chantListEl = document.getElementById('chantList');
+    const feedbackEl = document.getElementById('feedback');
+    const startBtn = document.getElementById('startBtn');
+    const startOverlay = document.getElementById('startOverlay');
+    const newFamilyBtn = document.getElementById('newFamilyBtn');
+    const replayBtn = document.getElementById('replayBtn');
+    const soundStatus = document.getElementById('soundStatus');
+    const streakNowEl = document.getElementById('streakNow');
+    const streakBestEl = document.getElementById('streakBest');
+    const roundCountEl = document.getElementById('roundCount');
+    const wholeNode = document.getElementById('wholeNode');
+    const partANode = document.getElementById('partANode');
+    const partBNode = document.getElementById('partBNode');
+    const confettiLayer = document.getElementById('confettiLayer');
+    const correctAudio = document.getElementById('correctSfx');
+    const wrongAudio = document.getElementById('wrongSfx');
+
+    let audioReady = false;
+    let audioLock = false;
+    let currentIndex = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let round = 1;
+    let family = null;
+    let selectedVoice = null;
+    let roundComplete = false;
+
+    function chooseVoice(){
+      if (!('speechSynthesis' in window)) return null;
+      const voices = speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+      const exactFemale = voices.find(v => /en-GB/i.test(v.lang) && /female|woman|uk english female/i.test(v.name));
+      const anyGB = voices.find(v => /en-GB/i.test(v.lang));
+      const anyEnglish = voices.find(v => /^en/i.test(v.lang));
+      selectedVoice = exactFemale || anyGB || anyEnglish || voices[0];
+      return selectedVoice;
+    }
+
+    chooseVoice();
+    if ('speechSynthesis' in window && 'onvoiceschanged' in speechSynthesis){
+      speechSynthesis.onvoiceschanged = () => chooseVoice();
+    }
+
+    function setFeedback(message, type = 'info'){
+      feedbackEl.className = `feedback ${type}`;
+      feedbackEl.innerHTML = message;
+    }
+
+    function updateScores(){
+      streakNowEl.textContent = String(streak);
+      streakBestEl.textContent = String(bestStreak);
+      roundCountEl.textContent = String(round);
+    }
+
+    function randomFamily(){
+      let a, b;
+      do{
+        a = 1 + Math.floor(Math.random() * 9);
+        b = 1 + Math.floor(Math.random() * (10 - a));
+      }while(a + b > 10 || a === b);
+      return {
+        a,
+        b,
+        whole: a + b,
+        solvedAdd0: null,
+        solvedAdd1: null,
+        solvedSub0: null,
+        solvedSub1: null
+      };
+    }
+
+    function updateBond(){
+      wholeNode.textContent = family.whole;
+      partANode.textContent = family.a;
+      partBNode.textContent = family.b;
+    }
+
+    function renderChant(){
+      chantListEl.innerHTML = '';
+      phrases.forEach((phrase, i) => {
+        const item = document.createElement('div');
+        item.className = 'chantItem';
+        if (i < currentIndex) item.classList.add('done');
+        if (!roundComplete && i === currentIndex) item.classList.add('active');
+        if (roundComplete) item.classList.add('done');
+        item.textContent = phrase;
+        chantListEl.appendChild(item);
+      });
+    }
+
+    function getSolvedEquation(index){
+      const key = index < 2 ? `solvedAdd${index}` : `solvedSub${index - 2}`;
+      return family[key] || [0,0,0];
+    }
+
+    function equationMarkup(index, state){
+      const op = index < 2 ? '+' : '−';
+      if (state === 'done'){
+        const solved = getSolvedEquation(index);
+        return `
+          <div class="eqFixed">${solved[0]}</div>
+          <span>${op}</span>
+          <div class="eqFixed">${solved[1]}</div>
+          <span>=</span>
+          <div class="eqFixed">${solved[2]}</div>
+        `;
+      }
+      if (state === 'active'){
+        return `
+          <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="first number" data-box="0" />
+          <span>${op}</span>
+          <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="second number" data-box="1" />
+          <span>=</span>
+          <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="answer" data-box="2" />
+        `;
+      }
+      return `
+        <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="first number locked" disabled />
+        <span>${op}</span>
+        <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="second number locked" disabled />
+        <span>=</span>
+        <input class="eqBox" inputmode="numeric" maxlength="2" aria-label="answer locked" disabled />
+      `;
+    }
+
+    function renderRows(){
+      rowsEl.innerHTML = '';
+
+      phrases.forEach((phrase, i) => {
+        let state = 'locked';
+        if (roundComplete) {
+          state = 'done';
+        } else if (i < currentIndex) {
+          state = 'done';
+        } else if (i === currentIndex) {
+          state = 'active';
+        }
+
+        const row = document.createElement('div');
+        row.className = `row ${state}`;
+        row.innerHTML = `
+          <div class="phrase">${phrase}</div>
+          <div class="equation">${equationMarkup(i, state)}</div>
+          ${state === 'active'
+            ? '<button class="primaryBtn rowCheckBtn" data-check-index="'+ i +'">Check</button>'
+            : '<div class="rowSpacer" aria-hidden="true"></div>'}
+          ${state === 'done'
+            ? '<div class="tick">✓</div>'
+            : '<button class="speakerBtn" data-speak-index="'+ i +'">🔊</button>'}
+        `;
+        rowsEl.appendChild(row);
+      });
+
+      document.querySelectorAll('.eqBox').forEach(input => {
+        input.addEventListener('input', () => {
+          input.value = input.value.replace(/[^0-9]/g, '').slice(0,2);
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') handleCheck();
+        });
+      });
+
+      document.querySelectorAll('.speakerBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const i = Number(btn.dataset.speakIndex);
+          await runAudio(async () => {
+            await speak(phrases[i]);
+          });
+        });
+      });
+
+      document.querySelectorAll('.rowCheckBtn').forEach(btn => {
+        btn.addEventListener('click', handleCheck);
+      });
+
+      renderChant();
+      focusActive();
+    }
+
+    function focusActive(){
+      const box = rowsEl.querySelector('.row.active .eqBox');
+      if (box && !audioLock) box.focus();
+    }
+
+    function currentInputs(){
+      return [...rowsEl.querySelectorAll('.row.active .eqBox')];
+    }
+
+    function disableInteractive(disabled){
+      replayBtn.disabled = disabled || !audioReady || roundComplete;
+      newFamilyBtn.disabled = disabled || !audioReady;
+      currentInputs().forEach(inp => inp.disabled = disabled);
+      document.querySelectorAll('.rowCheckBtn').forEach(btn => {
+        btn.disabled = disabled || !audioReady;
+      });
+    }
+
+    function wait(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function playTone(freq, duration, type = 'sine', when = 0){
+      if (!audioReady || (!window.AudioContext && !window.webkitAudioContext)) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!window._factFamilyAudioCtx) window._factFamilyAudioCtx = new AudioCtx();
+      const ctx = window._factFamilyAudioCtx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = 0.0001;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const start = ctx.currentTime + when;
+      osc.start(start);
+      gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.stop(start + duration + 0.03);
+    }
+
+    async function primeAudio(audioEl){
+      if (!audioEl) return;
+      try{
+        audioEl.volume = 1;
+        audioEl.muted = true;
+        audioEl.currentTime = 0;
+        const p = audioEl.play();
+        if (p && typeof p.then === 'function') await p.catch(() => {});
+        audioEl.pause();
+        audioEl.currentTime = 0;
+        audioEl.muted = false;
+      }catch(err){
+        try{
+          audioEl.muted = false;
+          audioEl.load();
+        }catch(e){}
+      }
+    }
+
+    async function playSfx(audioEl, fallback){
+      if (!audioEl) {
+        if (fallback) await fallback();
+        return;
+      }
+
+      try{
+        audioEl.pause();
+        audioEl.currentTime = 0;
+        audioEl.muted = false;
+        audioEl.volume = 1;
+
+        await new Promise(async resolve => {
+          let settled = false;
+
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            audioEl.removeEventListener('ended', finish);
+            audioEl.removeEventListener('error', fail);
+            resolve();
+          };
+
+          const fail = async () => {
+            if (settled) return;
+            settled = true;
+            audioEl.removeEventListener('ended', finish);
+            audioEl.removeEventListener('error', fail);
+            if (fallback) await fallback();
+            resolve();
+          };
+
+          audioEl.addEventListener('ended', finish);
+          audioEl.addEventListener('error', fail);
+
+          try{
+            const p = audioEl.play();
+            if (p && typeof p.then === 'function') await p;
+          }catch(err){
+            await fail();
+            return;
+          }
+
+          const ms = Number.isFinite(audioEl.duration) && audioEl.duration > 0
+            ? Math.ceil(audioEl.duration * 1000) + 150
+            : 1200;
+
+          setTimeout(finish, ms);
+        });
+      }catch(err){
+        if (fallback) await fallback();
+      }
+    }
+
+    async function correctSound(){
+      await playSfx(correctAudio, async () => {
+        playTone(660, .18, 'triangle', 0);
+        playTone(880, .22, 'triangle', .16);
+        await wait(430);
+      });
+    }
+
+    async function wrongSound(){
+      await playSfx(wrongAudio, async () => {
+        playTone(360, .22, 'sawtooth', 0);
+        playTone(240, .30, 'sawtooth', .16);
+        await wait(520);
+      });
+    }
+
+    function speak(text){
+      return new Promise(resolve => {
+        if (!audioReady || !('speechSynthesis' in window)) return resolve();
+        speechSynthesis.cancel();
+        chooseVoice();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = (selectedVoice && selectedVoice.lang) || 'en-GB';
+        utter.rate = 0.84;
+        utter.pitch = 1.02;
+        utter.volume = 1;
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => resolve();
+        utter.onerror = () => resolve();
+        speechSynthesis.speak(utter);
+      });
+    }
+
+    async function runAudio(task){
+      if (audioLock) return;
+      audioLock = true;
+      disableInteractive(true);
+      try{
+        await task();
+      }finally{
+        audioLock = false;
+        disableInteractive(false);
+        focusActive();
+      }
+    }
+
+    async function readCurrentPrompt(){
+      if (roundComplete || currentIndex >= phrases.length) return;
+      await runAudio(async () => {
+        setFeedback(phrases[currentIndex], 'info');
+        await speak(phrases[currentIndex]);
+      });
+    }
+
+    function parseActiveValues(){
+      const vals = currentInputs().map(i => i.value.trim());
+      if (vals.some(v => v === '')) return null;
+      return vals.map(Number);
+    }
+
+    function isValidAddition(vals){
+      const [x,y,z] = vals;
+      return z === family.whole && (
+        (x === family.a && y === family.b) ||
+        (x === family.b && y === family.a)
+      );
+    }
+
+    function isValidSubtraction(vals){
+      const [x,y,z] = vals;
+      return x === family.whole && (
+        (y === family.a && z === family.b) ||
+        (y === family.b && z === family.a)
+      );
+    }
+
+    function storeSolved(index, vals){
+      if (index < 2) family[`solvedAdd${index}`] = vals;
+      else family[`solvedSub${index - 2}`] = vals;
+    }
+
+    function sameEquation(a, b){
+      return !!a && !!b && a.length === b.length && a.every((v, i) => Number(v) === Number(b[i]));
+    }
+
+    function launchConfetti(){
+      const colors = ['#4a90ff','#25b46b','#ffb938','#ef5b5b','#8f67ff','#25c5d9'];
+      for (let i = 0; i < 130; i++){
+        const piece = document.createElement('div');
+        piece.className = 'confettiPiece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.setProperty('--dx', (Math.random() * 320 - 160) + 'px');
+        piece.style.setProperty('--rot', (Math.random() * 920 - 460) + 'deg');
+        piece.style.animationDuration = (2.3 + Math.random() * 1.4) + 's';
+        piece.style.animationDelay = (Math.random() * .22) + 's';
+        confettiLayer.appendChild(piece);
+        setTimeout(() => piece.remove(), 4200);
+      }
+    }
+
+    async function handleCheck(){
+      if (!audioReady || audioLock || roundComplete) return;
+
+      const vals = parseActiveValues();
+      if (!vals){
+        setFeedback('Please fill in all 3 boxes.', 'bad');
+        await runAudio(async () => {
+          await speak('Please fill in all three boxes.');
+        });
+        return;
+      }
+
+      let isCorrect = currentIndex < 2 ? isValidAddition(vals) : isValidSubtraction(vals);
+
+      if (isCorrect){
+        if (currentIndex === 1 && sameEquation(vals, family.solvedAdd0)) isCorrect = false;
+        if (currentIndex === 3 && sameEquation(vals, family.solvedSub0)) isCorrect = false;
+      }
+
+      if (!isCorrect){
+        streak = 0;
+        updateScores();
+        setFeedback('Try again!', 'bad');
+        await runAudio(async () => {
+          await wrongSound();
+          await speak('Try again! ' + phrases[currentIndex]);
+        });
+        return;
+      }
+
+      storeSolved(currentIndex, vals);
+
+      if (currentIndex < 3){
+        setFeedback('Correct. Listen to the next phrase.', 'good');
+        await runAudio(async () => {
+          await correctSound();
+          currentIndex += 1;
+          renderRows();
+          setFeedback(phrases[currentIndex], 'info');
+          await speak(phrases[currentIndex]);
+        });
+        return;
+      }
+
+      streak += 1;
+      if (streak > bestStreak) bestStreak = streak;
+
+      roundComplete = true;
+      currentIndex = 4;
+      renderRows();
+      updateScores();
+
+      setFeedback('Wonderful! Press New Fact Family when you are ready.', 'good');
+      launchConfetti();
+
+      await runAudio(async () => {
+        await correctSound();
+        await speak('Wonderful! Press New Fact Family when you are ready.');
+      });
+
+      disableInteractive(false);
+    }
+
+    function startRound(shouldRead = true){
+      roundComplete = false;
+      family = randomFamily();
+      updateBond();
+      currentIndex = 0;
+      renderRows();
+      setFeedback('Listen to the phrase, then fill in the matching equation.', 'info');
+      disableInteractive(!audioReady);
+      if (shouldRead && audioReady) readCurrentPrompt();
+    }
+
+    async function unlockAudio(){
+      if (audioReady) return;
+      audioReady = true;
+
+      try{
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx){
+          if (!window._factFamilyAudioCtx) window._factFamilyAudioCtx = new AudioCtx();
+          if (window._factFamilyAudioCtx.state === 'suspended') {
+            await window._factFamilyAudioCtx.resume();
+          }
+        }
+      }catch(err){}
+
+      chooseVoice();
+
+      try{
+        correctAudio.load();
+        wrongAudio.load();
+      }catch(err){}
+
+      await primeAudio(correctAudio);
+      await primeAudio(wrongAudio);
+
+      soundStatus.textContent = 'Sound is on. The phrase will be read before each equation.';
+      setFeedback('Sound is ready. Let us begin!', 'info');
+      startOverlay.classList.add('hidden');
+      startOverlay.setAttribute('aria-hidden','true');
+
+      disableInteractive(false);
+      await readCurrentPrompt();
+    }
+
+    startBtn.addEventListener('click', unlockAudio);
+
+    newFamilyBtn.addEventListener('click', async () => {
+      if (audioLock || !audioReady) return;
+      round += 1;
+      updateScores();
+      startRound(true);
+    });
+
+    replayBtn.addEventListener('click', async () => {
+      if (!audioReady || audioLock || roundComplete) return;
+      await readCurrentPrompt();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.activeElement && document.activeElement.classList.contains('eqBox')){
+        e.preventDefault();
+        handleCheck();
+      }
+    });
+
+    updateScores();
+    startRound(false);
+    disableInteractive(true);
+    startOverlay.classList.remove('hidden');
+    startOverlay.setAttribute('aria-hidden','false');
+  </script>
+</body>
+</html>
