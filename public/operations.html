@@ -1679,7 +1679,10 @@ function showP1OperationReference(c){
  $('feedback').textContent='';$('hint').hidden=true;$('answerForm').hidden=true;$('checkButton').hidden=true;$('hintButton').hidden=true;$('nextButton').hidden=true;
  interaction={p1:{kind:ref.kind}};
  if(ref.kind==='count'){interaction.p1.mode='add';interaction.p1.question=p1CountQuestion('add');interaction.p1.step=0;interaction.p1.introDone=false;p1RenderCount();}
- else if(ref.kind==='family'){interaction.p1.family=p1NewFamily();interaction.p1.familyIndex=0;p1RenderFamily();setTimeout(()=>p1Speak(P1_FAMILY_PHRASES[0]),120);}
+ else if(ref.kind==='family'){
+  if(parent!==window){parent.postMessage({type:'primary-maths-operations-activity',activity:'p1-fact-family'},'*');return true;}
+  interaction.p1.family=p1NewFamily();interaction.p1.familyIndex=0;p1RenderFamily();setTimeout(()=>p1Speak(P1_FAMILY_PHRASES[0]),120);
+ }
  else{interaction.p1.strategy='count';interaction.p1.within20=true;interaction.p1.mode='add';interaction.p1.question=p1CountQuestion('add',true);interaction.p1.step=0;interaction.p1.introDone=false;p1RenderCount();}
  return true;
 }
