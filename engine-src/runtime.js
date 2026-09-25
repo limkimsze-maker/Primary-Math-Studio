@@ -781,13 +781,13 @@ function drawConceptMultiplication(){
  $('multipAlgorithmToggle').onclick=()=>{interaction.showMultiplicationAlgorithm=!showAlgorithm;drawConceptMultiplication();};
  const rep=$('repAnswer'),mult=$('multAnswer'),check=$('conceptMultiplyCheck'),feedback=$('conceptMultiplyFeedback');
  const clean=input=>{input.value=input.value.replace(/\D/g,'').slice(0,4);};
- [rep,mult].forEach(input=>{input.oninput=()=>{clean(input);state[input===rep?'rep':'mult']=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();check.click();}};});
+ [rep,mult].forEach(input=>{input.oninput=()=>{clean(input);input.classList.remove('is-wrong');state[input===rep?'rep':'mult']=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();check.click();}};});
  check.onclick=()=>{
   if(state.ok||solved)return;
   state.rep=rep.value.trim();state.mult=mult.value.trim();attempts++;
   if(Number(state.rep)===product&&Number(state.mult)===product&&state.rep!==''&&state.mult!==''){
    state.ok=true;state.feedback='Correct!';solved=true;
-   rep.classList.add('is-correct');mult.classList.add('is-correct');rep.disabled=true;mult.disabled=true;check.disabled=true;
+   rep.classList.remove('is-wrong');mult.classList.remove('is-wrong');rep.classList.add('is-correct');mult.classList.add('is-correct');rep.disabled=true;mult.disabled=true;check.disabled=true;
    feedback.className='multip-concept-feedback correct';feedback.textContent='Correct!';
    results.push({first:attempts===1&&hints===0,attempts,hints});
    $('feedback').style.color='#24735e';$('feedback').textContent='Correct! '+current.explanation;
