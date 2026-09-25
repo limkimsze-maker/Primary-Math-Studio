@@ -44,6 +44,56 @@
 
 @media(min-width:621px){.addsub-engine.operation-complete .addsub-workspace{min-height:270px}}
 
+/* P1/P2 multiplication: concrete model first; written algorithm optional. */
+.multip-concept-workspace{min-height:350px;gap:10px}
+.multip-concept-options,.multip-model-options{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.diagram .multip-concept-options button,.diagram .multip-model-options button{font-size:12px;padding:6px 9px}
+.multip-concept-options button[aria-pressed=true],.multip-model-options button[aria-pressed=true]{background:#0f2a4a;color:#fff;border-color:#0f2a4a}
+.multip-concept-main{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-height:0}
+.multip-concept-main.algorithm-shown{grid-template-columns:minmax(0,1fr) minmax(220px,28%)}
+.multip-concept-model{display:flex;flex-direction:column;min-width:0;gap:8px}
+.multip-concept-cue{font-size:18px;line-height:1.35;margin:0;text-align:center;color:#0f2a4a}
+.multip-concept-groups{display:grid;grid-template-columns:repeat(var(--groups),minmax(90px,1fr));gap:8px;align-items:stretch;min-height:170px}
+.multip-concept-group{border:2px solid #bdd0da;border-radius:10px;background:#f9fcfd;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0}
+.multip-concept-group>strong{font-size:14px;color:#0f2a4a}
+.multip-concept-quantity{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;min-height:72px}
+.multip-concept-piece{display:flex;align-items:center;justify-content:center;flex:none}
+.multip-concept-disc{width:42px;height:42px;border-radius:50%;border:2px solid #087da7;background:#58c5ed;color:#0f2a4a;font-size:14px;font-weight:700}
+.multip-concept-disc[data-place="10"]{background:#ffcb69;border-color:#bd7709}
+.multip-concept-block{width:46px;height:62px;background:transparent}
+.multip-concept-block[data-place="1"]{width:38px;height:42px}
+.multip-concept-block svg,.multip-block svg{width:100%!important;height:100%!important;display:block;max-width:none!important;max-height:none!important}
+.multip-concept-bridge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.multip-concept-bridge>div{border:1px solid #c8d9df;border-radius:9px;background:#fff;padding:9px;text-align:center;display:flex;flex-direction:column;gap:4px}
+.multip-concept-bridge span{font-size:13px;color:#526b76}
+.multip-concept-bridge strong{font-size:20px;color:#0f2a4a;line-height:1.3}
+.multip-concept-algorithm{background:#fff;border:1px solid #c5d6df;border-radius:9px;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.multip-concept-algorithm h4{font-size:15px;margin:0;color:#0f2a4a;text-align:center}
+.multip-concept-algorithm p{font-size:13px;line-height:1.4;margin:0;text-align:center;color:#526b76}
+.multip-static-algorithm{width:130px;font:700 30px/1.25 Arial,Helvetica,sans-serif;text-align:right;color:#0f2a4a}
+.multip-static-algorithm>div:nth-child(2){display:flex;justify-content:space-between;align-items:center}
+.multip-static-line{border-top:3px solid #0f2a4a;margin:3px 0 4px}
+.multip-static-algorithm strong{display:block;font-size:32px}
+.multip-block{background:transparent!important;border:0!important;border-radius:0!important;color:transparent!important;padding:0!important}
+@media(max-width:850px){
+ .multip-concept-groups{grid-template-columns:repeat(min(var(--groups),3),minmax(90px,1fr))}
+ .multip-concept-main.algorithm-shown{grid-template-columns:minmax(0,1fr) 200px}
+ .multip-concept-cue{font-size:16px}.multip-concept-bridge strong{font-size:18px}
+}
+@media(max-width:620px){
+ .multip-concept-workspace{min-height:570px;height:auto}
+ .multip-concept-main,.multip-concept-main.algorithm-shown{grid-template-columns:1fr}
+ .multip-concept-groups{grid-template-columns:repeat(2,minmax(0,1fr));min-height:240px}
+ .multip-concept-options{justify-content:center}
+ .multip-concept-bridge{grid-template-columns:1fr}
+ .multip-concept-algorithm{max-width:420px;width:100%;justify-self:center}
+ .multip-concept-cue{font-size:18px}
+}
+.pupil .multip-concept-cue{font-size:22px}
+.pupil .multip-concept-group>strong{font-size:16px}
+.pupil .multip-concept-bridge span{font-size:15px}
+.pupil .multip-concept-bridge strong{font-size:25px}
+
 /* Uncle Joe's grouped-disc mat and paired answer/carry digit entry. */
 .multip-workspace{min-height:350px;gap:8px}
 .multip-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,31%);gap:12px;min-height:0}
