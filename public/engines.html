@@ -538,8 +538,40 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
   @media(max-width:700px){.duration-period-row{grid-template-columns:1fr 1fr}.duration-period-badge,.duration-period-readout{grid-column:1/-1}.duration-period-remove{grid-column:2;justify-self:end}.duration-timeline svg{min-width:600px}.time-answer-colon{font-size:30px}.duration-answer-entry{gap:5px}}@media(max-width:520px){.time-ampm-answer-entry{gap:9px}.time-ampm-answer-entry .time-answer-entry{width:100%}.ampm-choice{width:100%}.time-conversion-card,.time-calculation-card{min-width:130px;font-size:20px}.time-conversion-arrow,.time-calculation-arrow{width:100%;line-height:1}}
   .time-scene{position:relative;isolation:isolate;width:100%;min-height:220px;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;border:1px solid #b8cdb5;border-radius:14px;background-color:#e8f5ff;background-repeat:no-repeat;background-position:center;background-size:cover;box-shadow:inset 0 0 0 1px #ffffff8c}.time-scene::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at center,transparent 0 28%,#ffffff0d 56%,#102e2012 100%)}.time-scene.morning{background-image:url('assets/time-forest/morning-sun.webp')}.time-scene.afternoon{background-image:url('assets/time-forest/afternoon-sun.webp')}.time-scene.night{background-color:#142d57;background-image:url('assets/time-forest/night-moon.webp');border-color:#8094b1}.time-scene.overnight{background-color:#263761;background-image:url('assets/time-forest/early-morning-moon-owl.webp');border-color:#98a4c5}.time-scene .svg-clock{position:relative;z-index:1;width:min(50%,300px);height:auto;max-height:none;filter:drop-shadow(0 8px 10px #102c224d)}
 
+
 /* SMALL DIVISION CONCEPT ANIMATION v1 */
 .small-div-workspace{--small-counter:38px}.small-div-main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(220px,.75fr);gap:14px;min-height:0}.small-div-concept{min-width:0;display:flex;flex-direction:column;gap:10px}.small-div-cue{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #cbd9c7;border-radius:12px;background:#f7faf5}.small-div-cue strong{flex:none;padding:5px 9px;border-radius:999px;background:#183c35;color:#fff}.small-div-cue span{font-weight:700}.small-div-stage{display:grid;grid-template-columns:minmax(150px,.72fr) 34px minmax(0,1.7fr);gap:9px;align-items:stretch;min-height:260px}.small-div-bank-wrap{display:flex;flex-direction:column;min-width:0;border:2px solid #8ca79a;border-radius:14px;background:#fff;overflow:hidden}.small-div-bank-title{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:#eaf1e5;font-weight:800}.small-div-bank-title b{display:grid;place-items:center;min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:#183c35;color:#fff}.small-div-bank{display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;gap:6px;padding:12px;overflow:auto}.small-div-flow{display:grid;place-items:center;font-size:28px;font-weight:900;color:#24735e}.small-div-groups{display:grid;grid-template-columns:repeat(var(--small-div-groups),minmax(110px,1fr));gap:8px;align-content:start;min-width:0}.small-div-group{min-height:122px;border:3px dashed #9bb4a7;border-radius:16px;background:#fff;padding:8px;transition:border-color .2s,box-shadow .2s,transform .2s}.small-div-group.active{border-color:#efb83e;box-shadow:0 0 0 4px #efc66d55;transform:translateY(-2px)}.small-div-group.complete{border-style:solid;border-color:#24735e;background:#f4faf6}.small-div-group-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px;font-size:13px}.small-div-group-count{padding:2px 6px;border-radius:999px;background:#edf2ec;font-weight:800}.small-div-group.complete .small-div-group-count{background:#dcefe5}.small-div-group-counters{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:5px;min-height:64px}.small-div-counter{display:block;flex:none;width:var(--small-counter);height:var(--small-counter);border-radius:50%;border:3px solid #176596;background:radial-gradient(circle at 34% 30%,#a9e5ff 0 18%,#4fb7e8 19% 100%);box-shadow:0 2px 4px #183c3522}.small-div-counter.small-div-landed{animation:smallDivLand .34s ease-out both}.small-div-counter.small-div-placeholder{visibility:hidden}.small-div-flyer{box-shadow:0 8px 18px #183c3545}.small-div-live{margin:0;min-height:26px;padding:6px 10px;border-radius:9px;background:#fff8df;border:1px solid #efd58f;font-weight:800;text-align:center}.small-div-empty{align-self:center;color:#687b6d;font-weight:700}.small-div-key{padding:6px 10px;border-radius:999px;background:#efc66d;color:#183c35;font-weight:900}.small-div-writing{align-self:stretch}.small-div-meaning{margin:10px 0 0;padding:9px;border-radius:9px;background:#eef4eb;font-weight:700;line-height:1.4}@keyframes smallDivLand{0%{transform:scale(.65);filter:brightness(1.25)}65%{transform:scale(1.14)}100%{transform:scale(1)}}@media(max-width:900px){.small-div-main{grid-template-columns:1fr}.small-div-writing{display:none}.small-div-stage{grid-template-columns:minmax(120px,.62fr) 28px minmax(0,1.5fr)}.small-div-groups{grid-template-columns:repeat(2,minmax(100px,1fr))}}@media(max-width:600px){.small-div-workspace{--small-counter:30px}.small-div-cue{align-items:flex-start;flex-direction:column;gap:5px}.small-div-stage{grid-template-columns:1fr;min-height:0}.small-div-flow{transform:rotate(90deg);height:22px}.small-div-bank{max-height:150px}.small-div-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.small-div-group{min-height:100px;padding:6px}.small-div-group-head{font-size:11px}.small-div-live{font-size:12px}}
+
+
+/* MULTIPLICATION REGROUP ANIMATION v1 */
+.multip-regroup-tray{position:fixed;z-index:10040;width:min(168px,42vw);padding:8px;border:3px solid #d59a25;border-radius:12px;background:#fff9df;box-shadow:0 10px 30px #183c3540;text-align:center;color:#183c35}
+.multip-regroup-tray>strong{display:block;font-size:13px;line-height:1.2;margin-bottom:6px}
+.multip-regroup-slots{display:grid;grid-template-columns:repeat(5,24px);grid-auto-rows:24px;gap:4px;justify-content:center}
+.multip-regroup-slot{display:grid;place-items:center;width:24px;height:24px;border:2px dashed #a6b9ad;border-radius:50%;font-size:10px;font-weight:800;color:#061c2b}
+.multip-regroup-slot.filled{border-style:solid;border-color:#12618a;background:#32afe8;animation:multipRegroupLand .3s ease-out both}
+.multip-regroup-slot.filled[data-place="10"]{background:#f0a126;border-color:#a76708}
+.multip-regroup-slot.filled[data-place="100"]{background:#f066af;border-color:#ac3169}
+.multip-regroup-slot.filled[data-place="1000"]{background:#9a70f2;border-color:#6242ae;color:#fff}
+.multip-regroup-equation{margin-top:6px;min-height:20px;font-size:12px;font-weight:900}
+.multip-regroup-tray.complete{border-color:#24735e;background:#f4faf6;box-shadow:0 0 0 5px #24735e24,0 10px 30px #183c3540}
+.multip-regroup-convert{height:42px;display:grid;place-items:center}
+.multip-regroup-convert .multip-disc{--multip-size:38px;--multip-font:14px;box-shadow:0 0 0 4px #efc66d88}
+.multip-regroup-flyer{filter:drop-shadow(0 5px 5px #183c3538)}
+.multip-regroup-arrived.multip-regroup-glow{outline:4px solid #efc66d;outline-offset:2px;animation:multipRegroupGlow .8s ease-in-out 4 alternate}
+@keyframes multipRegroupLand{0%{transform:scale(.55)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes multipRegroupGlow{from{filter:brightness(1)}to{filter:brightness(1.22) drop-shadow(0 0 8px #efc66d)}}
+@media(max-width:620px){.multip-regroup-tray{width:min(150px,44vw);padding:6px}.multip-regroup-slots{grid-template-columns:repeat(5,21px);grid-auto-rows:21px;gap:3px}.multip-regroup-slot{width:21px;height:21px;font-size:9px}.multip-regroup-convert{height:36px}.multip-regroup-convert .multip-disc{--multip-size:33px;--multip-font:12px}}
+
+
+/* CONCEPT NUMBER SENTENCE v1 */
+.concept-number-sentence{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 10px;padding:10px 14px;border:2px solid #b9cabf;border-radius:12px;background:#fff;font-size:34px;font-weight:900;line-height:1;color:#183c35;box-shadow:0 2px 8px #183c3512}
+.concept-number-sentence .concept-operator{font-size:38px}
+.concept-answer-box{display:inline-block;width:64px;height:52px;border:3px solid #d6a144;border-radius:9px;background:#fffdf4;box-shadow:inset 0 0 0 2px #fff}
+.small-div-concept-column{display:flex;flex-direction:column;min-width:0}
+.pupil .concept-number-sentence{font-size:42px;gap:17px;padding:12px 16px}
+.pupil .concept-number-sentence .concept-operator{font-size:46px}
+.pupil .concept-answer-box{width:76px;height:60px}
+@media(max-width:620px){.concept-number-sentence,.pupil .concept-number-sentence{font-size:30px;gap:11px;padding:8px 10px;margin-bottom:8px}.concept-number-sentence .concept-operator,.pupil .concept-number-sentence .concept-operator{font-size:34px}.concept-answer-box,.pupil .concept-answer-box{width:58px;height:46px;border-width:3px}}
 
 
 /* CONCEPT NUMBER SENTENCE BOTTOM v2 */
@@ -548,13 +580,11 @@ body.pupil.fraction-engine .question-block{padding-top:10px;padding-bottom:4px}
 .concept-answer-box{flex:0 0 auto;min-width:64px;min-height:52px;box-sizing:border-box}
 @media(max-width:620px){.small-div-concept-column>.concept-number-sentence,.multip-model>.concept-number-sentence{margin-top:10px}.concept-answer-box{min-width:58px;min-height:46px}}
 
-
 /* SINGLE EQUATION ANSWER INPUT v3 */
 .concept-answer-input{flex:0 0 auto;width:64px;height:52px;border:3px solid #d6a144;border-radius:9px;background:#fffdf4;box-sizing:border-box;font:inherit;font-size:30px;font-weight:900;text-align:center;color:#183c35;padding:0 4px;outline:none}
 .concept-answer-input:focus{border-color:#a92f2f;box-shadow:0 0 0 4px #d6a14444}
 .small-div-controls .step-actions{justify-content:center}
 @media(max-width:620px){.concept-answer-input{width:58px;height:46px;font-size:27px}}
-
 </style><script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head><body>
 <script id="saved-config" type="application/json">null</script>
@@ -568,15 +598,169 @@ const LIMITS = {1:100,2:1000,3:10000};
 const pair=(v,label,min,max,step=1)=>({key:v,label,min,max,step,type:'number'});
 const select=(key,label,options)=>({key,label,options,type:'select'});
 const time24Field=(key,label)=>({key,label,type:'time24',maxLength:4});
+
+const OPERATION_SKILLS={
+  1:{
+    add:[['p1-add-2d1-no','2-digit + 1-digit — no renaming'],['p1-add-tens-no','2-digit + tens — no renaming'],['p1-add-2d2-no','2-digit + 2-digit — no renaming'],['p1-add-2d1-rename','2-digit + 1-digit — with renaming'],['p1-add-2d2-rename','2-digit + 2-digit — with renaming'],['p1-add-mixed','Mixed P1 Addition']],
+    subtract:[['p1-sub-2d1-no','2-digit − 1-digit — no renaming'],['p1-sub-tens-no','2-digit − tens — no renaming'],['p1-sub-2d2-no','2-digit − 2-digit — no renaming'],['p1-sub-2d1-rename','2-digit − 1-digit — with renaming'],['p1-sub-2d2-rename','2-digit − 2-digit — with renaming'],['p1-sub-mixed','Mixed P1 Subtraction']]
+  },
+  2:{
+    add:[['p2-add-revision','Revision: 2-digit addition'],['p2-add-3d1-no','3-digit + 1-digit — no renaming'],['p2-add-tens-no','3-digit + tens — no renaming'],['p2-add-hundreds-no','3-digit + hundreds — no renaming'],['p2-add-3d2-no','3-digit + 2-digit — no renaming'],['p2-add-3d3-no','3-digit + 3-digit — no renaming'],['p2-add-ones','Rename ones only'],['p2-add-tens','Rename tens only'],['p2-add-ones-tens','Rename ones and tens'],['p2-add-1000','Addition resulting in 1000'],['p2-add-mixed','Mixed P2 Addition']],
+    subtract:[['p2-sub-revision','Revision: 2-digit subtraction'],['p2-sub-3d1-no','3-digit − 1-digit — no renaming'],['p2-sub-tens-no','3-digit − tens — no renaming'],['p2-sub-hundreds-no','3-digit − hundreds — no renaming'],['p2-sub-3d2-no','3-digit − 2-digit — no renaming'],['p2-sub-3d3-no','3-digit − 3-digit — no renaming'],['p2-sub-ones','Rename tens to ones only'],['p2-sub-tens','Rename hundreds to tens only'],['p2-sub-two','Two renamings'],['p2-sub-zero','Renaming across a zero'],['p2-sub-1000','Subtraction from 1000'],['p2-sub-mixed','Mixed P2 Subtraction']]
+  },
+  3:{
+    add:[['p3-add-revision','Revision: 3-digit addition'],['p3-add-4d1-no','4-digit + 1-digit — no renaming'],['p3-add-tens-no','4-digit + tens — no renaming'],['p3-add-hundreds-no','4-digit + hundreds — no renaming'],['p3-add-thousands-no','4-digit + thousands — no renaming'],['p3-add-4d2-no','4-digit + 2-digit — no renaming'],['p3-add-4d3-no','4-digit + 3-digit — no renaming'],['p3-add-4d4-no','4-digit + 4-digit — no renaming'],['p3-add-ones','Rename ones only'],['p3-add-tens','Rename tens only'],['p3-add-hundreds','Rename hundreds only'],['p3-add-two','Two renamings'],['p3-add-three','Three renamings'],['p3-add-10000','Addition resulting in 10 000'],['p3-add-mixed','Mixed P3 Addition']],
+    subtract:[['p3-sub-revision','Revision: 3-digit subtraction'],['p3-sub-4d1-no','4-digit − 1-digit — no renaming'],['p3-sub-tens-no','4-digit − tens — no renaming'],['p3-sub-hundreds-no','4-digit − hundreds — no renaming'],['p3-sub-thousands-no','4-digit − thousands — no renaming'],['p3-sub-4d2-no','4-digit − 2-digit — no renaming'],['p3-sub-4d3-no','4-digit − 3-digit — no renaming'],['p3-sub-4d4-no','4-digit − 4-digit — no renaming'],['p3-sub-ones','Rename tens to ones only'],['p3-sub-tens','Rename hundreds to tens only'],['p3-sub-hundreds','Rename thousands to hundreds only'],['p3-sub-two','Two renamings'],['p3-sub-three','Three renamings'],['p3-sub-zero-one','Renaming across one zero'],['p3-sub-zero-multiple','Renaming across multiple zeros'],['p3-sub-10000','Subtraction from 10 000'],['p3-sub-mixed','Mixed P3 Subtraction']]
+  }
+};
+function operationSkillOptions(grade,task){return OPERATION_SKILLS[Number(grade)]?.[task]||[];}
+function opSame(a,b){return a.length===b.length&&a.every((v,i)=>v===b[i]);}
+function operationAddCarries(a,b,places=6){
+ let carry=0;const out=[];
+ for(let i=0;i<places;i++){const p=10**i,total=Math.floor(a/p)%10+Math.floor(b/p)%10+carry;if(total>=10){out.push(i);carry=1;}else carry=0;}
+ return out;
+}
+function operationSubRenames(a,b,places=6){
+ const top=Array.from({length:places},(_,i)=>Math.floor(a/10**i)%10),bottom=Array.from({length:places},(_,i)=>Math.floor(b/10**i)%10),ops=[],chains=[];
+ if(b>a)return {invalid:true,ops,chains};
+ for(let i=0;i<places;i++){
+  if(top[i]<bottom[i]){
+   let donor=i+1;while(donor<places&&top[donor]===0)donor++;
+   if(donor>=places)return {invalid:true,ops,chains};
+   chains.push({target:i,donor,length:donor-i});
+   for(let k=donor;k>i;k--){top[k]--;top[k-1]+=10;ops.push(k-1);}
+  }
+  top[i]-=bottom[i];
+ }
+ return {invalid:false,ops,chains};
+}
+function operationSkillMatches(grade,task,skill,a,b){
+ grade=Number(grade);a=Number(a);b=Number(b);
+ const between=(n,lo,hi)=>Number.isInteger(n)&&n>=lo&&n<=hi;
+ if(task==='add'){
+  const carries=operationAddCarries(a,b),no=()=>carries.length===0;
+  switch(skill){
+   case 'p1-add-2d1-no':return between(a,10,99)&&between(b,1,9)&&a+b<=100&&no();
+   case 'p1-add-tens-no':return between(a,10,99)&&between(b,10,90)&&b%10===0&&a+b<=100&&no();
+   case 'p1-add-2d2-no':return between(a,10,99)&&between(b,10,99)&&a+b<=100&&no();
+   case 'p1-add-2d1-rename':return between(a,10,99)&&between(b,1,9)&&a+b<=100&&opSame(carries,[0]);
+   case 'p1-add-2d2-rename':return between(a,10,99)&&between(b,10,99)&&a+b<=100&&carries.length>=1;
+   case 'p1-add-mixed':return between(a,10,99)&&between(b,1,99)&&a+b<=100;
+   case 'p2-add-revision':return between(a,10,99)&&between(b,10,99)&&a+b<=100;
+   case 'p2-add-3d1-no':return between(a,100,999)&&between(b,1,9)&&a+b<=999&&no();
+   case 'p2-add-tens-no':return between(a,100,999)&&between(b,10,90)&&b%10===0&&a+b<=999&&no();
+   case 'p2-add-hundreds-no':return between(a,100,999)&&between(b,100,900)&&b%100===0&&a+b<=999&&no();
+   case 'p2-add-3d2-no':return between(a,100,999)&&between(b,10,99)&&a+b<=999&&no();
+   case 'p2-add-3d3-no':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&no();
+   case 'p2-add-ones':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[0]);
+   case 'p2-add-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[1]);
+   case 'p2-add-ones-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[0,1]);
+   case 'p2-add-1000':return between(a,100,999)&&between(b,100,999)&&a+b===1000;
+   case 'p2-add-mixed':return between(a,10,999)&&between(b,1,999)&&a+b<=1000;
+   case 'p3-add-revision':return between(a,100,999)&&between(b,100,999)&&a+b<=1000;
+   case 'p3-add-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&a+b<=9999&&no();
+   case 'p3-add-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&a+b<=9999&&no();
+   case 'p3-add-hundreds-no':return between(a,1000,9999)&&between(b,100,900)&&b%100===0&&a+b<=9999&&no();
+   case 'p3-add-thousands-no':return between(a,1000,9999)&&between(b,1000,9000)&&b%1000===0&&a+b<=9999&&no();
+   case 'p3-add-4d2-no':return between(a,1000,9999)&&between(b,10,99)&&a+b<=9999&&no();
+   case 'p3-add-4d3-no':return between(a,1000,9999)&&between(b,100,999)&&a+b<=9999&&no();
+   case 'p3-add-4d4-no':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&no();
+   case 'p3-add-ones':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[0]);
+   case 'p3-add-tens':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[1]);
+   case 'p3-add-hundreds':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[2]);
+   case 'p3-add-two':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&carries.length===2&&carries.every(i=>i<3);
+   case 'p3-add-three':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[0,1,2]);
+   case 'p3-add-10000':return between(a,1000,9999)&&between(b,1000,9999)&&a+b===10000;
+   case 'p3-add-mixed':return between(a,100,9999)&&between(b,1,9999)&&a+b<=10000;
+  }
+ }
+ if(task==='subtract'){
+  const r=operationSubRenames(a,b),no=()=>!r.invalid&&r.ops.length===0,direct=n=>!r.invalid&&r.ops.length===n&&r.chains.every(x=>x.length===1);
+  if(r.invalid)return false;
+  const oneZero=r.chains.some(x=>x.length===2)&&!r.chains.some(x=>x.length>2),manyZeros=r.chains.some(x=>x.length>=3);
+  switch(skill){
+   case 'p1-sub-2d1-no':return between(a,10,99)&&between(b,1,9)&&no();
+   case 'p1-sub-tens-no':return between(a,10,99)&&between(b,10,90)&&b%10===0&&no();
+   case 'p1-sub-2d2-no':return between(a,10,99)&&between(b,10,99)&&no();
+   case 'p1-sub-2d1-rename':return between(a,10,99)&&between(b,1,9)&&r.ops.length>=1;
+   case 'p1-sub-2d2-rename':return between(a,10,99)&&between(b,10,99)&&r.ops.length>=1;
+   case 'p1-sub-mixed':return between(a,10,99)&&between(b,1,99);
+   case 'p2-sub-revision':return between(a,10,99)&&between(b,10,99);
+   case 'p2-sub-3d1-no':return between(a,100,999)&&between(b,1,9)&&no();
+   case 'p2-sub-tens-no':return between(a,100,999)&&between(b,10,90)&&b%10===0&&no();
+   case 'p2-sub-hundreds-no':return between(a,100,999)&&between(b,100,900)&&b%100===0&&no();
+   case 'p2-sub-3d2-no':return between(a,100,999)&&between(b,10,99)&&no();
+   case 'p2-sub-3d3-no':return between(a,100,999)&&between(b,100,999)&&no();
+   case 'p2-sub-ones':return between(a,100,999)&&between(b,100,999)&&r.ops.length===1&&r.chains[0]?.target===0&&r.chains[0]?.length===1;
+   case 'p2-sub-tens':return between(a,100,999)&&between(b,100,999)&&r.ops.length===1&&r.chains[0]?.target===1&&r.chains[0]?.length===1;
+   case 'p2-sub-two':return between(a,100,999)&&between(b,100,999)&&direct(2);
+   case 'p2-sub-zero':return between(a,100,999)&&between(b,1,999)&&oneZero;
+   case 'p2-sub-1000':return a===1000&&between(b,1,999);
+   case 'p2-sub-mixed':return between(a,10,1000)&&between(b,1,999);
+   case 'p3-sub-revision':return between(a,100,999)&&between(b,100,999);
+   case 'p3-sub-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&no();
+   case 'p3-sub-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&no();
+   case 'p3-sub-hundreds-no':return between(a,1000,9999)&&between(b,100,900)&&b%100===0&&no();
+   case 'p3-sub-thousands-no':return between(a,1000,9999)&&between(b,1000,9000)&&b%1000===0&&no();
+   case 'p3-sub-4d2-no':return between(a,1000,9999)&&between(b,10,99)&&no();
+   case 'p3-sub-4d3-no':return between(a,1000,9999)&&between(b,100,999)&&no();
+   case 'p3-sub-4d4-no':return between(a,1000,9999)&&between(b,1000,9999)&&no();
+   case 'p3-sub-ones':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===0&&r.chains[0]?.length===1;
+   case 'p3-sub-tens':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===1&&r.chains[0]?.length===1;
+   case 'p3-sub-hundreds':return between(a,1000,9999)&&between(b,1000,9999)&&r.ops.length===1&&r.chains[0]?.target===2&&r.chains[0]?.length===1;
+   case 'p3-sub-two':return between(a,1000,9999)&&between(b,1000,9999)&&direct(2);
+   case 'p3-sub-three':return between(a,1000,9999)&&between(b,1000,9999)&&direct(3);
+   case 'p3-sub-zero-one':return between(a,1000,9999)&&between(b,1,9999)&&oneZero;
+   case 'p3-sub-zero-multiple':return between(a,1000,9999)&&between(b,1,9999)&&manyZeros;
+   case 'p3-sub-10000':return a===10000&&between(b,1,9999);
+   case 'p3-sub-mixed':return between(a,100,10000)&&between(b,1,9999);
+  }
+ }
+ return false;
+}
+const OPERATION_SKILL_EXAMPLES={
+ 'p1-add-2d1-no':[24,5],'p1-add-tens-no':[34,20],'p1-add-2d2-no':[23,45],'p1-add-2d1-rename':[28,7],'p1-add-2d2-rename':[28,17],'p1-add-mixed':[28,17],
+ 'p1-sub-2d1-no':[28,5],'p1-sub-tens-no':[78,20],'p1-sub-2d2-no':[68,25],'p1-sub-2d1-rename':[32,7],'p1-sub-2d2-rename':[42,16],'p1-sub-mixed':[42,16],
+ 'p2-add-revision':[48,37],'p2-add-3d1-no':[324,5],'p2-add-tens-no':[324,30],'p2-add-hundreds-no':[324,200],'p2-add-3d2-no':[324,52],'p2-add-3d3-no':[324,152],'p2-add-ones':[326,157],'p2-add-tens':[351,172],'p2-add-ones-tens':[268,157],'p2-add-1000':[645,355],'p2-add-mixed':[587,246],
+ 'p2-sub-revision':[73,48],'p2-sub-3d1-no':[328,5],'p2-sub-tens-no':[378,20],'p2-sub-hundreds-no':[728,200],'p2-sub-3d2-no':[786,24],'p2-sub-3d3-no':[786,324],'p2-sub-ones':[354,127],'p2-sub-tens':[563,281],'p2-sub-two':[532,268],'p2-sub-zero':[402,175],'p2-sub-1000':[1000,376],'p2-sub-mixed':[643,278],
+ 'p3-add-revision':[478,356],'p3-add-4d1-no':[3241,5],'p3-add-tens-no':[3241,30],'p3-add-hundreds-no':[3241,200],'p3-add-thousands-no':[3241,2000],'p3-add-4d2-no':[3241,52],'p3-add-4d3-no':[3241,652],'p3-add-4d4-no':[3241,4528],'p3-add-ones':[3246,1527],'p3-add-tens':[3251,1572],'p3-add-hundreds':[3541,2726],'p3-add-two':[2678,1257],'p3-add-three':[2786,1587],'p3-add-10000':[6543,3457],'p3-add-mixed':[4875,2316],
+ 'p3-sub-revision':[745,368],'p3-sub-4d1-no':[3286,5],'p3-sub-tens-no':[3786,20],'p3-sub-hundreds-no':[7286,200],'p3-sub-thousands-no':[7286,2000],'p3-sub-4d2-no':[7865,24],'p3-sub-4d3-no':[7865,324],'p3-sub-4d4-no':[8765,4321],'p3-sub-ones':[7354,2127],'p3-sub-tens':[7563,1281],'p3-sub-hundreds':[6254,3413],'p3-sub-two':[4532,1268],'p3-sub-three':[5321,2786],'p3-sub-zero-one':[5203,1118],'p3-sub-zero-multiple':[5000,1768],'p3-sub-10000':[10000,3768],'p3-sub-mixed':[6432,2789]
+};
+function operationSkillExample(grade,task,skill){const fallback=task==='add'?(grade===1?[28,17]:grade===2?[587,246]:[4875,2316]):(grade===1?[42,16]:grade===2?[643,278]:[6432,2789]);const [a,b]=OPERATION_SKILL_EXAMPLES[skill]||fallback;return {a,b};}
+function randomOperationPair(grade,task,skill,r=Math.random){
+ const options=operationSkillOptions(grade,task),rnd=(lo,hi)=>Math.floor(r()*(hi-lo+1))+lo;
+ if(String(skill).endsWith('-mixed')){const pool=options.filter(([k])=>!k.endsWith('-mixed'));return randomOperationPair(grade,task,pool[rnd(0,pool.length-1)][0],r);}
+ if(skill==='p2-add-1000'){const a=rnd(100,900);return [a,1000-a];}
+ if(skill==='p3-add-10000'){const a=rnd(1000,9000);return [a,10000-a];}
+ if(skill==='p2-sub-1000')return [1000,rnd(1,999)];
+ if(skill==='p3-sub-10000')return [10000,rnd(1,9999)];
+ let aMin=grade===1?10:grade===2?100:1000,aMax=grade===1?99:grade===2?999:9999,bMin=1,bMax=aMax;
+ if(skill.includes('revision')){aMin=grade===2?10:100;aMax=grade===2?99:999;bMin=aMin;bMax=aMax;}
+ if(skill.includes('2d1')||skill.includes('3d1')||skill.includes('4d1'))bMax=9;
+ else if(skill.includes('tens-no')){bMin=10;bMax=90;}
+ else if(skill.includes('hundreds-no')){bMin=100;bMax=900;}
+ else if(skill.includes('thousands-no')){bMin=1000;bMax=9000;}
+ else if(skill.includes('2d2')||skill.includes('3d2')||skill.includes('4d2')){bMin=10;bMax=99;}
+ else if(skill.includes('3d3')||skill.includes('4d3')){bMin=100;bMax=999;}
+ else if(skill.includes('4d4')){bMin=1000;bMax=9999;}
+ for(let tries=0;tries<6000;tries++){
+  const a=rnd(aMin,aMax);
+  let b=skill.includes('tens-no')?rnd(1,9)*10:skill.includes('hundreds-no')?rnd(1,9)*100:skill.includes('thousands-no')?rnd(1,9)*1000:rnd(bMin,bMax);
+  if(task==='subtract'&&b>a)continue;
+  if(operationSkillMatches(grade,task,skill,a,b))return [a,b];
+ }
+ const e=operationSkillExample(grade,task,skill);return [e.a,e.b];
+}
+
 function tasks(engine,grade) {
  const all={
  place:[['read','Read blocks or discs'],['hundred','Explore numbers to 100 · Hundred chart & flip chart'],['digit','Value of a digit'],['more','More than a number'],['less','Less than a number']],
- operations:[...(grade===1?[['count-on-back','Addition / subtraction within 10 · Count on / count back'],['fact-family','Fact family'],['within-20','Adding & subtracting within 20 · Strategies']]:[]),['add','Add step by step'],['subtract','Subtract step by step'],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
+ operations:[...(grade===1?[['count-on-back','Addition / subtraction within 10 · Count on / count back'],['fact-family','Fact family'],['within-20','Adding & subtracting within 20 · Strategies']]:[]),['add','Add step by step'],['subtract','Subtract step by step'],['mixed-add-sub',`Mixed P${grade} Addition & Subtraction`],['multiply','Multiply: equal groups'],['share','Divide: share equally'],['group','Divide: make equal groups'],...(grade===3?[['multiply-column','Multiply: place-value algorithm'],['divide-column','Divide: place-value algorithm']]:[])],
  numberline:[['point','Find the missing number'],['add','Find a number more'],['subtract','Find a number less'],['pattern','Complete a number pattern']],
  bar:[['whole','Part–whole: find the whole'],['part','Part–whole: find a part'],['compare','Comparison: find the difference'],['change','Change: find what remains'],['groups','Equal groups: find the total']],
  money:[['count','Count money · Big to small'],['convert','Convert cents ↔ dollars'],['make','Saving Quest · $1 / $10 / $100'],['add','Add money · Step by step'],['subtract','Subtract money · Step by step'],['word','Money word problems · Model']],
  fraction:[['write','1 · Writing Fractions'],['unit-compare','2 · Comparing Unit Fractions'],['like-compare','3 · Comparing Like Fractions'],['like-add','4 · Adding Like Fractions'],['like-subtract','5 · Subtracting Like Fractions'],...(grade===3?[['equivalent','6 · Equivalent Fractions'],['simplify','7 · Simplifying Fractions'],['unlike-compare','8 · Comparing & Ordering Unlike Fractions'],['unlike-add','9 · Adding Unlike Fractions'],['unlike-subtract','10 · Subtracting Unlike Fractions']]:[])],
- time:grade===1?[['read','1 · Read clocks · 5-minute intervals'],['set','2 · Set clocks · 5-minute intervals'],['ampm','3 · Read clock · a.m. / p.m.'],['duration','4 · Find a 30 min / 1 h interval']]:grade===2?[['read','1 · Read clocks · 1-minute intervals'],['set','2 · Set clocks · 1-minute intervals'],['duration','3 · Find duration · h and min'],['later','4 · Find the finishing time'],['convert-duration','5 · Convert h and min ↔ min']]:[['seconds','1 · Measure duration · seconds'],['duration','2 · Find elapsed time · 24-hour timeline'],['endtime','3 · Find the finishing time · 24-hour'],['starttime','4 · Find the starting time · 24-hour'],['twentyfour','5 · 12-hour clock → 24-hour time'],['twelvehour','6 · 24-hour time → 12-hour time']],
+ time:grade===1?[['read','1 · Read clocks · 5-minute intervals'],['set','2 · Set clocks · 5-minute intervals'],['ampm','3 · Read clock · a.m. / p.m.'],['duration','4 · Find a 30 min / 1 h interval']]:grade===2?[['read','1 · Read clocks · 1-minute intervals'],['ampm','2 · Read clock · 1-minute intervals · a.m. / p.m.'],['set','3 · Set clocks · 1-minute intervals'],['duration','4 · Find duration · h and min'],['later','5 · Find the finishing time'],['convert-duration','6 · Convert h and min ↔ min']]:[['ampm','1 · Read clock · 1-minute intervals · a.m. / p.m.'],['seconds','2 · Measure duration · seconds'],['duration','3 · Find elapsed time · 24-hour timeline'],['endtime','4 · Find the finishing time · 24-hour'],['starttime','5 · Find the starting time · 24-hour'],['twentyfour','6 · 12-hour clock → 24-hour time'],['twelvehour','7 · 24-hour time → 12-hour time']],
  geometry:[['shape','Name a 2D shape'],['sides','Count sides'],...(grade>=2?[['solid','Name a 3D shape']]:[]),...(grade===3?[['angle','Compare with a right angle'],['lines','Parallel or perpendicular']]:[])],
  area:[['area','Area of a rectangle'],['perimeter','Perimeter of a rectangle'],['compare','Same area, different perimeter']],
  graph:[['read','Read a category'],['total','Find the total'],['difference','Compare categories']],
@@ -588,7 +772,11 @@ function fields(c) {
  const max=LIMITS[c.grade], small=c.grade===1?20:c.grade===2?100:1000;
  switch(c.engine){
  case 'place':return c.task==='hundred'?[pair('a','Starting number (0–100)',0,100),pair('leftAmount','Yellow-button amount',1,100),pair('rightAmount','Blue-button amount',1,100)]:[pair('a',['more','less'].includes(c.task)?'Starting number':'Number to show',0,max),...(['more','less'].includes(c.task)?[pair('b',c.task==='more'?'How much more?':'How much less?',1,max)]:[]),...(c.task==='digit'?[select('place','Place to focus on',[['1','Ones'],['10','Tens'],...(c.grade>=2?[['100','Hundreds']]:[]),...(c.grade===3?[['1000','Thousands']]:[])])]:[]),select('representation','Model',[['blocks','Base-ten blocks'],['discs','Place-value discs']])];
- case 'operations':if(['count-on-back','fact-family','within-20'].includes(c.task))return [];return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',c.task==='add'||c.task==='subtract'?0:1,['add','subtract'].includes(c.task)?max:c.task.endsWith('-column')?9:10),...(['add','subtract'].includes(c.task)?[select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])]:[])];
+ case 'operations':
+  if(['count-on-back','fact-family','within-20'].includes(c.task))return [];
+  if(c.task==='mixed-add-sub')return [select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])];
+  if(['add','subtract'].includes(c.task))return [select('skill','Skill focus',operationSkillOptions(c.grade,c.task)),pair('a','First number',0,max),pair('b','Second number',0,max),select('representation','Model',[['discs','Place-value discs'],['blocks','Base-ten blocks']])];
+  return [pair('a',c.task==='multiply-column'?'Number in each group (multiplicand)':c.task==='divide-column'?'Number to divide (dividend)':['share','group'].includes(c.task)?'Total counters':c.task==='multiply'?'Number of groups':'First number',0,c.task.endsWith('-column')?999:['multiply','share','group'].includes(c.task)?100:max),pair('b',c.task==='multiply-column'?'Number of groups (multiplier)':c.task==='divide-column'?'Number of groups (divisor)':['share','group'].includes(c.task)?c.task==='share'?'Number of groups':'Counters in each group':c.task==='multiply'?'Counters in each group':'Second number',1,c.task.endsWith('-column')?9:10)];
  case 'numberline':return c.task==='pattern'?[pair('a','Start number',0,max),select('patternType','Pattern type',[['constant','Constant change'],['alternating','Alternating changes']]),pair('b',c.patternType==='alternating'?'First change (+ or −)':'Change each time (+ or −)',-small,small),...(c.patternType==='alternating'?[pair('b2','Second change (+ or −)',-small,small)]:[]),select('missing','Missing numbers',[['2','2 · Easy'],['3','3 · Medium'],['4','4 · Hard']])]:[pair('a',c.task==='point'?'Missing number':'Start number',0,max),pair('b',c.task==='point'?'Tick interval':'Jump size',1,c.task==='point'?Math.max(10,max/10):small)];
  case 'bar':return [pair('a',c.task==='groups'?'Number of groups':c.task==='whole'?'First part':c.task==='part'?'Whole':'Starting / larger amount',1,c.task==='groups'?10:max),pair('b',c.task==='groups'?'Amount in each group':c.task==='whole'?'Second part':c.task==='part'?'Known part':c.task==='compare'?'Smaller amount':'Amount removed',1,c.task==='groups'?10:max),{key:'context',label:'Objects in the story',type:'text',maxLength:30}];
  case 'money':{
@@ -634,10 +822,15 @@ function fields(c) {
 function defaults(engine,grade=3,task){
  if(engine==='fraction'&&grade===1)grade=2;if(engine==='area')grade=3;
  const t=task||tasks(engine,grade)[0][0];
- let c={version:1,engine,grade,task:t,mode:'fixed',count:1,a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
+ let c={version:1,engine,grade,task:t,mode:'fixed',count:1,skill:'mixed',a:24,b:8,place:10,context:'stickers',den:8,den2:4,den3:8,cnum:7,factor:2,orderMode:'compare',format:'mixed',direction:'cents-to-money',target:'100',wordType:'total',duration:45,durationDirection:'to-minutes',secondsDirection:'to-seconds',clockTime:'0325',startTime:'0535',endTime:'1635',sky:'night',shape:'triangle',solid:'cube',angle:'right',lines:'parallel',cols2:4,rows2:6,labels:'Apples, Bananas, Pears',values:'12, 8, 16',key:2,category:0,graphType:'picture'};
  if(engine==='place'){c.a=t==='more'?grade===1?29:grade===2?199:999:t==='less'?grade===1?30:grade===2?200:1000:grade===1?34:grade===2?234:2034;c.b=1;}
  if(engine==='place'&&t==='hundred'){c.a=50;c.leftAmount=10;c.rightAmount=1;}
- if(engine==='operations'){c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}}
+ if(engine==='operations'){
+  c.a=grade===1?28:grade===2?248:1248;c.b=grade===1?17:grade===2?175:675;
+  if(['add','subtract'].includes(t)){c.skill=operationSkillOptions(grade,t).at(-1)?.[0]||'mixed';Object.assign(c,operationSkillExample(grade,t,c.skill));}
+  if(t==='mixed-add-sub'){c.mode='random';c.count=8;c.representation='discs';}
+  if(['multiply','share','group'].includes(t)){c.a=t==='multiply'?4:grade===1?20:24;c.b=t==='multiply'?grade===1?5:6:grade===1?5:4;}
+}
  if(engine==='operations'&&t==='multiply-column'){c.a=348;c.b=4;}if(engine==='operations'&&t==='divide-column'){c.a=246;c.b=2;}
  if(engine==='numberline'){c.a=grade===1?24:grade===2?240:2400;c.b=t==='point'?grade===1?1:grade===2?10:100:grade===1?5:grade===2?20:200;c.b2=grade===1?2:grade===2?10:100;c.patternType='constant';c.missing='2';}
  if(engine==='bar'){c.a=t==='groups'?4:24;c.b=t==='groups'?6:8;}
@@ -662,7 +855,7 @@ function defaults(engine,grade=3,task){
  if(engine==='time'){
   c.a=3;c.b=grade===1?30:25;c.clockTime=grade===1?'0330':'0325';c.duration=grade===1?30:45;
   if(grade===1&&t==='duration'){c.a=8;c.b=15;c.duration=30;}
-  if(grade===1&&t==='ampm'){c.a=7;c.b=0;c.sky='morning';}
+  if(t==='ampm'){c.a=7;c.b=grade===1?0:23;c.sky='morning';}
   if(grade===2&&t==='duration'){c.a=10;c.b=45;c.duration=95;}
   if(grade===2&&t==='later'){c.a=11;c.b=40;c.duration=55;}
   if(grade===2&&t==='convert-duration'){c.durationDirection='to-minutes';c.a=2;c.b=15;}
@@ -728,6 +921,10 @@ function validate(raw){
  if(c.engine==='operations'){
   if(c.task==='add'&&c.a+c.b>cap)throw Error(`The total must stay within ${cap}.`);
   if(c.task==='subtract'&&c.b>c.a)throw Error('The second number must not exceed the first.');
+  if(['add','subtract'].includes(c.task)&&!operationSkillMatches(g,c.task,c.skill,c.a,c.b)){
+   const label=operationSkillOptions(g,c.task).find(([key])=>key===c.skill)?.[1]||'chosen skill focus';
+   throw Error(`These numbers do not match “${label}”. Change the numbers or choose Random practice.`);
+  }
   if(['share','group'].includes(c.task)&&(c.a===0||c.a%c.b!==0||c.a/c.b>10))throw Error('Use equal groups with no remainder and at most 10 counters or groups in the answer.');
   if(g===1&&c.task==='multiply'&&c.a*c.b>40)throw Error('P1 multiplication presets stay within 40.');
   if(g===1&&['share','group'].includes(c.task)&&c.a>20)throw Error('P1 division presets stay within 20 counters.');
@@ -788,12 +985,19 @@ function validate(raw){
 const int=(r,min,max)=>Math.floor(r()*(max-min+1))+min;
 const choose=(r,a)=>a[int(r,0,a.length-1)];
 function generatedConfig(c,r=Math.random){
+ if(c.engine==='operations'&&c.task==='mixed-add-sub'){
+  const task=r()<.5?'add':'subtract',skill=operationSkillOptions(c.grade,task).at(-1)[0];
+  return generatedConfig({...c,task,skill,mode:'random'},r);
+ }
  if(c.mode==='fixed')return {...c};const p={...c},g=c.grade,cap=LIMITS[g];
  const small=g===1?40:g===2?400:4000,fieldSmall=g===1?100:g===2?1000:10000;
  switch(c.engine){
  case 'place':if(['more','less'].includes(c.task)){p.b=c.b;p.a=int(r,c.task==='less'?p.b:0,c.task==='more'?cap-p.b:cap);}else p.a=int(r,1,cap-1);break;
  case 'operations':
-  if(c.task.endsWith('-column')){p.a=int(r,10,999);p.b=int(r,2,9);}else if(['multiply','share','group'].includes(c.task)){const ns=g===1?[2,5,10]:[2,3,4,5,6,7,8,9,10];const b=choose(r,g===1?[2,5,10]:g===2?[2,3,4,5,10]:ns),a=int(r,1,g===1?Math.min(10,Math.floor((c.task==='multiply'?40:20)/b)):10);p.b=b;p.a=c.task==='multiply'?a:a*b;}else{p.a=int(r,1,small);p.b=int(r,1,c.task==='subtract'?p.a:small);}break;
+  if(['add','subtract'].includes(c.task)){[p.a,p.b]=randomOperationPair(g,c.task,c.skill,r);}
+  else if(c.task.endsWith('-column')){p.a=int(r,10,999);p.b=int(r,2,9);}
+  else if(['multiply','share','group'].includes(c.task)){const ns=g===1?[2,5,10]:[2,3,4,5,6,7,8,9,10];const b=choose(r,g===1?[2,5,10]:g===2?[2,3,4,5,10]:ns),a=int(r,1,g===1?Math.min(10,Math.floor((c.task==='multiply'?40:20)/b)):10);p.b=b;p.a=c.task==='multiply'?a:a*b;}
+  else{p.a=int(r,1,small);p.b=int(r,1,c.task==='subtract'?p.a:small);}break;
  case 'numberline':{
   if(c.task==='pattern'){
    const offsets=sequenceValues({...c,a:0}),lo=-Math.min(...offsets),hi=cap-Math.max(...offsets);p.a=int(r,lo,hi);
@@ -1017,7 +1221,7 @@ function lesson(config,r=Math.random){
  case 'numberline':if(t==='pattern'){const seq=sequenceValues(c),blanks=sequenceBlankIndices(c.missing),signed=n=>n>0?`+${n}`:String(n);type='sequence';answer=seq;d.sequence=seq;d.blanks=blanks;d.ruleText=c.patternType==='alternating'?`Alternate ${signed(c.b)}, then ${signed(c.b2)}.`:`${signed(c.b)} each time.`;question='Complete the number pattern.';hint=c.patternType==='alternating'?'The changes alternate. Compare the first pair, then the second pair.':'Find the change between neighbouring numbers.';explanation=`Rule: ${d.ruleText}`;}else{answer=t==='point'?a:t==='add'?a+b:a-b;question=numberlineQuestion(t,a,b);hint=t==='point'?`Each space increases by ${wholeNumberText(b)}.`:`Start at ${wholeNumberText(a)}. Follow one jump of ${wholeNumberText(b)} ${t==='add'?'more':'less'}, then move the blue marker and write the landing number.`;explanation=t==='point'?`The missing number is ${wholeNumberText(answer)}.`:`${wholeNumberText(a)} ${t==='add'?'+':'−'} ${wholeNumberText(b)} = ${wholeNumberText(answer)}.`;}break;
  case 'bar':answer=t==='whole'?a+b:t==='groups'?a*b:a-b;question=t==='whole'?`A box has ${a} red ${c.context} and ${b} blue ${c.context}. How many ${c.context} altogether?`:t==='part'?`There are ${a} ${c.context}. ${b} are red. How many are blue?`:t==='compare'?`Aisha has ${a} ${c.context}. Ben has ${b}. How many more does Aisha have?`:t==='change'?`Aisha has ${a} ${c.context} and gives away ${b}. How many remain?`:`There are ${a} bags with ${b} ${c.context} in each bag. How many altogether?`;hint=t==='whole'||t==='groups'?'The whole is made of all the parts.':'The missing part is the whole / longer bar minus the known part / shorter bar.';explanation=t==='whole'?`${a} + ${b} = ${answer}.`:t==='groups'?`${a} × ${b} = ${answer}.`:`${a} − ${b} = ${answer}.`;break;
  case 'money':{
-  const money=n=>`${Math.floor(n/100)}.${String(n%100).padStart(2,'0')}`;
+  const money=n=>`$${Math.floor(n/100)}.${String(n%100).padStart(2,'0')}`;
   const finish=value=>{answer=value;type=c.format==='mixed'?'money':'number';if(c.format==='dollars')answer=value/100;unit=c.format==='cents'?'cents':c.format==='dollars'?'dollars':'';explanation=c.format==='dollars'?`${answer} dollars.`:`${value} cents = ${money(value)}.`;};
   if(t==='convert'){
    if(c.direction==='cents-to-money'){answer=a;type='money';question=`Convert ${a} cents to dollars and cents.`;explanation=`${a} cents = ${money(a)}.`;}
@@ -1502,12 +1706,11 @@ function showP1OperationReference(c){
  else{interaction.p1.strategy='count';interaction.p1.within20=true;interaction.p1.mode='add';interaction.p1.question=p1CountQuestion('add',true);interaction.p1.step=0;interaction.p1.introDone=false;p1RenderCount();}
  return true;
 }
-function timeLevelSummary(grade){return grade===1?'P1: read and set clocks in five-minute intervals, distinguish a.m. / p.m., and work with 30 min and 1 h intervals.':grade===2?'P2: read and set clocks to the nearest minute, measure duration in h and min, and convert h and min ↔ min.':'P3: work with seconds, determine elapsed / start / end time, and convert between 12-hour and 24-hour time.';}
+function timeLevelSummary(grade){return grade===1?'P1: read and set clocks in five-minute intervals, distinguish a.m. / p.m., and work with 30 min and 1 h intervals.':grade===2?'P2: read and set clocks to the nearest minute, read a.m. / p.m. from picture clues, measure duration in h and min, and convert h and min ↔ min.':'P3: read clocks to the nearest minute with a.m. / p.m. picture clues, then work with seconds, elapsed / start / end time, and 12-hour / 24-hour time.';}
 function populate(c){draft={...c};$('grade').replaceChildren();for(const g of engine==='area'?[3]:engine==='fraction'?[2,3]:[1,2,3]){const o=document.createElement('option');o.value=g;o.textContent='Primary '+g;$('grade').append(o);}$('grade').value=c.grade;$('task').replaceChildren();for(const [v,l]of tasks(engine,c.grade)){const o=document.createElement('option');o.value=v;o.textContent=l;$('task').append(o);}$('task').value=c.task;$('mode').value=c.mode;$('count').value=c.mode==='fixed'?8:c.count;populateFields();}
-function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',referenceP1Operation=Boolean(p1OperationReference({...draft,engine})),random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord||referenceP1Operation;$('countField').hidden=!random||exploring||referenceMoneyWord||referenceP1Operation;
- const kept={operations:['representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category'],time:['durationDirection','secondsDirection']};
- for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else if(f.type==='time24'){input.type='text';input.inputMode='numeric';input.pattern='[0-9]{4}';input.maxLength=4;input.placeholder='HHMM';input.autocomplete='off';input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'').slice(0,4);draft[f.key]=input.value;});}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode'||engine==='time'&&['durationDirection','secondsDirection'].includes(f.key))populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='</script></body></html>
-;symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else if(f.type==='time24'){const timeWrap=document.createElement('div');timeWrap.className='time24-setting';const unit=document.createElement('span');unit.textContent='h';unit.setAttribute('aria-hidden','true');timeWrap.append(input,unit);wrap.append(timeWrap);}else wrap.append(input);$('engineFields').append(wrap);}
+function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',referenceP1Operation=Boolean(p1OperationReference({...draft,engine})),mixedOperations=engine==='operations'&&draft.task==='mixed-add-sub',random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord||referenceP1Operation||mixedOperations;$('countField').hidden=!random||exploring||referenceMoneyWord||referenceP1Operation;
+ const kept={operations:['skill','representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category'],time:['durationDirection','secondsDirection']};
+ for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else if(f.type==='time24'){input.type='text';input.inputMode='numeric';input.pattern='[0-9]{4}';input.maxLength=4;input.placeholder='HHMM';input.autocomplete='off';input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'').slice(0,4);draft[f.key]=input.value;});}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='operations'&&f.key==='skill'){Object.assign(draft,operationSkillExample(draft.grade,draft.task,draft.skill));populateFields();}else if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode'||engine==='time'&&['durationDirection','secondsDirection'].includes(f.key))populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='$';symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else if(f.type==='time24'){const timeWrap=document.createElement('div');timeWrap.className='time24-setting';const unit=document.createElement('span');unit.textContent='h';unit.setAttribute('aria-hidden','true');timeWrap.append(input,unit);wrap.append(timeWrap);}else wrap.append(input);$('engineFields').append(wrap);}
  const levelNote=engine==='time'?timeLevelSummary(draft.grade)+' ':'';$('randomNote').textContent=levelNote+(referenceP1Operation?'This follows your original P1 teaching sequence inside the Primary Maths Studio style, step by step.':exploring?'Explore numbers from 0 to 100. Generate restores your starting number and both button amounts.':random?'New questions use this grade’s preset ranges. The settings shown here stay fixed; other numbers or shapes vary. Generate again or reopen the downloaded file for a new practice set.':'Your chosen numbers make one fixed example. Reopening or restarting keeps that same example.');
 }
 function builderTab(which){const setup=which==='setup';$('setupPanel').hidden=!setup;$('examplePanel').hidden=setup;$('setupTab').setAttribute('aria-selected',setup);$('exampleTab').setAttribute('aria-selected',!setup);}
@@ -1526,8 +1729,7 @@ function progress(){$('progress').replaceChildren();for(let n=0;n<config.count;n
 function inputBox(id,label,min=0,max){const w=document.createElement('label');w.innerHTML=`<span class="answer-label">${E(label)}</span>`;const i=document.createElement('input');i.id=id;i.type='number';i.inputMode='numeric';i.step=1;i.min=min;if(max!==undefined)i.max=max;i.className='answer-input';i.required=true;i.autocomplete='off';w.append(i);return w;}
 function moneyAnswerEntry(){
  const wrap=document.createElement('div');wrap.className='money-answer-entry';wrap.setAttribute('aria-label','Enter the amount in dollars and cents');
- const symbol=document.createElement('span');symbol.className='money-answer-symbol';symbol.textContent='</script></body></html>
-;symbol.setAttribute('aria-hidden','true');
+ const symbol=document.createElement('span');symbol.className='money-answer-symbol';symbol.textContent='$';symbol.setAttribute('aria-hidden','true');
  const dollars=inputBox('answer1','Dollars',0),dot=document.createElement('span');dot.className='money-answer-dot';dot.textContent='.';dot.setAttribute('aria-hidden','true');
  const cents=document.createElement('label');cents.innerHTML='<span class="answer-label">Cents</span>';const centsInput=document.createElement('input');centsInput.id='answer2';centsInput.type='text';centsInput.inputMode='numeric';centsInput.pattern='[0-9]{2}';centsInput.maxLength=2;centsInput.placeholder='00';centsInput.className='answer-input money-cents-input';centsInput.required=true;centsInput.autocomplete='off';centsInput.setAttribute('aria-label','Cents, two digits');centsInput.addEventListener('input',()=>{centsInput.value=centsInput.value.replace(/\D/g,'').slice(0,2);});centsInput.addEventListener('blur',()=>{if(centsInput.value.length===1)centsInput.value='0'+centsInput.value;});cents.append(centsInput);
  wrap.append(symbol,dollars,dot,cents);return wrap;
@@ -1799,30 +2001,97 @@ async function moveAddSubToken(source,target,p,duration=500){
  const to=token.getBoundingClientRect(),ghost=token.cloneNode(true);ghost.classList.add('addsub-ghost');ghost.style.cssText=`position:fixed;left:0;top:0;width:${to.width}px;height:${to.height}px;font-size:${getComputedStyle(token).fontSize};visibility:visible;z-index:9999`;document.body.append(ghost);
  try{await ghost.animate([{transform:`translate(${from.left}px,${from.top}px) scale(.8)`},{transform:`translate(${to.left}px,${to.top}px) scale(1)`}],{duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:duration,easing:'ease-in-out',fill:'forwards'}).finished;}catch{}finally{ghost.remove();token.style.visibility='';}
 }
+function addSubPause(ms){
+ return new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:ms));
+}
+async function addSubPulse(tokens,duration=900){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ await Promise.all(tokens.map((token,index)=>{
+  try{return token.animate(
+   [{transform:'scale(1)',filter:'brightness(1)'},{transform:'scale(1.13)',filter:'brightness(1.18)',offset:.5},{transform:'scale(1)',filter:'brightness(1)'}],
+   {duration,delay:index*35,easing:'ease-in-out'}
+  ).finished;}catch{return Promise.resolve();}
+ }));
+}
 async function advanceAddSub(){
  const run=interaction,step=run.plan.steps[run.step];if(!step||solved||run.addSubBusy)return;
  run.addSubBusy=true;$('diagram').querySelectorAll('button').forEach(b=>b.disabled=true);$('hint').hidden=true;
  try{
-  const i=step.focus,p=run.plan.ps[i],top=$(`addsub-top-${i}`);
+  const i=step.focus,p=run.plan.ps[i],top=$(`addsub-top-${i}`),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(step.kind==='addition-place'){
    const lower=$(`addsub-lower-${i}`),pieces=Array.from(lower.querySelectorAll('.addsub-token'));
-   await Promise.all(pieces.map(t=>moveAddSubToken(t,top,p)));
-   if(interaction!==run)return;pieces.forEach(t=>t.remove());
+   if(pieces.length)$('stepFeedback').textContent='Move the second number into the working column, one counter at a time.';
+   for(let j=0;j<pieces.length;j++){
+    const token=pieces[j];
+    await moveAddSubToken(token,top,p,reduced?0:520);
+    if(interaction!==run)return;
+    token.remove();
+    $('stepFeedback').textContent=`Combined ${j+1} of ${pieces.length} ${placeName(p)}.`;
+    await addSubPause(110);
+   }
    if(step.carryOut){
-    const ten=Array.from(top.querySelectorAll('.addsub-token')).slice(-10);ten.forEach(t=>t.classList.add('addsub-bundled'));
-    const next=$(`addsub-top-${i+1}`);$('stepFeedback').textContent=`Rename ${placeQuantity(10,p)} as ${placeQuantity(1,run.plan.ps[i+1])}.`;
-    await moveAddSubToken(ten[0],next,run.plan.ps[i+1],1900);await new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:900));if(interaction!==run)return;ten.forEach(t=>t.remove());
+    const ten=Array.from(top.querySelectorAll('.addsub-token')).slice(-10);
+    ten.forEach(t=>t.classList.add('addsub-bundled'));
+    $('stepFeedback').textContent=`There are 10 ${placeName(p)}. Group these 10 together before regrouping.`;
+    await addSubPulse(ten,1050);
+    await addSubPause(350);
+    if(interaction!==run)return;
+    const next=$(`addsub-top-${i+1}`),nextPlace=run.plan.ps[i+1];
+    $('stepFeedback').textContent=`10 ${placeName(p)} become 1 ${placeName(nextPlace).replace(/s$/,'')}. Watch the new counter move to the next column.`;
+    const movePromise=moveAddSubToken(ten[0],next,nextPlace,reduced?0:2200);
+    const collapsePromises=ten.map((t,index)=>{
+     if(reduced)return Promise.resolve();
+     try{return t.animate(
+      [{opacity:1,transform:'scale(1)'},{opacity:.9,transform:'scale(1.08)',offset:.25},{opacity:.22,transform:'scale(.72)'}],
+      {duration:1750,delay:index*35,easing:'ease-in-out',fill:'forwards'}
+     ).finished;}catch{return Promise.resolve();}
+    });
+    await Promise.all([movePromise,...collapsePromises]);
+    if(interaction!==run)return;
+    ten.forEach(t=>t.remove());
+    $('stepFeedback').textContent=`Regrouped: 10 ${placeName(p)} → 1 ${placeName(nextPlace).replace(/s$/,'')}.`;
+    await addSubPause(650);
    }
   }else if(step.kind==='exchange'){
-   const donor=top.querySelector('.addsub-token'),target=$(`addsub-top-${step.target}`);$('stepFeedback').textContent=step.prompt;
-   await Promise.all(Array.from({length:10},()=>moveAddSubToken(donor,target,run.plan.ps[step.target],1900)));await new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:900));
-   if(interaction!==run)return;donor.remove();
+   const donor=top.querySelector('.addsub-token'),target=$(`addsub-top-${step.target}`),targetPlace=run.plan.ps[step.target],sourceName=placeName(p).replace(/s$/,''),targetName=placeName(targetPlace);
+   if(!donor)return;
+   donor.classList.add('addsub-bundled');
+   $('stepFeedback').textContent=`Exchange 1 ${sourceName} for 10 ${targetName}. First, focus on the ${sourceName} being exchanged.`;
+   await addSubPulse([donor],1100);
+   await addSubPause(350);
+   for(let j=1;j<=10;j++){
+    if(interaction!==run)return;
+    $('stepFeedback').textContent=`1 ${sourceName} → ${j} of 10 ${targetName}. Watch each new counter appear.`;
+    await moveAddSubToken(donor,target,targetPlace,reduced?0:430);
+    await addSubPause(75);
+   }
+   if(!reduced){
+    try{await donor.animate(
+     [{opacity:1,transform:'scale(1)'},{opacity:.3,transform:'scale(.65)'}],
+     {duration:700,easing:'ease-in',fill:'forwards'}
+    ).finished;}catch{}
+   }
+   donor.remove();
+   $('stepFeedback').textContent=`Exchange complete: 1 ${sourceName} = 10 ${targetName}. The total value has not changed.`;
+   await addSubPause(700);
   }else{
    const pieces=Array.from(top.querySelectorAll('.addsub-token')).slice(-step.amount);
-   if(step.amount)await Promise.all(pieces.map(async t=>{t.classList.add('addsub-crossed');try{await t.animate([{opacity:1},{opacity:1,offset:.7},{opacity:0}],{duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:800,fill:'forwards'}).finished;}catch{}}));
-   if(interaction!==run)return;if(step.amount)pieces.forEach(t=>t.remove());
+   if(step.amount)$('stepFeedback').textContent=`Take away ${step.amount} ${placeName(p)} one at a time.`;
+   for(let j=0;j<pieces.length;j++){
+    const t=pieces[j];t.classList.add('addsub-crossed');
+    if(!reduced){
+     try{await t.animate(
+      [{opacity:1,transform:'scale(1)'},{opacity:1,transform:'scale(1.08)',offset:.45},{opacity:0,transform:'scale(.78)'}],
+      {duration:520,easing:'ease-in-out',fill:'forwards'}
+     ).finished;}catch{}
+    }
+    t.remove();
+    $('stepFeedback').textContent=`Taken away ${j+1} of ${pieces.length} ${placeName(p)}.`;
+    await addSubPause(90);
+   }
   }
-  if(interaction!==run)return;run.step++;drawOperation();lockOperationAnswer();
+  if(interaction!==run)return;
+  run.step++;drawOperation();lockOperationAnswer();
  }finally{run.addSubBusy=false;}
 }
 window.addEventListener('resize',()=>{if(current&&['add','subtract'].includes(current.data.task)&&engine==='operations')requestAnimationFrame(fitAddSubPiles);});
@@ -2171,15 +2440,14 @@ function drawBars(){const c=current.data,host=$('diagram');const rect=(x,y,w,lab
 }
 const DENOMS=[5000,1000,500,200,100,50,20,10,5];
 function pieces(n){const out=[];for(const v of DENOMS){while(n>=v){out.push(v);n-=v;}}return out;}
-const denomination=v=>v>=100?'</script></body></html>
-+v/100:v+'¢';
-const moneyText=n=>`${Math.floor(n/100)}.${String(n%100).padStart(2,'0')}`;
+const denomination=v=>v>=100?'$'+v/100:v+'¢';
+const moneyText=n=>`$${Math.floor(n/100)}.${String(n%100).padStart(2,'0')}`;
 function moneyToken(v,interactive=false,disabled=false){
  const wrapper=interactive?'button':'span',attrs=interactive?` type="button" data-money="${v}" ${disabled?'disabled':''} aria-label="Add ${E(denomination(v))}"`:'';
  let drawing='';
  if(v<100)drawing=`<span class="money-coin-art coin-v${v}" aria-hidden="true"><span class="money-coin-ring"><b>${v}</b><small>cents</small></span></span>`;
  else if(v===100)drawing='<span class="money-dollar-coin-art" aria-hidden="true"><span><b>$1</b><small>coin</small></span></span>';
- else{const dollars=v/100;drawing=`<span class="money-note-art note-v${dollars}" aria-hidden="true"><span class="money-note-corner">${dollars}</span><span class="money-note-centre"><b>${dollars}</b><small>SGD</small></span><span class="money-note-corner right">${dollars}</span></span>`;}
+ else{const dollars=v/100;drawing=`<span class="money-note-art note-v${dollars}" aria-hidden="true"><span class="money-note-corner">$${dollars}</span><span class="money-note-centre"><b>$${dollars}</b><small>SGD</small></span><span class="money-note-corner right">$${dollars}</span></span>`;}
  return `<${wrapper} class="money-piece ${v>=200?'money-piece-note':'money-piece-coin'}"${attrs}>${drawing}<span class="sr-money-value">${E(denomination(v))}</span></${wrapper}>`;
 }
 function moneyPlaceCounts(value){
@@ -2194,7 +2462,7 @@ const MONEY_PLACE_WORD={d100:'$100 place',d10:'$10 place',d1:'$1 place',c10:'10�
 const MONEY_ADD_TITLE={c5:'Add the ones of cents (0 or 5).',c10:'Add the tens of cents.',d1:'Add the dollars (ones).',d10:'Add the dollars (tens).',d100:'Add the dollars (hundreds).'};
 const moneyCopy=o=>Object.fromEntries(MONEY_DESC.map(p=>[p,o[p]??null]));
 const moneyShownDigit=(place,count)=>place==='c5'?count*5:count;
-const moneyPlanAmount=value=>`${Math.floor(value/100)}.${String(value%100).padStart(2,'0')}`;
+const moneyPlanAmount=value=>`$${Math.floor(value/100)}.${String(value%100).padStart(2,'0')}`;
 function moneyMatToken(place,extra=''){
  const kind=place==='d1'?'one':place.startsWith('d')?'note':'cent';
  return `<span class="strict-money-token strict-money-${kind} strict-money-${place} ${extra}" aria-hidden="true"><b>${MONEY_LABEL[place]}</b></span>`;
@@ -2586,7 +2854,7 @@ For counting, addition, subtraction and word problems, the teacher enters ordina
  explain:['Build a mathematical explanation','Select an addition, equal-groups, fraction or perimeter context. Pupils choose three statement cards in model → operation → conclusion order. One card represents a misconception. Undo lets them revise their reasoning. This is a scaffold for discussion, not automatic grading of free writing.','There are 4 equal groups → each has 6 counters → 4 × 6 = 24.'],
  error:['Identify, explain and correct a misconception','Choose a believable place-value, addition, fraction, time or perimeter error. Pupils first select the reason the claim is wrong, then enter a corrected answer. Both must match. Ask pupils to justify the correction with the diagram. The chosen teacher numbers describe the correct mathematics; the engine constructs the wrong claim.','Read 34 as 43; count only unshaded parts in a fraction denominator; read 3:25 as 3:05; use area when asked for perimeter.'],
 };
-function guide(){const [title,steps,examples]=GUIDE[engine];$('guideContent').innerHTML=`<h3>${E(title)}</h3>${steps.split('\n\n').map(part=>`<p>${E(part)}</p>`).join('')}<p class="guide-note"><strong>Original classroom examples:</strong> ${E(examples)}</p>${engine==='place'?'<p>Interaction reference: <a href="https://limkimsze-maker.github.io/Place-Value-Chart-for-Counting/" target="_blank" rel="noreferrer">Lim Kim Sze’s Place Value Chart for Counting</a> and <a href="https://limkimsze-maker.github.io/P1-Hundred-Chart-and-Flip-Chart-More-Than-Less-Than/" target="_blank" rel="noreferrer">Hundred Chart and Flip Chart: More Than / Less Than</a>.</p>':''}${engine==='numberline'?'<p>Interaction reference: <a href="https://limkimsze-maker.github.io/P3_number_pattern/" target="_blank" rel="noreferrer">Lim Kim Sze’s P3 Number Pattern</a>.</p>':''}${engine==='operations'?'<h3>Pupil practice and teacher demonstration</h3><ol><li><strong>Addition and subtraction:</strong> press <strong>Next Step</strong> to follow the highlighted place and watch the pieces move, rename or cross out. The result digit appears with that same step. After all steps, enter the whole answer and press <strong>Check answer</strong>. A wrong whole answer can be retried. Pause before each step and ask pupils to predict what will happen.</li><li><strong>Multiplication:</strong> tap the highlighted answer box and enter one digit using the keyboard or number keypad. If a carry box is shown above the next column, fill it too. Press <strong>Check Digit</strong>. The current place advances only when both entries are correct. An empty or wrong carry stays on that place. The last check completes the product directly. <strong>Simple division grouping:</strong> type the current step’s value and check it.</li><li><strong>P3 division:</strong> follow the Animal Rescue layout. Enter one digit per highlighted box using the keyboard or the number keypad. Complete the quotient, product and next-number boxes for the current place, then press <strong>Check Step</strong>. The discs move from the bank into the matching group rows. Any leftover hundreds or tens become ten times as many smaller discs. Check Step advances one place at a time; the remainder is checked afterwards. Write 0 in the bottom remainder box if there is no remainder. Completed boxes are locked; future boxes wait until their place is highlighted.</li><li>In addition, ten smaller pieces are outlined before they become one larger piece in the next column. In subtraction, one larger piece becomes ten smaller pieces in the adjacent column. Watch the mat and the written regrouped or renamed amounts together.</li><li>Addition and subtraction reveal each result digit as its place is demonstrated. In multiplication, pupils fill the current result digit and outgoing carry together. Future result digits stay unknown. P3 division uses the highlighted quotient, product and next-number boxes.</li><li>For multiplication and P3 division, teachers can press <strong>Teacher: Next</strong> to reveal one step for demonstration. Addition and subtraction use <strong>Next Step</strong> in both views. In P3 division, this fills the current place’s boxes and demonstrates its sharing and exchange. Use <strong>Hide place-value mat</strong> when you want to focus on the written algorithm; showing it again keeps the working. This counts as help in the session summary. Pupil view hides this shortcut.</li><li><strong>Previous step</strong> revisits the working. <strong>Restart steps</strong> returns to the first model. These count as help; the question stays the same.</li><li>Addition and subtraction open a whole-answer check after the demonstrations. Multiplication finishes with its final digit check, as in Uncle Joe. P3 division finishes when the remainder boxes are checked, as in Animal Rescue. Ask pupils to explain why an exchange keeps the value the same.</li></ol><p>In multiplication, each dashed row starts with one copy of the number being multiplied. Future columns keep their rows of individual coloured discs. Completed columns show only the pieces left after regrouping. The carry slot shows pieces moved into the next place; they are added once and disappear from that slot when used. Use <strong>Hide place-value mat</strong> to focus on the written algorithm; show it again without losing entries.</p><p>Interaction references: Lim Kim Sze’s <a href="https://limkimsze-maker.github.io/P1_to_P3_Addition/" target="_blank" rel="noreferrer">addition mat</a>, <a href="https://limkimsze-maker.github.io/P1_to_P3_Subtraction/" target="_blank" rel="noreferrer">subtraction mat</a>, <a href="https://limkimsze-maker.github.io/P3-Uncle-Joe-and-the-Key-of-Product-desktop/" target="_blank" rel="noreferrer">Uncle Joe and the Key of Product</a> and <a href="https://limkimsze-maker.github.io/P3-Long-Division-3D-Animal-Rescue/" target="_blank" rel="noreferrer">Animal Rescue division guide</a>.</p>':''}<h3>Set up an activity</h3><ol><li>Choose the grade preset and task. Presets guide the starting point; follow your school’s scheme of work.</li><li>${engine==='place'&&config.task==='hundred'?'Set your starting number and two more/less amounts. This exploration option stays within 0–100.':'Choose <strong>Fixed numbers</strong> for one example using your exact values, or <strong>Random practice</strong> for 1–20 questions from grade preset ranges. In random mode, only the controls still shown remain fixed.'}</li><li>Press <strong>Generate activity</strong>. Check the preview, including units and question type.</li><li>Use <strong>Pupil view</strong> for a bigger model. In the toolkit, use Expand workspace to hide the engine tabs.</li><li>Model once, let pupils manipulate or inspect the model, and ask for an explanation before checking an answer.</li></ol><h3>What is a downloaded activity?</h3><p>Download activity saves a complete HTML copy of this engine with the settings currently shown in the builder. It runs in a browser offline. It is not a PDF, screenshot, printed worksheet or a saved set of pupil responses.</p><table><tr><th>Your choice</th><th>When opened or restarted</th></tr><tr><td>Fixed numbers</td><td>The same question and diagram values appear.</td></tr><tr><td>Random practice</td><td>The saved task, grade and visible settings stay the same. Fresh questions are generated within the grade preset ranges.</td></tr></table><p><strong>Is the activity the same regardless of when I download?</strong> If the engine version and settings are unchanged, you save the same type of activity. Fixed numbers give the same example. Random practice can produce different numbers each time, even in the same downloaded file. Changing the settings changes the saved activity.</p><p>Old downloaded files do not automatically update when the website improves. Download a fresh copy to get those improvements. You can share the HTML file with colleagues. Pupils need a browser, not an account. This file is standalone HTML; this release does not claim xAPI reporting or SLS package certification.</p><h3>Save settings and feedback</h3><p>Save settings downloads a JSON file containing the setup only. Load settings restores it in the matching engine. JSON is not a runnable activity and contains no pupil results. The session summary counts first-try answers, retries and hints; it is not a class report or a mastery grade. Settings are remembered on this browser when available.</p><h3>Classroom use</h3><p>Choose the matching topic and enter the numbers from your lesson to create an activity for teaching and practice. Grade ranges are teaching presets; use the tasks that match your lesson sequence.</p><p class="guide-note">Created by Lim Kim Sze</p>`;}
+function guide(){const [title,steps,examples]=GUIDE[engine];$('guideContent').innerHTML=`<h3>${E(title)}</h3>${steps.split('\n\n').map(part=>`<p>${E(part)}</p>`).join('')}<p class="guide-note"><strong>Original classroom examples:</strong> ${E(examples)}</p>${engine==='place'?'<p>Interaction reference: <a href="https://limkimsze-maker.github.io/Place-Value-Chart-for-Counting/" target="_blank" rel="noreferrer">Lim Kim Sze’s Place Value Chart for Counting</a> and <a href="https://limkimsze-maker.github.io/P1-Hundred-Chart-and-Flip-Chart-More-Than-Less-Than/" target="_blank" rel="noreferrer">Hundred Chart and Flip Chart: More Than / Less Than</a>.</p>':''}${engine==='numberline'?'<p>Interaction reference: <a href="https://limkimsze-maker.github.io/P3_number_pattern/" target="_blank" rel="noreferrer">Lim Kim Sze’s P3 Number Pattern</a>.</p>':''}${engine==='operations'?'<h3>Pupil practice and teacher demonstration</h3><ol><li><strong>Addition and subtraction:</strong> press <strong>Next Step</strong> to follow the highlighted place and watch the pieces move, rename or cross out. The result digit appears with that same step. After all steps, enter the whole answer and press <strong>Check answer</strong>. A wrong whole answer can be retried. Pause before each step and ask pupils to predict what will happen.</li><li><strong>Multiplication:</strong> tap the highlighted answer box and enter one digit using the keyboard or number keypad. If a carry box is shown above the next column, fill it too. Press <strong>Check Digit</strong>. The current place advances only when both entries are correct. An empty or wrong carry stays on that place. The last check completes the product directly. <strong>Simple division grouping:</strong> type the current step’s value and check it.</li><li><strong>P3 division:</strong> follow the Animal Rescue layout. Enter one digit per highlighted box using the keyboard or the number keypad. Complete the quotient, product and next-number boxes for the current place, then press <strong>Check Step</strong>. The discs move from the bank into the matching group rows. Any leftover hundreds or tens become ten times as many smaller discs. Check Step advances one place at a time; the remainder is checked afterwards. Write 0 in the bottom remainder box if there is no remainder. Completed boxes are locked; future boxes wait until their place is highlighted.</li><li>In addition, ten smaller pieces are outlined before they become one larger piece in the next column. In subtraction, one larger piece becomes ten smaller pieces in the adjacent column. Watch the mat and the written regrouped or renamed amounts together.</li><li>Addition and subtraction reveal each result digit as its place is demonstrated. In multiplication, pupils fill the current result digit and outgoing carry together. Future result digits stay unknown. P3 division uses the highlighted quotient, product and next-number boxes.</li><li>For multiplication and P3 division, teachers can press <strong>Teacher: Next</strong> to reveal one step for demonstration. Addition and subtraction use <strong>Next Step</strong> in both views. In P3 division, this fills the current place’s boxes and demonstrates its sharing and exchange. Use <strong>Hide place-value mat</strong> when you want to focus on the written algorithm; showing it again keeps the working. This counts as help in the session summary. Pupil view hides this shortcut.</li><li><strong>Previous step</strong> revisits the working. <strong>Restart steps</strong> returns to the first model. These count as help; the question stays the same.</li><li>Addition and subtraction open a whole-answer check after the demonstrations. Multiplication finishes with its final digit check, as in Uncle Joe. P3 division finishes when the remainder boxes are checked, as in Animal Rescue. Ask pupils to explain why an exchange keeps the value the same.</li></ol><p>In multiplication, each dashed row starts with one copy of the number being multiplied. Future columns keep their rows of individual coloured discs. Completed columns show only the pieces left after regrouping. The carry slot shows pieces moved into the next place; they are added once and disappear from that slot when used. Use <strong>Hide place-value mat</strong> to focus on the written algorithm; show it again without losing entries.</p><p>Interaction references: Lim Kim Sze’s <a href="https://limkimsze-maker.github.io/P1_to_P3_Addition/" target="_blank" rel="noreferrer">addition mat</a>, <a href="https://limkimsze-maker.github.io/P1_to_P3_Subtraction/" target="_blank" rel="noreferrer">subtraction mat</a>, <a href="https://limkimsze-maker.github.io/P3-Uncle-Joe-and-the-Key-of-Product-desktop/" target="_blank" rel="noreferrer">Uncle Joe and the Key of Product</a> and <a href="https://limkimsze-maker.github.io/P3-Long-Division-3D-Animal-Rescue/" target="_blank" rel="noreferrer">Animal Rescue division guide</a>.</p>':''}<h3>Set up an activity</h3><ol><li>Choose the grade preset and task. Presets guide the starting point; follow your school’s scheme of work.</li><li>${engine==='place'&&config.task==='hundred'?'Set your starting number and two more/less amounts. This exploration option stays within 0–100.':'Choose <strong>Fixed numbers</strong> for one example using your exact values, or <strong>Random practice</strong> for 1–20 questions from grade preset ranges. In random mode, only the controls still shown remain fixed.'}</li><li>Press <strong>Generate activity</strong>. Check the preview, including units and question type.</li><li>Use <strong>Pupil view</strong> for a bigger model. In the toolkit, use Expand workspace to hide the engine tabs.</li><li>Model once, let pupils manipulate or inspect the model, and ask for an explanation before checking an answer.</li></ol><h3>What is a downloaded activity?</h3><p>Download activity saves a complete HTML copy of this engine with the settings currently shown in the builder. It runs in a browser offline. It is not a PDF, screenshot, printed worksheet or a saved set of pupil responses.</p><table><tr><th>Your choice</th><th>When opened or restarted</th></tr><tr><td>Fixed numbers</td><td>The same question and diagram values appear.</td></tr><tr><td>Random practice</td><td>The saved task, grade and visible settings stay the same. Fresh questions are generated within the grade preset ranges.</td></tr></table><p><strong>Is the activity the same regardless of when I download?</strong> If the engine version and settings are unchanged, you save the same type of activity. Fixed numbers give the same example. Random practice can produce different numbers each time, even in the same downloaded file. Changing the settings changes the saved activity.</p><p>Old downloaded files do not automatically update when the website improves. Download a fresh copy to get those improvements. You can share the HTML file with colleagues. Pupils need a browser, not an account. This file is standalone HTML; this release does not claim xAPI reporting or SLS package certification.</p><h3>Save settings and feedback</h3><p>Save settings downloads a JSON file containing the setup only. Load settings restores it in the matching engine. JSON is not a runnable activity and contains no pupil results. The session summary counts first-try answers, retries and hints; it is not a class report or a mastery grade. Settings are remembered on this browser when available.</p><h3>Textbook connection</h3><p>Choose the matching topic and enter the numbers from your lesson to create an original activity in the same mathematical style. No textbook pictures or question wording have been copied. Exact textbook-page alignment has not been verified. This is a toolkit of selected reusable tasks, not a complete P1–P3 course.</p><p>Reference: <a href="https://www.mceducation.com/primary/products/my-pals-are-here-maths-4th-edition" target="_blank" rel="noreferrer">My Pals Are Here! Maths publisher description</a>. Check the <a href="https://www.moe.gov.sg/media/files/primary/92bff26d-b2b4-4535-b868-b8415c744b91.pdf" target="_blank" rel="noreferrer">MOE syllabus</a> and your school’s lesson sequence. Grade ranges are teaching presets; not every syllabus objective is covered.</p><p class="guide-note">Created by Lim Kim Sze</p>`;}
 function addMoneyGuideReferences(){if(engine!=='money')return;const note=document.createElement('p');note.className='guide-note';note.innerHTML='<strong>Projection cue:</strong> each $1 coin has a dark individual outline. Regrouping and borrowing move slowly; the newly renamed coin or note then glows gold so pupils can identify what changed.';const p=document.createElement('p');p.innerHTML='Interaction references: <a href="https://limkimsze-maker.github.io/P2_Counting_Money/" target="_blank" rel="noreferrer">Counting Money</a>, <a href="https://limkimsze-maker.github.io/P2_Money_Conversion/" target="_blank" rel="noreferrer">Money Conversion</a>, <a href="https://limkimsze-maker.github.io/P3_Saving_Quest_Making_Money_Up_To_100/" target="_blank" rel="noreferrer">Saving Quest</a>, <a href="https://limkimsze-maker.github.io/P1_to_P3_Adding_Money/" target="_blank" rel="noreferrer">Adding Money</a>, <a href="https://limkimsze-maker.github.io/P1_to_P3_Subtracting_Money/" target="_blank" rel="noreferrer">Subtracting Money</a> and <a href="https://limkimsze-maker.github.io/P3_Money_Word_Problems/" target="_blank" rel="noreferrer">Money Word Problems</a>.';const setup=[...$('guideContent').querySelectorAll('h3')].find(h=>h.textContent==='Set up an activity');setup?.before(note,p);}
 function addFractionGuideReference(){if(engine!=='fraction')return;const p=document.createElement('p');p.innerHTML='Interaction reference: <a href="https://limkimsze-maker.github.io/P2-P3-Space-Max-and-the-Lost-Fraction-Rocket-Parts/" target="_blank" rel="noreferrer">Space Max and the Lost Fraction Rocket Parts</a>. The topic order and teaching sequence are adapted from Lim Kim Sze’s own interactives.';const setup=[...$('guideContent').querySelectorAll('h3')].find(h=>h.textContent==='Set up an activity');setup?.before(p);}
 function addPlaceGuideNote(){if(engine!=='place')return;const p=document.createElement('p');p.className='guide-note';p.innerHTML='<strong>Starting display:</strong> the place-value cards are placed together first to show the complete number. Press <strong>Put Apart</strong> to separate them into expanded place values. Whenever ten pieces are regrouped, the new disc or base-ten block glows gold so pupils can identify what changed.';$('guideContent').querySelector('h3')?.after(p);}
