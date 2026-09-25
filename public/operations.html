@@ -2146,6 +2146,7 @@ function drawConceptMultiplication(){
     <div class="multip-concept-check-row">
      <button type="button" class="primary" id="conceptMultiplyCheck" ${state.ok?'disabled':''}>Check</button>
      <p id="conceptMultiplyFeedback" class="multip-concept-feedback ${state.ok?'correct':state.feedback?'wrong':''}" role="status" aria-live="polite">${E(state.feedback)}</p>
+     <button type="button" class="primary multip-concept-next" id="conceptMultiplyNext" ${state.ok?'':'hidden'}>${index+1===config.count?'Finish activity →':'Next question →'}</button>
     </div>
    </div>
    ${showAlgorithm?`<div class="multip-concept-algorithm"><h4>Written algorithm · optional preview</h4>${multiplicationStaticAlgorithm(c)}<p>P1 and P2 learn the multiplication concept and tables through models. The formal multiplication algorithm is taught from P3.</p></div>`:''}
@@ -2155,7 +2156,7 @@ function drawConceptMultiplication(){
  $('multipConceptBlocks').onclick=()=>setModel('blocks');
  $('multipConceptDiscs').onclick=()=>setModel('discs');
  $('multipAlgorithmToggle').onclick=()=>{interaction.showMultiplicationAlgorithm=!showAlgorithm;drawConceptMultiplication();};
- const rep=$('repAnswer'),mult=$('multAnswer'),check=$('conceptMultiplyCheck'),feedback=$('conceptMultiplyFeedback');
+ const rep=$('repAnswer'),mult=$('multAnswer'),check=$('conceptMultiplyCheck'),feedback=$('conceptMultiplyFeedback'),next=$('conceptMultiplyNext');
  const clean=input=>{input.value=input.value.replace(/\D/g,'').slice(0,4);};
  [rep,mult].forEach(input=>{input.oninput=()=>{clean(input);input.classList.remove('is-wrong');state[input===rep?'rep':'mult']=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();check.click();}};});
  check.onclick=()=>{
@@ -2167,7 +2168,7 @@ function drawConceptMultiplication(){
    feedback.className='multip-concept-feedback correct';feedback.textContent='Correct!';
    results.push({first:attempts===1&&hints===0,attempts,hints});
    $('feedback').style.color='#24735e';$('feedback').textContent='Correct! '+current.explanation;
-   $('nextButton').hidden=false;$('hintButton').disabled=true;progress();
+   $('nextButton').hidden=true;$('hintButton').disabled=true;if(next)next.hidden=false;progress();
   }else{
    state.ok=false;state.feedback='Try again.';
    rep.classList.toggle('is-wrong',state.rep!==''&&Number(state.rep)!==product);
@@ -2175,7 +2176,8 @@ function drawConceptMultiplication(){
    feedback.className='multip-concept-feedback wrong';feedback.textContent='Try again.';
   }
  };
- requestAnimationFrame(()=>rep?.focus());
+ if(next)next.onclick=()=>{index++;if(index>=config.count)summary();else showQuestion();};
+ requestAnimationFrame(()=>{if(state.ok)next?.focus();else rep?.focus();});
 }
 
 // Uncle Joe and the Key of Product: grouped discs and paired digit/carry checking.
