@@ -378,7 +378,13 @@ body.pupil main{display:block;height:100dvh;padding:0}
 body.pupil .activity{position:relative;width:100%;height:100dvh;max-width:none;margin:0;border:0;border-radius:0}
 body.pupil .activity-bar{position:absolute;z-index:20;top:8px;left:10px;padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:#fffffff2}
 body.pupil #previewLabel{display:none}
-body.pupil #questionView{height:100%;overflow:auto}
+body.pupil #questionView{height:100%;overflow:auto;max-width:none;width:100%;align-self:stretch}
+body.pupil .question-block{width:100%;max-width:none}
+body.pupil .diagram{width:auto;max-width:none;margin-left:10px;margin-right:10px}
+body.pupil #answerForm{width:100%;max-width:none}
+body.pupil.place-engine .diagram{margin:4px 10px;padding:10px 14px}
+body.pupil.place-engine .pv-board{width:100%;max-width:none}
+body.pupil.place-engine .place-value-learning,body.pupil.place-engine .counting-chart,body.pupil.place-engine .diagram>div{max-width:none}
 body.pupil .question-block{padding:12px 130px 6px;text-align:center}
 body.pupil .activity-bottom,body.pupil footer{display:none}
 
