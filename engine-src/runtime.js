@@ -327,8 +327,8 @@ function showP1OperationReference(c){
 function timeLevelSummary(grade){return grade===1?'P1: read and set clocks in five-minute intervals, distinguish a.m. / p.m., and work with 30 min and 1 h intervals.':grade===2?'P2: read and set clocks to the nearest minute, read a.m. / p.m. from picture clues, measure duration in h and min, and convert h and min ↔ min.':'P3: read clocks to the nearest minute with a.m. / p.m. picture clues, then work with seconds, elapsed / start / end time, and 12-hour / 24-hour time.';}
 function populate(c){draft={...c};$('grade').replaceChildren();for(const g of engine==='area'?[3]:engine==='fraction'?[2,3]:[1,2,3]){const o=document.createElement('option');o.value=g;o.textContent='Primary '+g;$('grade').append(o);}$('grade').value=c.grade;$('task').replaceChildren();for(const [v,l]of tasks(engine,c.grade)){const o=document.createElement('option');o.value=v;o.textContent=l;$('task').append(o);}$('task').value=c.task;$('mode').value=c.mode;$('count').value=c.mode==='fixed'?8:c.count;populateFields();}
 function populateFields(){draft.mode=$('mode').value;draft.grade=Number($('grade').value);draft.task=$('task').value;$('engineFields').replaceChildren();const exploring=engine==='place'&&draft.task==='hundred',referenceMoneyWord=engine==='money'&&draft.task==='word',referenceP1Operation=Boolean(p1OperationReference({...draft,engine})),mixedOperations=engine==='operations'&&draft.task==='mixed-add-sub',random=draft.mode==='random';$('mode').closest('.field').hidden=exploring||referenceMoneyWord||referenceP1Operation||mixedOperations;$('countField').hidden=!random||exploring||referenceMoneyWord||referenceP1Operation;
- const kept={operations:['skill','representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category'],time:['durationDirection','secondsDirection']};
- for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else if(f.type==='time24'){input.type='text';input.inputMode='numeric';input.pattern='[0-9]{4}';input.maxLength=4;input.placeholder='HHMM';input.autocomplete='off';input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'').slice(0,4);draft[f.key]=input.value;});}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='operations'&&f.key==='skill'){Object.assign(draft,operationSkillExample(draft.grade,draft.task,draft.skill));populateFields();}else if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode'||engine==='time'&&['durationDirection','secondsDirection'].includes(f.key))populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='$';symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else if(f.type==='time24'){const timeWrap=document.createElement('div');timeWrap.className='time24-setting';const unit=document.createElement('span');unit.textContent='h';unit.setAttribute('aria-hidden','true');timeWrap.append(input,unit);wrap.append(timeWrap);}else wrap.append(input);$('engineFields').append(wrap);}
+ const kept={operations:['skill','multiplicationFocus','multiplicationColumnFocus','representation'],place:['place','b','representation'],numberline:draft.task==='pattern'?['patternType','b','b2','missing']:['b'],money:draft.task==='convert'?['direction']:draft.task==='word'?['wordType','format']:draft.task==='make'?['format']:['format'],fraction:['factor','orderMode'],bar:['context'],graph:['key','labels','graphType','category'],time:['durationDirection','secondsDirection']};
+ for(const f of fields(draft)){if(random&&!(kept[engine]||[]).includes(f.key))continue;const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.htmlFor='setting-'+f.key;label.textContent=f.label;const input=document.createElement(f.type==='select'?'select':'input');input.id=label.htmlFor;const currency=teacherMoneyField(draft,f);if(f.type==='select'){for(const [v,l]of f.options){const o=document.createElement('option');o.value=v;o.textContent=l;input.append(o);}}else if(currency){input.type='text';input.inputMode='decimal';input.dataset.moneyDollars='true';input.placeholder='12.75';input.autocomplete='off';}else if(f.type==='time24'){input.type='text';input.inputMode='numeric';input.pattern='[0-9]{4}';input.maxLength=4;input.placeholder='HHMM';input.autocomplete='off';input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'').slice(0,4);draft[f.key]=input.value;});}else{input.type=f.type;if(f.type==='number'){input.min=f.min;input.max=f.max;input.step=f.step||1;}else input.maxLength=f.maxLength;}input.value=currency?teacherMoneyValue(draft[f.key]):draft[f.key];input.addEventListener('change',()=>{if(currency){try{draft[f.key]=teacherMoneyCents(input.value,f.label);}catch{}}else draft[f.key]=input.value;if(engine==='operations'&&f.key==='skill'){Object.assign(draft,operationSkillExample(draft.grade,draft.task,draft.skill));populateFields();}else if(engine==='operations'&&f.key==='multiplicationFocus'){Object.assign(draft,multiplicationFocusExample(draft.grade,draft.multiplicationFocus));populateFields();}else if(engine==='operations'&&f.key==='multiplicationColumnFocus'){Object.assign(draft,multiplicationColumnExample(draft.multiplicationColumnFocus));populateFields();}else if(engine==='numberline'&&f.key==='patternType'||engine==='money'&&f.key==='direction'||engine==='fraction'&&f.key==='orderMode'||engine==='time'&&['durationDirection','secondsDirection'].includes(f.key))populateFields();});wrap.append(label);if(currency){const moneyWrap=document.createElement('div');moneyWrap.className='currency-setting';const symbol=document.createElement('span');symbol.textContent='$';symbol.setAttribute('aria-hidden','true');moneyWrap.append(symbol,input);wrap.append(moneyWrap);}else if(f.type==='time24'){const timeWrap=document.createElement('div');timeWrap.className='time24-setting';const unit=document.createElement('span');unit.textContent='h';unit.setAttribute('aria-hidden','true');timeWrap.append(input,unit);wrap.append(timeWrap);}else wrap.append(input);$('engineFields').append(wrap);}
  const levelNote=engine==='time'?timeLevelSummary(draft.grade)+' ':'';$('randomNote').textContent=levelNote+(referenceP1Operation?'This follows your original P1 teaching sequence inside the Primary Maths Studio style, step by step.':exploring?'Explore numbers from 0 to 100. Generate restores your starting number and both button amounts.':random?'New questions use this grade’s preset ranges. The settings shown here stay fixed; other numbers or shapes vary. Generate again or reopen the downloaded file for a new practice set.':'Your chosen numbers make one fixed example. Reopening or restarting keeps that same example.');
 }
 function builderTab(which){const setup=which==='setup';$('setupPanel').hidden=!setup;$('examplePanel').hidden=setup;$('setupTab').setAttribute('aria-selected',setup);$('exampleTab').setAttribute('aria-selected',!setup);}
@@ -448,7 +448,14 @@ function operationAlgorithm(state,step){
  const original=order.map(i=>`<span class="algorithm-cell ${step?.focus===i?'active-cell':''} ${c.task==='subtract'&&state.revised[i]!==null?'old-digit':''}">${operand===0&&i===0?0:digit(operand,i)}</span>`).join('');
  return `<div class="written-algorithm ${division?'division-algorithm':''}" style="--places:${order.length}"><div class="algorithm-head">${order.map(i=>`<span>${plan.ps[i]===1?'O':plan.ps[i]===10?'T':plan.ps[i]===100?'H':plan.ps[i]===1000?'Th':'TTh'}</span>`).join('')}</div>${division?`<div class="algorithm-row quotient-row">${result}</div><div class="algorithm-row division-roof"><b class="algorithm-sign">${c.b}</b>${original}</div>${working}${state.remainder===null?'':`<p class="division-remainder">Remainder: ${state.remainder}</p>`}`:`${regroupRow}<div class="algorithm-row">${original}</div><div class="algorithm-row"><b class="algorithm-sign">${c.task==='add'?'+':c.task==='subtract'?'−':'×'}</b>${numberRow(['add','subtract'].includes(c.task)?c.b:plan.multiplier)}</div><div class="algorithm-row algorithm-answer">${result}</div>`}</div>`;
 }
-function lockOperationAnswer(){const complete=interaction.operationComplete;document.body.classList.toggle('operation-complete',complete);$('answerForm').hidden=!complete;for(const input of $('answerFields').querySelectorAll('input'))input.disabled=!complete||solved;$('checkButton').disabled=!complete||solved;}
+function lockOperationAnswer(){
+ const conceptMultiply=engine==='operations'&&current?.data?.task==='multiply'&&current.data.grade<=2;
+ const complete=conceptMultiply||interaction.operationComplete;
+ document.body.classList.toggle('operation-complete',complete);
+ $('answerForm').hidden=!complete;
+ for(const input of $('answerFields').querySelectorAll('input'))input.disabled=!complete||solved;
+ $('checkButton').disabled=!complete||solved;
+}
 function advanceOperation(reveal=false){
  const step=interaction.plan.steps[interaction.step];if(!step||solved)return;
  if(!reveal&&!checkOperationStep(step,$('operationInput').value)){attempts++;$('stepFeedback').textContent='Try this step again. Count the discs in the highlighted place.';$('stepFeedback').className='step-feedback retry';return;}
@@ -554,6 +561,7 @@ function drawSmallDivision(){
 function drawOperation(){
  if(interaction.plan.division){drawDivision();return;}
  if(['add','subtract'].includes(current.data.task)){drawAddSub();return;}
+ if(current.data.task==='multiply'&&current.data.grade<=2){drawConceptMultiplication();return;}
  if(['multiply','multiply-column'].includes(current.data.task)){drawMultiplication();return;}
  if(interaction.plan.smallDiv){drawSmallDivision();return;}
  const c=current.data,plan=interaction.plan,pos=interaction.step,step=plan.steps[pos],state=step?step.before:plan.final,previous=pos?plan.steps[pos-1]:null,host=$('diagram');interaction.operationComplete=!step;
@@ -713,9 +721,71 @@ async function advanceAddSub(){
  }finally{run.addSubBusy=false;}
 }
 window.addEventListener('resize',()=>{if(current&&['add','subtract'].includes(current.data.task)&&engine==='operations')requestAnimationFrame(fitAddSubPiles);});
+// P1/P2 multiplication is model-first. The written algorithm is optional and hidden initially.
+let multiplicationSVGId=0;
+function multiplicationBlockPiece(p,cls=''){
+ const svg=BASE_TEN_SVGS[p]||BASE_TEN_SVGS[1],prefix='mult-block-'+(++multiplicationSVGId)+'-';
+ const content=svg.replace(/id="([^"]+)"/g,(_m,id)=>`id="${prefix}${id}"`).replace(/url\(#([^)]*)\)/g,(_m,id)=>`url(#${prefix}${id})`);
+ return `<span class="multip-concept-piece multip-concept-block ${cls}" data-place="${p}">${content}</span>`;
+}
+function multiplicationDiscPiece(p,cls=''){return `<span class="multip-concept-piece multip-concept-disc ${cls}" data-place="${p}">${p}</span>`;}
+function multiplicationConceptQuantity(value,representation){
+ const tens=Math.floor(value/10),ones=value%10,piece=p=>representation==='blocks'?multiplicationBlockPiece(p):multiplicationDiscPiece(p);
+ return `<div class="multip-concept-quantity" aria-label="${E(String(value))}">${Array.from({length:tens},()=>piece(10)).join('')}${Array.from({length:ones},()=>piece(1)).join('')}</div>`;
+}
+function multiplicationStaticAlgorithm(c){
+ return `<div class="multip-static-algorithm" aria-label="${c.a} times ${c.b} equals ${c.a*c.b}"><div>${c.a}</div><div><span>×</span>${c.b}</div><div class="multip-static-line"></div><strong>${c.a*c.b}</strong></div>`;
+}
+function drawConceptMultiplication(){
+ const c=current.data,host=$('diagram'),representation=interaction.multiplicationRepresentation||c.representation||'blocks';
+ interaction.multiplicationRepresentation=representation;interaction.operationComplete=true;
+ const showAlgorithm=Boolean(interaction.showMultiplicationAlgorithm);
+ const groups=Array.from({length:c.a},(_,i)=>`<div class="multip-concept-group"><strong>Group ${i+1}</strong>${multiplicationConceptQuantity(c.b,representation)}</div>`).join('');
+ const repeated=Array.from({length:c.a},()=>c.b).join(' + ');
+ const focusLabel=multiplicationFocusOptions(c.grade).find(([key])=>key===c.multiplicationFocus)?.[1]||'Multiplication';
+ const emphasis=c.multiplicationFocus==='p1-repeated'
+  ?'<strong>Repeated addition</strong>'
+  :c.multiplicationFocus==='p1-equal'
+    ?'<strong>Equal groups</strong>'
+    :`<strong>${E(focusLabel)}</strong>`;
+ host.innerHTML=`<div class="operation-workspace multip-concept-workspace">
+  <div class="operation-top">
+   <div class="step-heading"><span>P${c.grade} multiplication</span><h3>${emphasis}</h3></div>
+   <div class="multip-concept-options" role="group" aria-label="Multiplication display">
+    <button type="button" id="multipConceptBlocks" aria-pressed="${representation==='blocks'}">Base-ten set</button>
+    <button type="button" id="multipConceptDiscs" aria-pressed="${representation==='discs'}">Place-value discs</button>
+    <button type="button" id="multipAlgorithmToggle" aria-pressed="${showAlgorithm}">${showAlgorithm?'Hide Algorithm':'Show Algorithm'}</button>
+   </div>
+  </div>
+  <div class="multip-concept-main ${showAlgorithm?'algorithm-shown':''}">
+   <div class="multip-concept-model">
+    <p class="multip-concept-cue"><strong>${c.a} equal groups</strong> with <strong>${c.b}</strong> in each group.</p>
+    <div class="multip-concept-groups" style="--groups:${Math.min(c.a,5)}">${groups}</div>
+    <div class="multip-concept-bridge">
+     <div><span>Repeated addition</span><strong>${E(repeated)} = ${c.a*c.b}</strong></div>
+     <div><span>Multiplication sentence</span><strong>${c.a} × ${c.b} = ${c.a*c.b}</strong></div>
+    </div>
+   </div>
+   ${showAlgorithm?`<div class="multip-concept-algorithm"><h4>Written algorithm · optional preview</h4>${multiplicationStaticAlgorithm(c)}<p>P1 and P2 learn the multiplication concept and tables through models. The formal multiplication algorithm is taught from P3.</p></div>`:''}
+  </div>
+ </div>`;
+ const setModel=which=>{interaction.multiplicationRepresentation=which;c.representation=which;config.representation=which;draft.representation=which;if($('setting-representation'))$('setting-representation').value=which;drawConceptMultiplication();};
+ $('multipConceptBlocks').onclick=()=>setModel('blocks');
+ $('multipConceptDiscs').onclick=()=>setModel('discs');
+ $('multipAlgorithmToggle').onclick=()=>{interaction.showMultiplicationAlgorithm=!showAlgorithm;drawConceptMultiplication();};
+ requestAnimationFrame(()=>host.querySelector('#answer1')?.focus());
+}
+
 // Uncle Joe and the Key of Product: grouped discs and paired digit/carry checking.
 function multiplicationPile(n,p,label){
- return `<div class="multip-pile" data-place="${p}" aria-label="${E(label||placeQuantity(n,p))}">${Array.from({length:n},()=>`<span class="multip-disc" data-place="${p}">${p}</span>`).join('')}${n?'':'<span class="multip-empty" aria-hidden="true">0</span>'}</div>`;
+ const representation=interaction.multiplicationRepresentation||current.data.representation||'discs';
+ const piece=()=>{
+  if(representation!=='blocks')return `<span class="multip-disc" data-place="${p}">${p}</span>`;
+  const svg=BASE_TEN_SVGS[p]||BASE_TEN_SVGS[1],prefix='multip-live-'+(++multiplicationSVGId)+'-';
+  const content=svg.replace(/id="([^"]+)"/g,(_m,id)=>`id="${prefix}${id}"`).replace(/url\(#([^)]*)\)/g,(_m,id)=>`url(#${prefix}${id})`);
+  return `<span class="multip-disc multip-block" data-place="${p}">${content}</span>`;
+ };
+ return `<div class="multip-pile" data-place="${p}" aria-label="${E(label||placeQuantity(n,p))}">${Array.from({length:n},piece).join('')}${n?'':'<span class="multip-empty" aria-hidden="true">0</span>'}</div>`;
 }
 function fitMultiplicationPiles(){
  $('diagram').querySelectorAll('.multip-pile').forEach(pile=>{
@@ -748,7 +818,8 @@ function drawMultiplication(){
   const rows=done?`<div class="multip-leftovers">${multiplicationPile(state.result[i],p)}</div>`:`<div class="multip-groups" style="--groups:${plan.multiplier}">${Array.from({length:plan.multiplier},(_,g)=>`<div class="multip-group">${multiplicationPile(base,p,`Group ${g+1}: ${placeQuantity(base,p)}`)}</div>`).join('')}</div>`;
   return `<div class="multip-column ${step?.focus===i?'multip-active':''}" data-place="${p}"><div class="multip-place">${E(placeName(p))}</div><div class="multip-carry-slot" aria-label="Regrouped ${E(placeName(p))}">${state.carry[i]?multiplicationPile(state.carry[i],p):''}</div>${rows}</div>`;
  }).join('');
- host.innerHTML=`<div class="operation-workspace multip-workspace"><div class="operation-top"><div class="step-heading"><span>${step?`Step ${pos+1} / ${plan.steps.length}`:'Completed'}</span><h3>${step?E(step.title):'Product complete!'}</h3></div><button type="button" id="multipMatToggle">${interaction.hideMultiplicationMat?'Show':'Hide'} place-value mat</button></div><div class="multip-main ${interaction.hideMultiplicationMat?'multip-mat-hidden':''}"><div class="multip-model"><p class="multip-caption">${plan.multiplier} equal groups · each row starts with ${plan.multiplicand}</p><div class="multip-mat" style="--places:${order.length}">${columns}</div>${current.data.task==='multiply'?conceptNumberSentence(current.data):''}</div><div class="multip-writing"><h4>Multiplication algorithm</h4>${multiplicationAlgorithm(state,step)}${step?'<p class="multip-entry-note">Enter the highlighted answer digit and carry digit, when shown.</p>':''}</div></div><div class="operation-controls multip-controls">${step?`<p class="multip-prompt">${E(step.prompt)}</p><div class="multip-controls-layout"><div class="multip-keypad-panel"><div class="multip-keypad-help">Tap a highlighted box, then a number</div><div class="multip-keypad" role="group" aria-label="Number keypad">${[1,2,3,4,5,6,7,8,9,0].map(n=>`<button type="button" data-multip-digit="${n}">${n}</button>`).join('')}<button type="button" id="multipErase" aria-label="Erase digit">⌫</button><button type="button" id="multipClear">Del</button></div></div><div class="step-actions"><button type="button" class="primary" id="operationNext">Check Digit</button><button type="button" class="teacher-only" id="teacherNext">Teacher: Next ▶</button><button type="button" id="operationHelp">Help me</button></div></div><p id="stepFeedback" class="step-feedback" role="status" aria-live="polite"></p>`:''}<div class="operation-rewind"><button type="button" id="operationBack" ${pos===0||solved?'disabled':''}>Previous step</button><button type="button" id="operationReset" ${pos===0||solved?'disabled':''}>Restart steps</button></div></div></div>`;
+ const representation=interaction.multiplicationRepresentation||current.data.representation||'discs';interaction.multiplicationRepresentation=representation;
+ host.innerHTML=`<div class="operation-workspace multip-workspace"><div class="operation-top"><div class="step-heading"><span>${step?`Step ${pos+1} / ${plan.steps.length}`:'Completed'}</span><h3>${step?E(step.title):'Product complete!'}</h3></div><div class="multip-model-options" role="group" aria-label="Multiplication model"><button type="button" id="multipBlocks" aria-pressed="${representation==='blocks'}">Base-ten set</button><button type="button" id="multipDiscs" aria-pressed="${representation==='discs'}">Place-value discs</button><button type="button" id="multipMatToggle">${interaction.hideMultiplicationMat?'Show':'Hide'} place-value mat</button></div></div><div class="multip-main ${interaction.hideMultiplicationMat?'multip-mat-hidden':''}"><div class="multip-model"><p class="multip-caption">${plan.multiplier} equal groups · each row starts with ${plan.multiplicand}</p><div class="multip-mat" style="--places:${order.length}">${columns}</div>${current.data.task==='multiply'?conceptNumberSentence(current.data):''}</div><div class="multip-writing"><h4>Multiplication algorithm</h4>${multiplicationAlgorithm(state,step)}${step?'<p class="multip-entry-note">Enter the highlighted answer digit and carry digit, when shown.</p>':''}</div></div><div class="operation-controls multip-controls">${step?`<p class="multip-prompt">${E(step.prompt)}</p><div class="multip-controls-layout"><div class="multip-keypad-panel"><div class="multip-keypad-help">Tap a highlighted box, then a number</div><div class="multip-keypad" role="group" aria-label="Number keypad">${[1,2,3,4,5,6,7,8,9,0].map(n=>`<button type="button" data-multip-digit="${n}">${n}</button>`).join('')}<button type="button" id="multipErase" aria-label="Erase digit">⌫</button><button type="button" id="multipClear">Del</button></div></div><div class="step-actions"><button type="button" class="primary" id="operationNext">Check Digit</button><button type="button" class="teacher-only" id="teacherNext">Teacher: Next ▶</button><button type="button" id="operationHelp">Help me</button></div></div><p id="stepFeedback" class="step-feedback" role="status" aria-live="polite"></p>`:''}<div class="operation-rewind"><button type="button" id="operationBack" ${pos===0||solved?'disabled':''}>Previous step</button><button type="button" id="operationReset" ${pos===0||solved?'disabled':''}>Restart steps</button></div></div></div>`;
  if(step){
   const inputs=step.inputs.map(f=>host.querySelector(`[data-field="${f.key}"]`));let active=inputs[0];
   const select=input=>{inputs.forEach(i=>i.classList.remove('multip-selected'));active=input;if(active)active.classList.add('multip-selected');};
@@ -760,6 +831,8 @@ function drawMultiplication(){
   $('multipErase').onclick=()=>{if(!active||active.disabled)return;if(!active.value)select(inputs[Math.max(0,inputs.indexOf(active)-1)]);active.value='';};
   $('operationNext').onclick=()=>advanceMultiplication();$('teacherNext').onclick=()=>advanceMultiplication(true);$('operationHelp').onclick=()=>{hints++;$('stepFeedback').className='step-feedback';$('stepFeedback').textContent=step.equation;};
  }
+ const setMultipModel=which=>{if(interaction.multiplicationBusy)return;interaction.multiplicationRepresentation=which;current.data.representation=which;config.representation=which;draft.representation=which;if($('setting-representation'))$('setting-representation').value=which;drawMultiplication();};
+ $('multipBlocks').onclick=()=>setMultipModel('blocks');$('multipDiscs').onclick=()=>setMultipModel('discs');
  $('multipMatToggle').onclick=()=>{interaction.hideMultiplicationMat=!interaction.hideMultiplicationMat;host.querySelector('.multip-main').classList.toggle('multip-mat-hidden',interaction.hideMultiplicationMat);$('multipMatToggle').textContent=(interaction.hideMultiplicationMat?'Show':'Hide')+' place-value mat';requestAnimationFrame(fitMultiplicationPiles);};
  $('operationBack').onclick=()=>{if(pos>0&&!solved){interaction.step--;hints++;drawOperation();lockOperationAnswer();}};
  $('operationReset').onclick=()=>{if(!solved){interaction.step=0;hints++;drawOperation();lockOperationAnswer();}};
@@ -777,7 +850,7 @@ async function animateMultiplicationRegroup(run,step){
  const needed=step.carryOut*10;
  if(source.length<needed)return;
  run.multiplicationBusy=true;
- const controls=['operationNext','teacherNext','operationHelp','operationBack','operationReset','multipMatToggle','multipClear','multipErase'].map(id=>$(id)).filter(Boolean);
+ const controls=['operationNext','teacherNext','operationHelp','operationBack','operationReset','multipBlocks','multipDiscs','multipMatToggle','multipClear','multipErase'].map(id=>$(id)).filter(Boolean);
  controls.forEach(el=>el.disabled=true);
  host.querySelectorAll('[data-multip-digit],.multip-entry').forEach(el=>el.disabled=true);
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,moveMs=reduced?0:340,betweenMs=reduced?0:70,convertMs=reduced?0:900,pauseMs=reduced?0:650;
