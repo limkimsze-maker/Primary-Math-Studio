@@ -1637,30 +1637,97 @@ async function moveAddSubToken(source,target,p,duration=500){
  const to=token.getBoundingClientRect(),ghost=token.cloneNode(true);ghost.classList.add('addsub-ghost');ghost.style.cssText=`position:fixed;left:0;top:0;width:${to.width}px;height:${to.height}px;font-size:${getComputedStyle(token).fontSize};visibility:visible;z-index:9999`;document.body.append(ghost);
  try{await ghost.animate([{transform:`translate(${from.left}px,${from.top}px) scale(.8)`},{transform:`translate(${to.left}px,${to.top}px) scale(1)`}],{duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:duration,easing:'ease-in-out',fill:'forwards'}).finished;}catch{}finally{ghost.remove();token.style.visibility='';}
 }
+function addSubPause(ms){
+ return new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:ms));
+}
+async function addSubPulse(tokens,duration=900){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ await Promise.all(tokens.map((token,index)=>{
+  try{return token.animate(
+   [{transform:'scale(1)',filter:'brightness(1)'},{transform:'scale(1.13)',filter:'brightness(1.18)',offset:.5},{transform:'scale(1)',filter:'brightness(1)'}],
+   {duration,delay:index*35,easing:'ease-in-out'}
+  ).finished;}catch{return Promise.resolve();}
+ }));
+}
 async function advanceAddSub(){
  const run=interaction,step=run.plan.steps[run.step];if(!step||solved||run.addSubBusy)return;
  run.addSubBusy=true;$('diagram').querySelectorAll('button').forEach(b=>b.disabled=true);$('hint').hidden=true;
  try{
-  const i=step.focus,p=run.plan.ps[i],top=$(`addsub-top-${i}`);
+  const i=step.focus,p=run.plan.ps[i],top=$(`addsub-top-${i}`),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(step.kind==='addition-place'){
    const lower=$(`addsub-lower-${i}`),pieces=Array.from(lower.querySelectorAll('.addsub-token'));
-   await Promise.all(pieces.map(t=>moveAddSubToken(t,top,p)));
-   if(interaction!==run)return;pieces.forEach(t=>t.remove());
+   if(pieces.length)$('stepFeedback').textContent='Move the second number into the working column, one counter at a time.';
+   for(let j=0;j<pieces.length;j++){
+    const token=pieces[j];
+    await moveAddSubToken(token,top,p,reduced?0:520);
+    if(interaction!==run)return;
+    token.remove();
+    $('stepFeedback').textContent=`Combined ${j+1} of ${pieces.length} ${placeName(p)}.`;
+    await addSubPause(110);
+   }
    if(step.carryOut){
-    const ten=Array.from(top.querySelectorAll('.addsub-token')).slice(-10);ten.forEach(t=>t.classList.add('addsub-bundled'));
-    const next=$(`addsub-top-${i+1}`);$('stepFeedback').textContent=`Rename ${placeQuantity(10,p)} as ${placeQuantity(1,run.plan.ps[i+1])}.`;
-    await moveAddSubToken(ten[0],next,run.plan.ps[i+1],1900);await new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:900));if(interaction!==run)return;ten.forEach(t=>t.remove());
+    const ten=Array.from(top.querySelectorAll('.addsub-token')).slice(-10);
+    ten.forEach(t=>t.classList.add('addsub-bundled'));
+    $('stepFeedback').textContent=`There are 10 ${placeName(p)}. Group these 10 together before regrouping.`;
+    await addSubPulse(ten,1050);
+    await addSubPause(350);
+    if(interaction!==run)return;
+    const next=$(`addsub-top-${i+1}`),nextPlace=run.plan.ps[i+1];
+    $('stepFeedback').textContent=`10 ${placeName(p)} become 1 ${placeName(nextPlace).replace(/s$/,'')}. Watch the new counter move to the next column.`;
+    const movePromise=moveAddSubToken(ten[0],next,nextPlace,reduced?0:2200);
+    const collapsePromises=ten.map((t,index)=>{
+     if(reduced)return Promise.resolve();
+     try{return t.animate(
+      [{opacity:1,transform:'scale(1)'},{opacity:.9,transform:'scale(1.08)',offset:.25},{opacity:.22,transform:'scale(.72)'}],
+      {duration:1750,delay:index*35,easing:'ease-in-out',fill:'forwards'}
+     ).finished;}catch{return Promise.resolve();}
+    });
+    await Promise.all([movePromise,...collapsePromises]);
+    if(interaction!==run)return;
+    ten.forEach(t=>t.remove());
+    $('stepFeedback').textContent=`Regrouped: 10 ${placeName(p)} → 1 ${placeName(nextPlace).replace(/s$/,'')}.`;
+    await addSubPause(650);
    }
   }else if(step.kind==='exchange'){
-   const donor=top.querySelector('.addsub-token'),target=$(`addsub-top-${step.target}`);$('stepFeedback').textContent=step.prompt;
-   await Promise.all(Array.from({length:10},()=>moveAddSubToken(donor,target,run.plan.ps[step.target],1900)));await new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:900));
-   if(interaction!==run)return;donor.remove();
+   const donor=top.querySelector('.addsub-token'),target=$(`addsub-top-${step.target}`),targetPlace=run.plan.ps[step.target],sourceName=placeName(p).replace(/s$/,''),targetName=placeName(targetPlace);
+   if(!donor)return;
+   donor.classList.add('addsub-bundled');
+   $('stepFeedback').textContent=`Exchange 1 ${sourceName} for 10 ${targetName}. First, focus on the ${sourceName} being exchanged.`;
+   await addSubPulse([donor],1100);
+   await addSubPause(350);
+   for(let j=1;j<=10;j++){
+    if(interaction!==run)return;
+    $('stepFeedback').textContent=`1 ${sourceName} → ${j} of 10 ${targetName}. Watch each new counter appear.`;
+    await moveAddSubToken(donor,target,targetPlace,reduced?0:430);
+    await addSubPause(75);
+   }
+   if(!reduced){
+    try{await donor.animate(
+     [{opacity:1,transform:'scale(1)'},{opacity:.3,transform:'scale(.65)'}],
+     {duration:700,easing:'ease-in',fill:'forwards'}
+    ).finished;}catch{}
+   }
+   donor.remove();
+   $('stepFeedback').textContent=`Exchange complete: 1 ${sourceName} = 10 ${targetName}. The total value has not changed.`;
+   await addSubPause(700);
   }else{
    const pieces=Array.from(top.querySelectorAll('.addsub-token')).slice(-step.amount);
-   if(step.amount)await Promise.all(pieces.map(async t=>{t.classList.add('addsub-crossed');try{await t.animate([{opacity:1},{opacity:1,offset:.7},{opacity:0}],{duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:800,fill:'forwards'}).finished;}catch{}}));
-   if(interaction!==run)return;if(step.amount)pieces.forEach(t=>t.remove());
+   if(step.amount)$('stepFeedback').textContent=`Take away ${step.amount} ${placeName(p)} one at a time.`;
+   for(let j=0;j<pieces.length;j++){
+    const t=pieces[j];t.classList.add('addsub-crossed');
+    if(!reduced){
+     try{await t.animate(
+      [{opacity:1,transform:'scale(1)'},{opacity:1,transform:'scale(1.08)',offset:.45},{opacity:0,transform:'scale(.78)'}],
+      {duration:520,easing:'ease-in-out',fill:'forwards'}
+     ).finished;}catch{}
+    }
+    t.remove();
+    $('stepFeedback').textContent=`Taken away ${j+1} of ${pieces.length} ${placeName(p)}.`;
+    await addSubPause(90);
+   }
   }
-  if(interaction!==run)return;run.step++;drawOperation();lockOperationAnswer();
+  if(interaction!==run)return;
+  run.step++;drawOperation();lockOperationAnswer();
  }finally{run.addSubBusy=false;}
 }
 window.addEventListener('resize',()=>{if(current&&['add','subtract'].includes(current.data.task)&&engine==='operations')requestAnimationFrame(fitAddSubPiles);});
