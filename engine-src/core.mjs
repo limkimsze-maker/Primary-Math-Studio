@@ -62,7 +62,7 @@ export function operationSkillMatches(grade,task,skill,a,b){
    case 'p2-add-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[1]);
    case 'p2-add-ones-tens':return between(a,100,999)&&between(b,100,999)&&a+b<=999&&opSame(carries,[0,1]);
    case 'p2-add-1000':return between(a,100,999)&&between(b,100,999)&&a+b===1000;
-   case 'p2-add-mixed':return between(a,100,999)&&between(b,1,999)&&a+b<=1000;
+   case 'p2-add-mixed':return between(a,10,999)&&between(b,1,999)&&a+b<=1000;
    case 'p3-add-revision':return between(a,100,999)&&between(b,100,999)&&a+b<=1000;
    case 'p3-add-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&a+b<=9999&&no();
    case 'p3-add-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&a+b<=9999&&no();
@@ -77,7 +77,7 @@ export function operationSkillMatches(grade,task,skill,a,b){
    case 'p3-add-two':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&carries.length===2&&carries.every(i=>i<3);
    case 'p3-add-three':return between(a,1000,9999)&&between(b,1000,9999)&&a+b<=9999&&opSame(carries,[0,1,2]);
    case 'p3-add-10000':return between(a,1000,9999)&&between(b,1000,9999)&&a+b===10000;
-   case 'p3-add-mixed':return between(a,1000,9999)&&between(b,1,9999)&&a+b<=10000;
+   case 'p3-add-mixed':return between(a,100,9999)&&between(b,1,9999)&&a+b<=10000;
   }
  }
  if(task==='subtract'){
@@ -102,7 +102,7 @@ export function operationSkillMatches(grade,task,skill,a,b){
    case 'p2-sub-two':return between(a,100,999)&&between(b,100,999)&&direct(2);
    case 'p2-sub-zero':return between(a,100,999)&&between(b,1,999)&&oneZero;
    case 'p2-sub-1000':return a===1000&&between(b,1,999);
-   case 'p2-sub-mixed':return between(a,100,1000)&&between(b,1,999);
+   case 'p2-sub-mixed':return between(a,10,1000)&&between(b,1,999);
    case 'p3-sub-revision':return between(a,100,999)&&between(b,100,999);
    case 'p3-sub-4d1-no':return between(a,1000,9999)&&between(b,1,9)&&no();
    case 'p3-sub-tens-no':return between(a,1000,9999)&&between(b,10,90)&&b%10===0&&no();
@@ -119,7 +119,7 @@ export function operationSkillMatches(grade,task,skill,a,b){
    case 'p3-sub-zero-one':return between(a,1000,9999)&&between(b,1,9999)&&oneZero;
    case 'p3-sub-zero-multiple':return between(a,1000,9999)&&between(b,1,9999)&&manyZeros;
    case 'p3-sub-10000':return a===10000&&between(b,1,9999);
-   case 'p3-sub-mixed':return between(a,1000,10000)&&between(b,1,9999);
+   case 'p3-sub-mixed':return between(a,100,10000)&&between(b,1,9999);
   }
  }
  return false;
