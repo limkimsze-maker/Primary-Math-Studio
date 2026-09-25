@@ -452,7 +452,7 @@ function lockOperationAnswer(){
  const conceptMultiply=engine==='operations'&&current?.data?.task==='multiply'&&current.data.grade<=2;
  const complete=conceptMultiply||interaction.operationComplete;
  document.body.classList.toggle('operation-complete',complete);
- $('answerForm').hidden=!complete;
+ $('answerForm').hidden=conceptMultiply||!complete;
  for(const input of $('answerFields').querySelectorAll('input'))input.disabled=!complete||solved;
  $('checkButton').disabled=!complete||solved;
 }
@@ -739,7 +739,8 @@ function multiplicationStaticAlgorithm(c){
 function drawConceptMultiplication(){
  const c=current.data,host=$('diagram'),representation=interaction.multiplicationRepresentation||c.representation||'blocks';
  interaction.multiplicationRepresentation=representation;interaction.operationComplete=true;
- const showAlgorithm=Boolean(interaction.showMultiplicationAlgorithm);
+ const showAlgorithm=Boolean(interaction.showMultiplicationAlgorithm),product=c.a*c.b;
+ const state=interaction.conceptMultiplyState||(interaction.conceptMultiplyState={rep:'',mult:'',feedback:'',ok:false});
  const groups=Array.from({length:c.a},(_,i)=>`<div class="multip-concept-group"><strong>Group ${i+1}</strong>${multiplicationConceptQuantity(c.b,representation)}</div>`).join('');
  const repeated=Array.from({length:c.a},()=>c.b).join(' + ');
  const focusLabel=multiplicationFocusOptions(c.grade).find(([key])=>key===c.multiplicationFocus)?.[1]||'Multiplication';
@@ -748,6 +749,7 @@ function drawConceptMultiplication(){
   :c.multiplicationFocus==='p1-equal'
     ?'<strong>Equal groups</strong>'
     :`<strong>${E(focusLabel)}</strong>`;
+ const answerInput=(id,value,label)=>`<input id="${id}" class="multip-concept-answer ${state.ok?'is-correct':''}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="${E(label)}" value="${E(value)}" ${state.ok?'disabled':''}>`;
  host.innerHTML=`<div class="operation-workspace multip-concept-workspace">
   <div class="operation-top">
    <div class="step-heading"><span>P${c.grade} multiplication</span><h3>${emphasis}</h3></div>
@@ -762,8 +764,12 @@ function drawConceptMultiplication(){
     <p class="multip-concept-cue"><strong>${c.a} equal groups</strong> with <strong>${c.b}</strong> in each group.</p>
     <div class="multip-concept-groups" style="--groups:${Math.min(c.a,5)}">${groups}</div>
     <div class="multip-concept-bridge">
-     <div><span>Repeated addition</span><strong>${E(repeated)} = ${c.a*c.b}</strong></div>
-     <div><span>Multiplication sentence</span><strong>${c.a} × ${c.b} = ${c.a*c.b}</strong></div>
+     <div><span>Repeated addition</span><strong class="multip-concept-equation">${E(repeated)} = ${answerInput('repAnswer',state.rep,'Repeated addition answer')}</strong></div>
+     <div><span>Multiplication sentence</span><strong class="multip-concept-equation">${c.a} × ${c.b} = ${answerInput('multAnswer',state.mult,'Multiplication answer')}</strong></div>
+    </div>
+    <div class="multip-concept-check-row">
+     <button type="button" class="primary" id="conceptMultiplyCheck" ${state.ok?'disabled':''}>Check</button>
+     <p id="conceptMultiplyFeedback" class="multip-concept-feedback ${state.ok?'correct':state.feedback?'wrong':''}" role="status" aria-live="polite">${E(state.feedback)}</p>
     </div>
    </div>
    ${showAlgorithm?`<div class="multip-concept-algorithm"><h4>Written algorithm · optional preview</h4>${multiplicationStaticAlgorithm(c)}<p>P1 and P2 learn the multiplication concept and tables through models. The formal multiplication algorithm is taught from P3.</p></div>`:''}
@@ -773,7 +779,27 @@ function drawConceptMultiplication(){
  $('multipConceptBlocks').onclick=()=>setModel('blocks');
  $('multipConceptDiscs').onclick=()=>setModel('discs');
  $('multipAlgorithmToggle').onclick=()=>{interaction.showMultiplicationAlgorithm=!showAlgorithm;drawConceptMultiplication();};
- requestAnimationFrame(()=>host.querySelector('#answer1')?.focus());
+ const rep=$('repAnswer'),mult=$('multAnswer'),check=$('conceptMultiplyCheck'),feedback=$('conceptMultiplyFeedback');
+ const clean=input=>{input.value=input.value.replace(/\D/g,'').slice(0,4);};
+ [rep,mult].forEach(input=>{input.oninput=()=>{clean(input);state[input===rep?'rep':'mult']=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();check.click();}};});
+ check.onclick=()=>{
+  if(state.ok||solved)return;
+  state.rep=rep.value.trim();state.mult=mult.value.trim();attempts++;
+  if(Number(state.rep)===product&&Number(state.mult)===product&&state.rep!==''&&state.mult!==''){
+   state.ok=true;state.feedback='Correct!';solved=true;
+   rep.classList.add('is-correct');mult.classList.add('is-correct');rep.disabled=true;mult.disabled=true;check.disabled=true;
+   feedback.className='multip-concept-feedback correct';feedback.textContent='Correct!';
+   results.push({first:attempts===1&&hints===0,attempts,hints});
+   $('feedback').style.color='#24735e';$('feedback').textContent='Correct! '+current.explanation;
+   $('nextButton').hidden=false;$('hintButton').disabled=true;progress();
+  }else{
+   state.ok=false;state.feedback='Try again.';
+   rep.classList.toggle('is-wrong',state.rep!==''&&Number(state.rep)!==product);
+   mult.classList.toggle('is-wrong',state.mult!==''&&Number(state.mult)!==product);
+   feedback.className='multip-concept-feedback wrong';feedback.textContent='Try again.';
+  }
+ };
+ requestAnimationFrame(()=>rep?.focus());
 }
 
 // Uncle Joe and the Key of Product: grouped discs and paired digit/carry checking.
