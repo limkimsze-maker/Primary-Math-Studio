@@ -23,7 +23,7 @@
     }
   
     /* Universal classroom annotation toolbar */
-    #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none;touch-action:none}.annotation-drawing #annotationCanvas{pointer-events:auto;cursor:crosshair}
+    #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none;touch-action:none}.annotation-drawing{cursor:crosshair}
     .annotation-toolbar{position:fixed;z-index:99990;top:0;left:0;right:0;height:46px;border:0;border-bottom:1px solid #c8d4c5;border-radius:0;background:#fffdf9f7;box-shadow:0 2px 10px #183c351f;backdrop-filter:blur(8px);font:12px/1.2 Arial,Helvetica,sans-serif;color:#183c35;user-select:none;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
     .annotation-head{display:none}
     .annotation-body{height:45px;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;padding:5px 8px;min-width:max-content}
@@ -182,9 +182,18 @@
     function annotationHit(o,x,y,r=10){const b=annotationBounds(o);return x>=b.l-r&&x<=b.r+r&&y>=b.t-r&&y<=b.b+r;}
     function annotationSetTool(tool){
       annotationTool=tool;
-      document.body.classList.toggle('annotation-drawing',tool!=='pointer');
-      annotationCanvas.style.pointerEvents=tool==='pointer'?'none':'auto';
-      annotationCanvas.style.touchAction=tool==='pointer'?'auto':'none';
+      const drawing=tool!=='pointer';
+      document.body.classList.toggle('annotation-drawing',drawing);
+      document.documentElement.classList.toggle('annotation-drawing-mode',drawing);
+      annotationCanvas.style.pointerEvents='none';
+      annotationCanvas.style.touchAction='none';
+      try{
+        const child=frame.contentDocument;
+        if(child){
+          child.documentElement.classList.toggle('annotation-drawing-mode',drawing);
+          child.body?.classList.toggle('annotation-drawing-mode',drawing);
+        }
+      }catch(e){}
       document.querySelectorAll('[data-annotation-tool]').forEach(b=>b.classList.toggle('active',b.dataset.annotationTool===tool));
     }
     function annotationInteractive(target,doc){
@@ -201,7 +210,7 @@
       const before=annotationItems.length;annotationItems=annotationItems.filter(o=>!annotationHit(o,x,y,Math.max(8,Number(annotationSize.value)*1.4)));return before!==annotationItems.length;
     }
     function annotationBegin(e,doc){
-      if(annotationTool==='pointer'||e.button>0)return;
+      if(annotationTool==='pointer'||e.button>0||annotationInteractive(e.target,doc))return;
       const p=annotationPoint(e,doc);
       if(annotationTool==='text'){
         e.preventDefault();e.stopPropagation();const value=window.prompt('Annotation text:');if(!value)return;annotationSnapshot();annotationItems.push({tool:'text',colour:annotationColour,size:Number(annotationSize.value),textSize:Number(annotationTextSize.value),text:value,x1:p.x,y1:p.y});annotationSave();annotationSetButtons();annotationRender();return;
@@ -249,18 +258,19 @@
     }
     function annotationAttachDocument(doc){
       if(!doc||doc.__mathAnnotationAttached)return;doc.__mathAnnotationAttached=true;
-      // The parent annotation canvas captures input in drawing mode.
-      // Frame listeners are retained only as a compatibility fallback.
-      doc.addEventListener('pointerdown',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationBegin(e,doc);},true);
-      doc.addEventListener('pointermove',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationMove(e,doc);},{capture:true,passive:false});
-      doc.addEventListener('pointerup',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationEnd(e,doc);},true);
-      doc.addEventListener('pointercancel',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationEnd(e,doc);},true);
+      try{
+        let style=doc.getElementById('mathAnnotationTouchStyle');
+        if(!style){style=doc.createElement('style');style.id='mathAnnotationTouchStyle';style.textContent='html.annotation-drawing-mode,html.annotation-drawing-mode body{touch-action:none!important;}';doc.head?.append(style);}
+        const drawing=annotationTool!=='pointer';
+        doc.documentElement.classList.toggle('annotation-drawing-mode',drawing);
+        doc.body?.classList.toggle('annotation-drawing-mode',drawing);
+      }catch(e){}
+      doc.addEventListener('pointerdown',e=>annotationBegin(e,doc),true);
+      doc.addEventListener('pointermove',e=>annotationMove(e,doc),{capture:true,passive:false});
+      doc.addEventListener('pointerup',e=>annotationEnd(e,doc),true);
+      doc.addEventListener('pointercancel',e=>annotationEnd(e,doc),true);
     }
-    annotationCanvas.addEventListener('pointerdown',e=>annotationBegin(e,document),{passive:false});
-    annotationCanvas.addEventListener('pointermove',e=>annotationMove(e,document),{passive:false});
-    annotationCanvas.addEventListener('pointerup',e=>annotationEnd(e,document),{passive:false});
-    annotationCanvas.addEventListener('pointercancel',e=>annotationEnd(e,document),{passive:false});
-    function annotationAttachFrame(){try{annotationAttachDocument(frame.contentDocument);}catch(e){}}
+    function annotationAttachFrame(){try{annotationAttachDocument(frame.contentDocument);annotationSetTool(annotationTool);}catch(e){}}
     document.querySelectorAll('[data-annotation-tool]').forEach(btn=>btn.addEventListener('click',()=>annotationSetTool(btn.dataset.annotationTool)));
     document.querySelectorAll('.annotation-colour').forEach(btn=>btn.addEventListener('click',()=>{
       annotationColour=btn.dataset.colour;document.querySelectorAll('.annotation-colour').forEach(b=>b.classList.toggle('active',b===btn));
@@ -269,6 +279,7 @@
     annotationRedo.addEventListener('click',()=>{if(!annotationRedoStack.length)return;annotationUndoStack.push(annotationClone(annotationItems));annotationItems=annotationRedoStack.pop();annotationSave();annotationSetButtons();annotationRender();});
     annotationClear.addEventListener('click',()=>{if(!annotationItems.length)return;annotationSnapshot();annotationItems=[];annotationSave();annotationSetButtons();annotationRender();});
     annotationLoad();
+    annotationAttachDocument(document);
     annotationSetTool(annotationTool);annotationSetButtons();annotationResize();window.addEventListener('resize',annotationResize);
     frame.addEventListener('load',annotationAttachFrame);
 
