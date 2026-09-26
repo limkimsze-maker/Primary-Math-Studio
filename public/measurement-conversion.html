@@ -27,7 +27,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;width:
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">↔</div><div><p>Interactive Teaching Engine</p><h1>P3 Measurement Conversion</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
+<header><div class="brand"><div class="mark">↔</div><div><p>Interactive Teaching Engine</p><h1>P3 Measurement Conversion</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button class="teacher" id="downloadActivityButton" type="button">Download activity</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
 <main><div class="layout">
 <aside class="panel teacher"><h2>Activity builder</h2><p class="sub">Convert length, mass and volume units.</p>
 <div class="field"><label for="measurement">Measurement</label><select id="measurement"><option value="mixed">Mixed · all measurements</option><option value="length">Length</option><option value="mass">Mass</option><option value="volume">Volume</option></select></div>
@@ -131,5 +131,31 @@ $('viewBtn').onclick=()=>{const on=!document.body.classList.contains('pupil');do
 const guide=$('guide');$('guideBtn').onclick=()=>guide.showModal();$('closeGuide').onclick=()=>guide.close();
 try{const s=JSON.parse(localStorage.getItem('p3-measurement-conversion-settings')||'null');if(s){for(const id of ['measurement','task','support','count'])if(s[id]&&[...$(id).options].some(o=>o.value===String(s[id])))$(id).value=String(s[id])}}catch(e){}
 generate();
+</script>
+<script id="activityDownloadExport">
+(()=>{
+  const btn=document.getElementById('downloadActivityButton');
+  if(!btn)return;
+  function save(name,html){
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function build(name,cfg,restoreCode){
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelector('#downloadActivityButton')?.remove();
+    clone.querySelector('body')?.classList.remove('pupil');
+    const script=document.createElement('script');
+    script.textContent='(()=>{const cfg='+JSON.stringify(cfg)+';'+restoreCode+'})();';
+    clone.querySelector('body')?.append(script);
+    save(name,'<!doctype html>'+clone.outerHTML);
+  }
+  btn.addEventListener('click',()=>{
+    const ids=['measurement','task','support','count'],cfg={};ids.forEach(id=>cfg[id]=document.getElementById(id)?.value||'');
+    build('p3-measurement-conversion-activity.html',cfg,
+      "['measurement','task','support','count'].forEach(id=>{const el=document.getElementById(id);if(el&&cfg[id]!==undefined)el.value=cfg[id];});document.getElementById('generate')?.click();"
+    );
+  });
+})();
 </script>
 </body></html>
