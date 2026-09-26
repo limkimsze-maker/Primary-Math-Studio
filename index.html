@@ -21,10 +21,80 @@
       body.mobile-activity .engine-frame{height:1200px;border:0;overflow:hidden}
       body.mobile-activity .studio-footer{height:26px!important}
     }
+  
+    /* Universal classroom annotation toolbar */
+    #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none}
+    .annotation-toolbar{position:fixed;z-index:99990;top:78px;right:8px;max-width:min(560px,94vw);border:1px solid #bfcdbf;border-radius:11px;background:#fffdf9f2;box-shadow:0 8px 28px #183c3530;backdrop-filter:blur(8px);font:12px/1.2 Arial,Helvetica,sans-serif;color:#183c35;user-select:none}
+    .annotation-toolbar.collapsed{width:38px;height:38px;overflow:hidden;border-radius:12px}
+    .annotation-toolbar.collapsed .annotation-head{height:38px;padding:0;justify-content:center}
+    .annotation-toolbar.collapsed .annotation-drag,.annotation-toolbar.collapsed .annotation-title{display:none}
+    .annotation-toolbar.collapsed .annotation-collapse{width:38px;height:38px;border:0;border-radius:11px;font-size:18px}
+    .annotation-toolbar.collapsed .annotation-body{display:none}
+    .annotation-head{display:flex;align-items:center;gap:5px;padding:4px 5px;border-bottom:1px solid #dce5d8;background:#f3f6ee;border-radius:10px 10px 0 0}
+    .annotation-drag{width:26px;height:28px;display:grid;place-items:center;border-radius:7px;cursor:grab;font-size:16px;color:#6b7e70;touch-action:none}
+    .annotation-drag:active{cursor:grabbing}
+    .annotation-title{font-weight:900;letter-spacing:.02em;margin-right:auto;white-space:nowrap}
+    .annotation-collapse,.annotation-tool,.annotation-action{height:30px;min-width:30px;padding:0 7px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;cursor:pointer;font-weight:850}
+    .annotation-tool:hover,.annotation-action:hover,.annotation-collapse:hover{background:#edf3e8}
+    .annotation-tool.active{background:#183c35;color:#fff;border-color:#183c35;box-shadow:0 0 0 2px #efc66d88}
+    .annotation-body{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:5px}
+    .annotation-divider{width:1px;height:24px;background:#d7e0d3;margin:0 1px}
+    .annotation-select{height:30px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;padding:0 4px;font:inherit;font-weight:800}
+    .annotation-colours{display:flex;align-items:center;gap:3px}
+    .annotation-colour{width:24px;height:24px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #b9c7b7;cursor:pointer;padding:0}
+    .annotation-colour.active{box-shadow:0 0 0 3px #efc66d}
+    .annotation-clear{color:#9b2c2c}
+    @media(max-width:700px){
+      .annotation-toolbar{top:56px;right:6px;max-width:calc(100vw - 12px)}
+      .annotation-head{padding:3px 4px}.annotation-body{padding:4px;gap:3px}
+      .annotation-tool,.annotation-action{height:32px;min-width:32px;padding:0 6px}
+      .annotation-title{font-size:11px}
+    }
+
   </style>
 <script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head>
 <body>
+
+  <canvas id="annotationCanvas" aria-hidden="true"></canvas>
+  <div class="annotation-toolbar collapsed" id="annotationToolbar" role="group" aria-label="Annotation tools">
+    <div class="annotation-head">
+      <span class="annotation-drag" id="annotationDrag" title="Drag to move the toolbar" aria-label="Drag annotation toolbar">⋮⋮</span>
+      <span class="annotation-title">Annotation</span>
+      <button class="annotation-collapse" id="annotationCollapse" type="button" title="Open annotation tools" aria-label="Open annotation tools">✎</button>
+    </div>
+    <div class="annotation-body" id="annotationBody">
+      <button class="annotation-tool active" type="button" data-annotation-tool="pointer" title="Pointer / scroll" aria-label="Pointer and scroll">☝</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="pen" title="Pen" aria-label="Pen">✎</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="highlighter" title="Highlighter" aria-label="Highlighter">▰</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="line" title="Line" aria-label="Line">╱</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="arrow" title="Arrow" aria-label="Arrow">➜</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="box" title="Box" aria-label="Box">□</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="circle" title="Circle" aria-label="Circle">○</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="text" title="Text box" aria-label="Text box">T</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="eraser" title="Eraser" aria-label="Eraser">⌫</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="boxerase" title="Box erase" aria-label="Box erase">▱×</button>
+      <span class="annotation-divider" aria-hidden="true"></span>
+      <select class="annotation-select" id="annotationSize" title="Tip size" aria-label="Tip size">
+        <option value="1">1 px</option><option value="2">2 px</option><option value="4" selected>4 px</option><option value="6">6 px</option><option value="10">10 px</option><option value="16">16 px</option><option value="24">24 px</option>
+      </select>
+      <select class="annotation-select" id="annotationTextSize" title="Text size" aria-label="Text size">
+        <option value="1">T 1</option><option value="12">T 12</option><option value="18">T 18</option><option value="24" selected>T 24</option><option value="32">T 32</option><option value="48">T 48</option>
+      </select>
+      <span class="annotation-colours" id="annotationColours" aria-label="Annotation colours">
+        <button class="annotation-colour active" type="button" data-colour="#ef4444" title="Red" aria-label="Red" style="background:#ef4444"></button>
+        <button class="annotation-colour" type="button" data-colour="#2563eb" title="Blue" aria-label="Blue" style="background:#2563eb"></button>
+        <button class="annotation-colour" type="button" data-colour="#16a34a" title="Green" aria-label="Green" style="background:#16a34a"></button>
+        <button class="annotation-colour" type="button" data-colour="#f59e0b" title="Amber" aria-label="Amber" style="background:#f59e0b"></button>
+        <button class="annotation-colour" type="button" data-colour="#111827" title="Dark" aria-label="Dark" style="background:#111827"></button>
+      </span>
+      <span class="annotation-divider" aria-hidden="true"></span>
+      <button class="annotation-action" id="annotationUndo" type="button" title="Undo" aria-label="Undo">↶</button>
+      <button class="annotation-action" id="annotationRedo" type="button" title="Redo" aria-label="Redo">↷</button>
+      <button class="annotation-action annotation-clear" id="annotationClear" type="button" title="Clear all annotations" aria-label="Clear all annotations">Clear</button>
+    </div>
+  </div>
+
   <div class="studio" id="studio">
     <header class="studio-header">
       <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><div><p>INTERACTIVE MATHEMATICS TEACHING</p><h1>P1 to P3 Math Teaching Engine</h1></div></div>
@@ -41,6 +111,144 @@
   <script>
     const engines=[['place','Place value'],['compare-order','Comparing & ordering'],['operations','Operations & grouping'],['times-table-builder','Times Table Builder'],['mental-sum','Mental sum'],['numberline','Number line'],['bar','Bar models'],['p3-sum-difference','P3 Sum & Difference Model'],['more-word-problems','P3 More Word Problems'],['money','Money'],['fraction','Fractions'],['time','Time'],['length','Length'],['mass','Mass'],['volume','Volume'],['measurement-conversion','Measurement conversion'],['geometry','Shapes, angles & lines'],['area','Area & perimeter'],['graph','Graphs'],['explain','Explain your thinking'],['error','Error analysis']];
     const tabs=document.querySelector('#engineTabs'),frame=document.querySelector('#engineFrame'),nameBox=document.querySelector('#engineName'),loading=document.querySelector('#frameLoading'),studio=document.querySelector('#studio'),returnButton=document.querySelector('#returnButton'),mobilePupilFallback=document.querySelector('#mobilePupilFallback'),release='20260926-fraction-answer-hidden-57';let launchedFrom=null;let mobileFrameObserver=null;
+
+    // Universal annotation layer: persistent, collapsible, draggable and non-blocking.
+    const annotationCanvas=document.querySelector('#annotationCanvas');
+    const annotationToolbar=document.querySelector('#annotationToolbar');
+    const annotationCollapse=document.querySelector('#annotationCollapse');
+    const annotationDrag=document.querySelector('#annotationDrag');
+    const annotationSize=document.querySelector('#annotationSize');
+    const annotationTextSize=document.querySelector('#annotationTextSize');
+    const annotationUndo=document.querySelector('#annotationUndo');
+    const annotationRedo=document.querySelector('#annotationRedo');
+    const annotationClear=document.querySelector('#annotationClear');
+    const annotationStoreKey='mathTeachingAnnotationsV1';
+    const annotationToolbarKey='mathTeachingAnnotationToolbarV1';
+    const annotationCtx=annotationCanvas.getContext('2d');
+    let annotationTool='pointer',annotationColour='#ef4444',annotationItems=[],annotationUndoStack=[],annotationRedoStack=[];
+    let annotationDrawing=null,annotationEraseSnapshot=null,annotationDpr=1;
+
+    function annotationClone(items){return JSON.parse(JSON.stringify(items));}
+    function annotationSave(){try{localStorage.setItem(annotationStoreKey,JSON.stringify(annotationItems));}catch(e){}}
+    function annotationLoad(){try{const saved=JSON.parse(localStorage.getItem(annotationStoreKey)||'[]');if(Array.isArray(saved))annotationItems=saved;}catch(e){annotationItems=[];}}
+    function annotationSnapshot(){annotationUndoStack.push(annotationClone(annotationItems));if(annotationUndoStack.length>60)annotationUndoStack.shift();annotationRedoStack=[];}
+    function annotationSetButtons(){annotationUndo.disabled=!annotationUndoStack.length;annotationRedo.disabled=!annotationRedoStack.length;}
+    function annotationResize(){
+      annotationDpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+      annotationCanvas.width=Math.round(innerWidth*annotationDpr);annotationCanvas.height=Math.round(innerHeight*annotationDpr);
+      annotationCanvas.style.width=innerWidth+'px';annotationCanvas.style.height=innerHeight+'px';
+      annotationCtx.setTransform(annotationDpr,0,0,annotationDpr,0,0);annotationRender();
+    }
+    function annotationPathPoints(ctx,points){if(!points?.length)return;ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);}
+    function annotationDrawArrow(ctx,a,b,size){
+      const ang=Math.atan2(b.y-a.y,b.x-a.x),head=Math.max(10,size*3.2);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-head*Math.cos(ang-Math.PI/6),b.y-head*Math.sin(ang-Math.PI/6));ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-head*Math.cos(ang+Math.PI/6),b.y-head*Math.sin(ang+Math.PI/6));ctx.stroke();
+    }
+    function annotationDrawItem(ctx,o){
+      ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=o.colour||'#ef4444';ctx.fillStyle=o.colour||'#ef4444';ctx.lineWidth=o.size||4;ctx.globalAlpha=o.tool==='highlighter'?.28:1;
+      if(o.tool==='pen'||o.tool==='highlighter'){annotationPathPoints(ctx,o.points);ctx.stroke();}
+      else if(o.tool==='line'){ctx.beginPath();ctx.moveTo(o.x1,o.y1);ctx.lineTo(o.x2,o.y2);ctx.stroke();}
+      else if(o.tool==='arrow'){annotationDrawArrow(ctx,{x:o.x1,y:o.y1},{x:o.x2,y:o.y2},o.size||4);}
+      else if(o.tool==='box'||o.tool==='boxerase'){ctx.strokeRect(Math.min(o.x1,o.x2),Math.min(o.y1,o.y2),Math.abs(o.x2-o.x1),Math.abs(o.y2-o.y1));}
+      else if(o.tool==='circle'){const cx=(o.x1+o.x2)/2,cy=(o.y1+o.y2)/2,rx=Math.abs(o.x2-o.x1)/2,ry=Math.abs(o.y2-o.y1)/2;ctx.beginPath();ctx.ellipse(cx,cy,Math.max(.5,rx),Math.max(.5,ry),0,0,Math.PI*2);ctx.stroke();}
+      else if(o.tool==='text'){ctx.globalAlpha=1;ctx.font=Math.max(1,o.textSize||24)+'px Arial,Helvetica,sans-serif';ctx.textBaseline='top';ctx.fillText(o.text||'',o.x1,o.y1);}
+      ctx.restore();
+    }
+    function annotationRender(){
+      if(!annotationCtx)return;annotationCtx.clearRect(0,0,innerWidth,innerHeight);
+      for(const o of annotationItems)annotationDrawItem(annotationCtx,o);
+      if(annotationDrawing)annotationDrawItem(annotationCtx,annotationDrawing);
+    }
+    function annotationBounds(o){
+      if(o.tool==='pen'||o.tool==='highlighter'){
+        const xs=o.points.map(p=>p.x),ys=o.points.map(p=>p.y),pad=(o.size||4)+4;return {l:Math.min(...xs)-pad,r:Math.max(...xs)+pad,t:Math.min(...ys)-pad,b:Math.max(...ys)+pad};
+      }
+      if(o.tool==='text'){
+        const fs=Math.max(1,o.textSize||24),w=Math.max(fs,(o.text||'').length*fs*.6);return {l:o.x1,r:o.x1+w,t:o.y1,b:o.y1+fs*1.25};
+      }
+      const pad=(o.size||4)+5;return {l:Math.min(o.x1,o.x2)-pad,r:Math.max(o.x1,o.x2)+pad,t:Math.min(o.y1,o.y2)-pad,b:Math.max(o.y1,o.y2)+pad};
+    }
+    function annotationHit(o,x,y,r=10){const b=annotationBounds(o);return x>=b.l-r&&x<=b.r+r&&y>=b.t-r&&y<=b.b+r;}
+    function annotationInteractive(target,doc){
+      if(!target||target.nodeType!==1)return false;
+      if(target.closest?.('button,input,select,textarea,a,[contenteditable="true"],[draggable="true"],[role="button"],[role="slider"],[role="checkbox"],[role="radio"],[role="switch"],[role="textbox"],canvas,.draggable,.drag-handle,.counter,.token,.coin,.disc,.handle,[data-draggable],[data-drag]'))return true;
+      try{const c=doc.defaultView.getComputedStyle(target).cursor;return c==='pointer'||c==='grab'||c==='grabbing'||c==='text';}catch(e){return false;}
+    }
+    function annotationPoint(e,doc){
+      if(doc===document)return {x:e.clientX,y:e.clientY};
+      const rect=frame.getBoundingClientRect();return {x:rect.left+e.clientX,y:rect.top+e.clientY};
+    }
+    function annotationRemoveAt(x,y){
+      const before=annotationItems.length;annotationItems=annotationItems.filter(o=>!annotationHit(o,x,y,Math.max(8,Number(annotationSize.value)*1.4)));return before!==annotationItems.length;
+    }
+    function annotationBegin(e,doc){
+      if(annotationTool==='pointer'||e.button>0||annotationInteractive(e.target,doc))return;
+      const p=annotationPoint(e,doc);
+      if(annotationTool==='text'){
+        e.preventDefault();e.stopPropagation();const value=window.prompt('Annotation text:');if(!value)return;annotationSnapshot();annotationItems.push({tool:'text',colour:annotationColour,size:Number(annotationSize.value),textSize:Number(annotationTextSize.value),text:value,x1:p.x,y1:p.y});annotationSave();annotationSetButtons();annotationRender();return;
+      }
+      e.preventDefault();e.stopPropagation();
+      if(annotationTool==='eraser'){annotationEraseSnapshot=annotationClone(annotationItems);annotationRemoveAt(p.x,p.y);annotationRender();return;}
+      const base={tool:annotationTool,colour:annotationColour,size:Number(annotationSize.value),x1:p.x,y1:p.y,x2:p.x,y2:p.y};
+      if(annotationTool==='pen'||annotationTool==='highlighter')base.points=[p];
+      annotationDrawing=base;annotationRender();
+    }
+    function annotationMove(e,doc){
+      const p=annotationPoint(e,doc);
+      if(annotationTool==='eraser'&&annotationEraseSnapshot){
+        e.preventDefault();e.stopPropagation();if(annotationRemoveAt(p.x,p.y))annotationRender();return;
+      }
+      if(!annotationDrawing)return;e.preventDefault();e.stopPropagation();
+      if(annotationDrawing.points){const last=annotationDrawing.points[annotationDrawing.points.length-1];if(Math.hypot(p.x-last.x,p.y-last.y)>1.5)annotationDrawing.points.push(p);}
+      else{annotationDrawing.x2=p.x;annotationDrawing.y2=p.y;}annotationRender();
+    }
+    function annotationEnd(e,doc){
+      if(annotationTool==='eraser'&&annotationEraseSnapshot){
+        e.preventDefault();e.stopPropagation();if(JSON.stringify(annotationEraseSnapshot)!==JSON.stringify(annotationItems)){annotationUndoStack.push(annotationEraseSnapshot);if(annotationUndoStack.length>60)annotationUndoStack.shift();annotationRedoStack=[];annotationSave();}annotationEraseSnapshot=null;annotationSetButtons();annotationRender();return;
+      }
+      if(!annotationDrawing)return;e.preventDefault();e.stopPropagation();
+      const done=annotationDrawing;annotationDrawing=null;
+      if(done.tool==='boxerase'){
+        const l=Math.min(done.x1,done.x2),r=Math.max(done.x1,done.x2),t=Math.min(done.y1,done.y2),b=Math.max(done.y1,done.y2);
+        const before=annotationClone(annotationItems);annotationItems=annotationItems.filter(o=>{const q=annotationBounds(o);return q.r<l||q.l>r||q.b<t||q.t>b;});
+        if(JSON.stringify(before)!==JSON.stringify(annotationItems)){annotationUndoStack.push(before);if(annotationUndoStack.length>60)annotationUndoStack.shift();annotationRedoStack=[];annotationSave();}
+      }else{
+        annotationSnapshot();annotationItems.push(done);annotationSave();
+      }
+      annotationSetButtons();annotationRender();
+    }
+    function annotationAttachDocument(doc){
+      if(!doc||doc.__mathAnnotationAttached)return;doc.__mathAnnotationAttached=true;
+      doc.addEventListener('pointerdown',e=>annotationBegin(e,doc),true);
+      doc.addEventListener('pointermove',e=>annotationMove(e,doc),{capture:true,passive:false});
+      doc.addEventListener('pointerup',e=>annotationEnd(e,doc),true);
+      doc.addEventListener('pointercancel',e=>annotationEnd(e,doc),true);
+    }
+    function annotationAttachFrame(){try{annotationAttachDocument(frame.contentDocument);}catch(e){}}
+    document.querySelectorAll('[data-annotation-tool]').forEach(btn=>btn.addEventListener('click',()=>{
+      annotationTool=btn.dataset.annotationTool;document.querySelectorAll('[data-annotation-tool]').forEach(b=>b.classList.toggle('active',b===btn));
+    }));
+    document.querySelectorAll('.annotation-colour').forEach(btn=>btn.addEventListener('click',()=>{
+      annotationColour=btn.dataset.colour;document.querySelectorAll('.annotation-colour').forEach(b=>b.classList.toggle('active',b===btn));
+    }));
+    annotationCollapse.addEventListener('click',()=>{
+      const collapsed=annotationToolbar.classList.toggle('collapsed');annotationCollapse.textContent=collapsed?'✎':'−';annotationCollapse.title=collapsed?'Open annotation tools':'Collapse annotation tools';try{localStorage.setItem(annotationToolbarKey,JSON.stringify({collapsed,left:annotationToolbar.style.left,top:annotationToolbar.style.top}));}catch(e){}
+    });
+    annotationUndo.addEventListener('click',()=>{if(!annotationUndoStack.length)return;annotationRedoStack.push(annotationClone(annotationItems));annotationItems=annotationUndoStack.pop();annotationSave();annotationSetButtons();annotationRender();});
+    annotationRedo.addEventListener('click',()=>{if(!annotationRedoStack.length)return;annotationUndoStack.push(annotationClone(annotationItems));annotationItems=annotationRedoStack.pop();annotationSave();annotationSetButtons();annotationRender();});
+    annotationClear.addEventListener('click',()=>{if(!annotationItems.length)return;annotationSnapshot();annotationItems=[];annotationSave();annotationSetButtons();annotationRender();});
+    let annotationDragState=null;
+    annotationDrag.addEventListener('pointerdown',e=>{e.preventDefault();annotationDrag.setPointerCapture?.(e.pointerId);const r=annotationToolbar.getBoundingClientRect();annotationDragState={dx:e.clientX-r.left,dy:e.clientY-r.top};});
+    annotationDrag.addEventListener('pointermove',e=>{if(!annotationDragState)return;const w=annotationToolbar.offsetWidth,h=annotationToolbar.offsetHeight;annotationToolbar.style.left=Math.max(0,Math.min(innerWidth-w,e.clientX-annotationDragState.dx))+'px';annotationToolbar.style.top=Math.max(0,Math.min(innerHeight-h,e.clientY-annotationDragState.dy))+'px';annotationToolbar.style.right='auto';});
+    annotationDrag.addEventListener('pointerup',()=>{if(!annotationDragState)return;annotationDragState=null;try{localStorage.setItem(annotationToolbarKey,JSON.stringify({collapsed:annotationToolbar.classList.contains('collapsed'),left:annotationToolbar.style.left,top:annotationToolbar.style.top}));}catch(err){}});
+    annotationLoad();
+    try{
+      const st=JSON.parse(localStorage.getItem(annotationToolbarKey)||'null');
+      if(st){annotationToolbar.classList.toggle('collapsed',st.collapsed!==false);annotationCollapse.textContent=st.collapsed===false?'−':'✎';if(st.left)annotationToolbar.style.left=st.left;if(st.top)annotationToolbar.style.top=st.top;if(st.left)annotationToolbar.style.right='auto';}
+    }catch(e){}
+    annotationSetButtons();annotationResize();window.addEventListener('resize',annotationResize);
+    frame.addEventListener('load',annotationAttachFrame);
+
     const compareActivities={
       'p1-compare':{title:'P1 · Compare numbers',url:'https://limkimsze-maker.github.io/P1_Compare_Numbers/?v=20260924-topalign'},
       'p1-order':{title:'P1 · Order numbers',url:'https://limkimsze-maker.github.io/P1_Ordering_Numbers/?v=20260924-topalign'},
