@@ -41,21 +41,85 @@
     body>.studio{height:calc(100dvh - 46px)!important;min-height:0!important}
     #annotationCanvas{top:46px!important;height:calc(100vh - 46px)!important}
     @media(max-width:700px){
-      .annotation-toolbar{height:48px}
-      .annotation-body{height:47px;padding:6px 6px;gap:4px}
-      .annotation-tool,.annotation-action{height:34px;min-width:34px;padding:0 7px}
-      .annotation-select{height:34px;font-size:12px}
-      body{padding-top:48px!important}
-      body>.studio{height:calc(100dvh - 48px)!important;min-height:0!important}
+      .annotation-toolbar{
+        height:76px;
+        overflow:hidden;
+      }
+      .annotation-body{
+        width:100%;
+        min-width:0;
+        height:75px;
+        padding:5px 4px;
+        gap:3px;
+        display:flex;
+        flex-wrap:wrap;
+        align-content:center;
+        justify-content:center;
+      }
+
+      /* Row 1: all drawing tools, always visible. */
+      .annotation-tool{
+        width:30px;
+        min-width:30px;
+        height:30px;
+        padding:0;
+        font-size:15px;
+        flex:0 0 30px;
+      }
+      .annotation-row-break{
+        display:block;
+        flex:0 0 100%;
+        width:100%;
+        height:0;
+        margin:0;
+        border:0;
+        background:transparent;
+      }
+
+      /* Row 2: sizes, colours, history and clear. */
+      .annotation-select{
+        width:48px;
+        min-width:48px;
+        height:29px;
+        padding:0 2px;
+        font-size:10px;
+        flex:0 0 48px;
+      }
+      .annotation-colours{
+        gap:2px;
+      }
+      .annotation-colour{
+        width:20px;
+        height:20px;
+      }
+      .annotation-secondary-divider{
+        width:1px;
+        height:20px;
+        margin:0;
+      }
+      .annotation-action{
+        height:29px;
+        min-width:28px;
+        padding:0 5px;
+        font-size:13px;
+      }
+      .annotation-clear{
+        min-width:40px;
+        padding:0 5px;
+        font-size:10px;
+      }
+
+      body{padding-top:76px!important}
+      body>.studio{height:calc(100dvh - 76px)!important;min-height:0!important}
       body>.studio.presentation,
       body>.studio.presentation .studio-body,
       body>.studio.presentation .workspace,
       body>.studio.presentation .frame-wrap,
       body>.studio.presentation .engine-frame{
-        height:calc(100dvh - 48px)!important;
-        min-height:calc(100dvh - 48px)!important;
+        height:calc(100dvh - 76px)!important;
+        min-height:calc(100dvh - 76px)!important;
       }
-      #annotationCanvas{top:48px!important;height:calc(100vh - 48px)!important}
+      #annotationCanvas{top:76px!important;height:calc(100vh - 76px)!important}
     }
 
   </style>
@@ -76,7 +140,7 @@
       <button class="annotation-tool" type="button" data-annotation-tool="text" title="Text box" aria-label="Text box">T</button>
       <button class="annotation-tool" type="button" data-annotation-tool="eraser" title="Eraser" aria-label="Eraser">⌫</button>
       <button class="annotation-tool" type="button" data-annotation-tool="boxerase" title="Box erase" aria-label="Box erase">▱×</button>
-      <span class="annotation-divider" aria-hidden="true"></span>
+      <span class="annotation-divider annotation-row-break" aria-hidden="true"></span>
       <select class="annotation-select" id="annotationSize" title="Tip size" aria-label="Tip size">
         <option value="1">1 px</option><option value="2">2 px</option><option value="4" selected>4 px</option><option value="6">6 px</option><option value="10">10 px</option><option value="16">16 px</option><option value="24">24 px</option>
       </select>
@@ -90,7 +154,7 @@
         <button class="annotation-colour" type="button" data-colour="#f59e0b" title="Amber" aria-label="Amber" style="background:#f59e0b"></button>
         <button class="annotation-colour" type="button" data-colour="#111827" title="Dark" aria-label="Dark" style="background:#111827"></button>
       </span>
-      <span class="annotation-divider" aria-hidden="true"></span>
+      <span class="annotation-divider annotation-secondary-divider" aria-hidden="true"></span>
       <button class="annotation-action" id="annotationUndo" type="button" title="Undo" aria-label="Undo">↶</button>
       <button class="annotation-action" id="annotationRedo" type="button" title="Redo" aria-label="Redo">↷</button>
       <button class="annotation-action annotation-clear" id="annotationClear" type="button" title="Clear all annotations" aria-label="Clear all annotations">Clear</button>
