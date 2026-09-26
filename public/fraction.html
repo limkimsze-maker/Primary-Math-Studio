@@ -917,7 +917,7 @@ let engine=saved?.engine||(Object.hasOwn(ENGINE_NAMES,requested)?requested:'plac
 let config=defaults(engine),current,index=0,results=[],attempts=0,hints=0,solved=false,selected=null,interaction={},draft;
 try{const s=saved||JSON.parse(localStorage.getItem('maths-studio-'+engine)||'null');if(s&&s.engine===engine)config=validate(s);}catch{}
 function file(name,content,type){const u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
-function onlineDownload(c,format){if(saved||!['http:','https:'].includes(location.protocol))return false;const a=document.createElement('a');a.href='/api/download?settings='+encodeURIComponent(JSON.stringify(c))+'&format='+format;a.download=c.engine+(format==='settings'?'-settings.json':'-activity.html');document.body.append(a);a.click();a.remove();return true;}
+function onlineDownload(c,format){return false;}
 const teacherMoneyField=(c,f)=>c.engine==='money'&&['a','b'].includes(f.key)&&!(c.task==='convert'&&c.direction==='cents-to-money');
 function teacherAnswerField(c,f){
  if(c.mode!=='fixed'||f.type==='select')return false;
