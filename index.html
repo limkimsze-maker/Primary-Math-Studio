@@ -195,6 +195,7 @@
     const annotationCtx=annotationCanvas.getContext('2d');
     let annotationTool='pointer',annotationColour='#ef4444',annotationItems=[],annotationUndoStack=[],annotationRedoStack=[];
     let annotationDrawing=null,annotationEraseSnapshot=null,annotationDpr=1;
+    let annotationPointerId=null,annotationLastSampleTime=0;
 
     function annotationClone(items){return JSON.parse(JSON.stringify(items));}
     function annotationSave(){try{localStorage.setItem(annotationStoreKey,JSON.stringify(annotationItems));}catch(e){}}
@@ -281,6 +282,9 @@
     }
     function annotationBegin(e,doc){
       if(annotationTool==='pointer'||e.button>0||annotationInteractive(e.target,doc))return;
+      if(annotationPointerId!==null&&annotationPointerId!==e.pointerId)return;
+      annotationPointerId=e.pointerId;
+      annotationLastSampleTime=Number.isFinite(e.timeStamp)?e.timeStamp:0;
       const p=annotationPoint(e,doc);
       if(annotationTool==='text'){
         e.preventDefault();e.stopPropagation();const value=window.prompt('Annotation text:');if(!value)return;annotationSnapshot();annotationItems.push({tool:'text',colour:annotationColour,size:Number(annotationSize.value),textSize:Number(annotationTextSize.value),text:value,x1:p.x,y1:p.y});annotationSave();annotationSetButtons();annotationRender();return;
@@ -293,30 +297,42 @@
       annotationDrawing=base;annotationRender();
     }
     function annotationMove(e,doc){
-      if(annotationTool==='pointer')return;
-      const samples=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
+      if(annotationTool==='pointer'||annotationPointerId===null||e.pointerId!==annotationPointerId)return;
+      let samples=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
+      if(!Array.isArray(samples)||!samples.length)samples=[e];
+      samples=samples.filter(sample=>{
+        const t=Number.isFinite(sample.timeStamp)?sample.timeStamp:0;
+        if(t&&t<annotationLastSampleTime)return false;
+        if(t)annotationLastSampleTime=t;
+        return true;
+      });
+      if(!samples.length)return;
       if(annotationTool==='eraser'&&annotationEraseSnapshot){
         e.preventDefault();e.stopPropagation();
         for(const sample of samples){const p=annotationPoint(sample,doc);annotationRemoveAt(p.x,p.y);}
         annotationRender();return;
       }
-      if(!annotationDrawing)return;e.preventDefault();e.stopPropagation();
+      if(!annotationDrawing)return;
+      e.preventDefault();e.stopPropagation();
       if(annotationDrawing.points){
         for(const sample of samples){
           const p=annotationPoint(sample,doc),last=annotationDrawing.points[annotationDrawing.points.length-1];
-          if(Math.hypot(p.x-last.x,p.y-last.y)>.65)annotationDrawing.points.push(p);
+          const d=Math.hypot(p.x-last.x,p.y-last.y);
+          if(d>.9&&d<120)annotationDrawing.points.push(p);
         }
       }else{
-        const p=annotationPoint(samples[samples.length-1]||e,doc);annotationDrawing.x2=p.x;annotationDrawing.y2=p.y;
+        const p=annotationPoint(samples[samples.length-1],doc);
+        annotationDrawing.x2=p.x;annotationDrawing.y2=p.y;
       }
       annotationRender();
     }
     function annotationEnd(e,doc){
+      if(annotationPointerId===null||e.pointerId!==annotationPointerId)return;
       if(annotationTool==='eraser'&&annotationEraseSnapshot){
-        e.preventDefault();e.stopPropagation();if(JSON.stringify(annotationEraseSnapshot)!==JSON.stringify(annotationItems)){annotationUndoStack.push(annotationEraseSnapshot);if(annotationUndoStack.length>60)annotationUndoStack.shift();annotationRedoStack=[];annotationSave();}annotationEraseSnapshot=null;annotationSetButtons();annotationRender();return;
+        e.preventDefault();e.stopPropagation();if(JSON.stringify(annotationEraseSnapshot)!==JSON.stringify(annotationItems)){annotationUndoStack.push(annotationEraseSnapshot);if(annotationUndoStack.length>60)annotationUndoStack.shift();annotationRedoStack=[];annotationSave();}annotationEraseSnapshot=null;annotationPointerId=null;annotationLastSampleTime=0;annotationSetButtons();annotationRender();return;
       }
-      if(!annotationDrawing)return;e.preventDefault();e.stopPropagation();
-      const done=annotationDrawing;annotationDrawing=null;
+      if(!annotationDrawing){annotationPointerId=null;annotationLastSampleTime=0;return;}e.preventDefault();e.stopPropagation();
+      const done=annotationDrawing;annotationDrawing=null;annotationPointerId=null;annotationLastSampleTime=0;
       if(done.tool==='boxerase'){
         const l=Math.min(done.x1,done.x2),r=Math.max(done.x1,done.x2),t=Math.min(done.y1,done.y2),b=Math.max(done.y1,done.y2);
         const before=annotationClone(annotationItems);annotationItems=annotationItems.filter(o=>{const q=annotationBounds(o);return q.r<l||q.l>r||q.b<t||q.t>b;});
@@ -351,9 +367,8 @@
       }catch(e){}
       doc.addEventListener('pointerdown',e=>annotationBegin(e,doc),true);
       doc.addEventListener('pointermove',e=>annotationMove(e,doc),{capture:true,passive:false});
-      if('onpointerrawupdate' in doc)doc.addEventListener('pointerrawupdate',e=>{if(annotationDrawing||annotationEraseSnapshot)annotationMove(e,doc);},{capture:true,passive:false});
       doc.addEventListener('pointerup',e=>annotationEnd(e,doc),true);
-      doc.addEventListener('pointercancel',e=>annotationEnd(e,doc),true);
+      doc.addEventListener('pointercancel',e=>{annotationEnd(e,doc);if(e.pointerId===annotationPointerId){annotationPointerId=null;annotationLastSampleTime=0;}},true);
     }
     function annotationAttachFrame(){try{annotationAttachDocument(frame.contentDocument);annotationSetTool(annotationTool);}catch(e){}}
     document.querySelectorAll('[data-annotation-tool]').forEach(btn=>btn.addEventListener('click',()=>annotationSetTool(btn.dataset.annotationTool)));
