@@ -25,7 +25,7 @@ body.pupil .teacher{display:none!important}body.pupil main{max-width:none;width:
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">△</div><div><p>Interactive Teaching Engine</p><h1>Shapes, Angles & Lines</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
+<header><div class="brand"><div class="mark">△</div><div><p>Interactive Teaching Engine</p><h1>Shapes, Angles & Lines</h1></div></div><div class="head-actions"><button class="teacher" id="guideBtn" type="button">Teacher guide</button><button class="teacher" id="downloadActivityButton" type="button">Download activity</button><button id="viewBtn" type="button">Pupil view ↗</button></div></header>
 <main><div class="layout">
 <aside class="panel teacher"><h2>Activity builder</h2><p class="sub">P1–P3 geometry progression.</p>
 <div class="field"><label for="grade">Primary level</label><select id="grade"><option value="1">Primary 1</option><option value="2">Primary 2</option><option value="3">Primary 3</option></select></div>
@@ -322,5 +322,33 @@ $('grade').onchange=()=>{populateTasks();build()};$('task').onchange=build;$('ge
 $('viewBtn').onclick=()=>{const on=!document.body.classList.contains('pupil');document.body.classList.toggle('pupil',on);$('viewBtn').textContent=on?'Teacher view':'Pupil view ↗';try{parent.postMessage({type:'primary-maths-pupil-view',on},'*')}catch(e){}};
 const guide=$('guide');$('guideBtn').onclick=()=>guide.showModal();$('closeGuide').onclick=()=>guide.close();
 populateTasks();build();
+</script>
+<script id="activityDownloadExport">
+(()=>{
+  const btn=document.getElementById('downloadActivityButton');
+  if(!btn)return;
+  function save(name,html){
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function build(name,cfg,restoreCode){
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelector('#downloadActivityButton')?.remove();
+    clone.querySelector('body')?.classList.remove('pupil');
+    const script=document.createElement('script');
+    script.textContent='(()=>{const cfg='+JSON.stringify(cfg)+';'+restoreCode+'})();';
+    clone.querySelector('body')?.append(script);
+    save(name,'<!doctype html>'+clone.outerHTML);
+  }
+  btn.addEventListener('click',()=>{
+    const cfg={grade:document.getElementById('grade')?.value||'1',task:document.getElementById('task')?.value||'',count:document.getElementById('count')?.value||'8'};
+    build('shapes-angles-lines-activity.html',cfg,
+      "const g=document.getElementById('grade');if(g){g.value=cfg.grade;g.dispatchEvent(new Event('change',{bubbles:true}));}"+
+      "const t=document.getElementById('task');if(t&&[...t.options].some(o=>o.value===cfg.task))t.value=cfg.task;"+
+      "const c=document.getElementById('count');if(c)c.value=cfg.count;document.getElementById('generate')?.click();"
+    );
+  });
+})();
 </script>
 </body></html>
