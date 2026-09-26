@@ -65,7 +65,7 @@ body.pupil .teacher-only{display:none!important}body.pupil main{padding:6px;max-
 <body>
 <header>
   <div class="brand"><div class="brandmark">▦</div><div><p>Interactive Teaching Engine</p><h1>Area & Perimeter</h1></div></div>
-  <div class="header-actions"><button class="teacher-only" id="guideButton" type="button">Teacher guide</button><button id="viewButton" type="button">Pupil view ↗</button><button class="teacher-only accent" id="newButton" type="button">New activity</button></div>
+  <div class="header-actions"><button class="teacher-only" id="guideButton" type="button">Teacher guide</button><button class="teacher-only" id="downloadActivityButton" type="button">Download activity</button><button id="viewButton" type="button">Pupil view ↗</button><button class="teacher-only accent" id="newButton" type="button">New activity</button></div>
 </header>
 <main>
   <div class="workspace">
@@ -313,6 +313,32 @@ $('toolButton').onclick=()=>{const q=questions[index];if(q.phase!=='build')retur
 const guide=$('guide');$('guideButton').onclick=()=>guide.showModal();$('closeGuide').onclick=()=>guide.close();guide.addEventListener('click',e=>{if(e.target===guide)guide.close()});
 $('viewButton').onclick=()=>{const on=!document.body.classList.contains('pupil');document.body.classList.toggle('pupil',on);$('viewButton').textContent=on?'Teacher view':'Pupil view ↗';try{parent.postMessage({type:'primary-maths-pupil-view',on},'*')}catch(e){}};
 load();questions=generate();showQuestion();
+</script>
+<script id="activityDownloadExport">
+(()=>{
+  const btn=document.getElementById('downloadActivityButton');
+  if(!btn)return;
+  function save(name,html){
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function build(name,cfg,restoreCode){
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelector('#downloadActivityButton')?.remove();
+    clone.querySelector('body')?.classList.remove('pupil');
+    const script=document.createElement('script');
+    script.textContent='(()=>{const cfg='+JSON.stringify(cfg)+';'+restoreCode+'})();';
+    clone.querySelector('body')?.append(script);
+    save(name,'<!doctype html>'+clone.outerHTML);
+  }
+  btn.addEventListener('click',()=>{
+    const ids=['task','phase','unit','count'],cfg={};ids.forEach(id=>cfg[id]=document.getElementById(id)?.value||'');
+    build('area-perimeter-activity.html',cfg,
+      "['task','phase','unit','count'].forEach(id=>{const el=document.getElementById(id);if(el&&cfg[id]!==undefined)el.value=cfg[id];});document.getElementById('newButton')?.click();"
+    );
+  });
+})();
 </script>
 </body>
 </html>
