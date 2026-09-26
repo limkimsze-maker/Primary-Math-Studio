@@ -475,6 +475,13 @@
     }
     .chip:active{ cursor:grabbing; }
     .chip.placed{ opacity:.55; cursor:not-allowed; }
+    .chip.selected,.opChip.selected{
+      outline:4px solid rgba(45,143,213,.28);
+      outline-offset:2px;
+      background:#eaf7ff;
+      border-color:#2d8fd5;
+      transform:translateY(-1px);
+    }
 
     .barsCol{
       width:100%;
@@ -715,6 +722,25 @@
     .msg.good{ border-color:rgba(22,163,74,.35); background:#ecfdf3; display:block; }
     .msg.bad{ border-color:rgba(225,29,72,.30); background:#fff1f2; display:block; }
 
+    .answerActions{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      padding:4px 0;
+    }
+    .answerBtn{
+      min-width:220px;
+      min-height:54px;
+      font-size:18px;
+      font-weight:1000;
+    }
+    .answerBtn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
     /* Tools */
     .mini{ font-size:11px; color:var(--muted); font-weight:900; }
     .timerRow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -902,7 +928,11 @@
       .main.toolsHidden .question{font-size:clamp(36px,3.3vw,54px)}
     }
     @media (max-width:760px){
-      body{overflow:auto}.app{min-height:100dvh;height:auto;overflow:visible}
+      html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+      .wrap{height:auto;min-height:100dvh;display:block}
+      .app{height:auto;min-height:100dvh;overflow:visible;display:block}
+      .main{overflow:visible;min-height:0;flex:none}
+      .bd{overflow:visible;min-height:0}
       .topbar{padding:10px 12px;align-items:flex-start;flex-direction:column}
       .title h1{font-size:23px}.title .sub{font-size:14px}
       .controls{width:100%;justify-content:flex-start}.seg{max-width:100%;overflow-x:auto}
@@ -912,13 +942,132 @@
       .question{font-size:clamp(24px,7vw,32px)}.questionTitle{font-size:14px}
       .gate{align-items:stretch}.gateBtns{width:100%;display:grid;grid-template-columns:1fr 1fr}
       .choiceBtn{font-size:16px;min-height:52px;white-space:normal}
-      .modelWrap{min-height:320px;padding:10px}.modelStage{padding:48px 4px 58px}
-      .diffGrid{grid-template-columns:118px 1fr;gap:10px}.slot{height:46px;font-size:14px;padding:0 5px}
-      .chip,.slot .chipInSlot{font-size:14px;padding:6px 9px}.labelBank .mini{width:100%}
+      :root{--barH:58px;--braceH:24px;--blankMin:56px;--blankMax:60px}
+      .modelWrap{min-height:430px;padding:10px 8px 22px;overflow:visible;align-items:flex-start}
+      .modelStage{width:100%;min-width:0;padding:48px 2px 126px;overflow:visible}
+      .diffGrid{grid-template-columns:96px minmax(0,1fr);gap:14px 8px;min-width:0}
+      .barsCol{min-width:0}
+      .diffTopBrace{left:104px;right:6px;top:166px}
+      .diffBottom{left:104px;right:6px;bottom:72px}
+      .sumTotalBrace{bottom:72px}
+
+      /* Dedicated Part-Whole mobile geometry */
+      #modelSum{
+        position:relative;
+        min-height:270px;
+        padding:96px 6px 76px;
+      }
+      #modelSum .sumKnownBrace{
+        left:0;
+        width:22%;
+        top:56px;
+      }
+      #modelSum .sumUnknownBrace{
+        left:22%;
+        width:78%;
+        top:56px;
+      }
+      #modelSum .sumKnownBrace .labelTop,
+      #modelSum .sumUnknownBrace .labelTop{
+        top:-54px;
+      }
+      #modelSum .sumKnownBrace .blank{
+        min-width:58px;
+        max-width:64px;
+      }
+      #modelSum .sumUnknownBrace .qMark{
+        font-size:34px;
+        line-height:1;
+      }
+      #modelSum .sumBar{
+        width:100%;
+        margin:0;
+      }
+      #modelSum .sumTotalBrace{
+        left:0;
+        width:100%;
+        top:166px;
+        bottom:auto;
+      }
+      #modelSum .sumTotalBrace .labelBot{
+        top:26px;
+      }
+
+      .slot{height:46px;font-size:13px;padding:0 4px;min-width:0}
+      .chip,.slot .chipInSlot{font-size:14px;padding:7px 9px;touch-action:manipulation}
+      .slot .chipInSlot{max-width:100%;white-space:nowrap}
+      .slot,.opChip,.opSlot{touch-action:manipulation}
+      .diffTopBrace,.sumKnownBrace,.sumUnknownBrace,.sumTotalBrace,.diffBottom{z-index:10}
+      .labelTop,.labelBot{
+        white-space:nowrap;
+        z-index:12;
+        max-width:calc(100vw - 36px);
+        pointer-events:auto;
+      }
+      .labelTop{top:-74px}
+      .labelBot{top:30px}
+      #modelSum .labelTop{max-width:none}
+      #modelSum .labelBot{max-width:none}
+      .labelTop .blank,.labelBot .blank{
+        position:relative;
+        z-index:13;
+        pointer-events:auto;
+      }
+      .labelTop .blank input,.labelBot .blank input{
+        position:relative;
+        z-index:14;
+        pointer-events:auto;
+        touch-action:manipulation;
+      }
+      .blank{min-height:44px}
+      .blank input{font-size:18px;padding:5px 3px}
+      .labelBank{margin-bottom:64px;position:relative;z-index:6;pointer-events:none}
+      .labelBank .chip,.labelBank .mini{pointer-events:auto}
+      .labelBank .mini{width:100%;line-height:1.25;order:-1;margin-bottom:4px;overflow-wrap:anywhere}
       .modelCheckRow{align-items:stretch}.modelCheckRow>div:last-child{width:100%}#btnCheckModel{width:100%;min-height:50px}
       .opBank{justify-content:center}.equation-step-note{width:100%;justify-content:center}
-      .eq{font-size:23px;overflow-x:auto;justify-content:flex-start;padding:8px}.result{font-size:21px}.msg{font-size:18px}
+      .eq{font-size:23px;overflow-x:auto;justify-content:flex-start;padding:8px;max-width:100%}
+      .eq.locked{
+        min-height:82px;
+        overflow:hidden;
+        white-space:normal;
+      }
+      .eq.locked::after{
+        content:"Check the model first.";
+        white-space:normal;
+        overflow-wrap:anywhere;
+        word-break:normal;
+        line-height:1.25;
+        font-size:18px;
+        padding:12px 14px;
+        box-sizing:border-box;
+        max-width:100%;
+      }
+      .result{font-size:21px;white-space:normal;max-width:100%;overflow-wrap:anywhere}
+      .answerActions{width:100%;padding:4px 0 8px}
+      .answerBtn{width:100%;min-width:0;min-height:58px;font-size:20px}
+      .msg{font-size:18px;max-width:100%;overflow-wrap:anywhere}
       .footer{font-size:12px}#toolsCard{margin-top:10px}
+
+      /* Pupil working space is always available on phones. */
+      .main.toolsHidden #toolsCard{display:flex}
+      .main.toolsHidden #toolsCard>.hd{display:none}
+      .main.toolsHidden #toolsCard>.bd{
+        display:block !important;
+        overflow:visible !important;
+        padding:0;
+      }
+      .main.toolsHidden #toolsCard .bd>.timerRow,
+      .main.toolsHidden #toolsCard .bd>div[style*="display:flex"][style*="margin-bottom:10px"],
+      .main.toolsHidden #toolsCard .bd>p{display:none !important}
+      .main.toolsHidden #toolsCard .workCard{margin:0;border-radius:18px}
+      .main.toolsHidden #toolsCard .workHdr{padding:12px}
+      .main.toolsHidden #toolsCard canvas#workCanvas{
+        height:230px;
+        display:block;
+        pointer-events:auto;
+        touch-action:none;
+      }
     }
 
     /* ✅ Confetti overlay canvas */
@@ -1005,10 +1154,10 @@
                 <div class="labelBank" id="labelBank">
                   <div class="chip" id="chipGreater" draggable="true" data-label="greater">greater</div>
                   <div class="chip" id="chipSmaller" draggable="true" data-label="smaller">smaller</div>
-                  <span class="mini">Drag labels into the left boxes.</span>
+                  <span class="mini">Tap a label, then tap a left box. You can also drag.</span>
                 </div>
 
-                <div class="braceSpan diffTopBrace" aria-hidden="true">
+                <div class="braceSpan diffTopBrace">
                   <svg viewBox="0 0 100 24" preserveAspectRatio="none">
                     <path d="M4 18 C4 10 6 6 12 6 L45 6 C47 6 48.5 6 50 2 C51.5 6 53 6 55 6 L88 6 C94 6 96 10 96 18"/>
                   </svg>
@@ -1060,7 +1209,7 @@
 
               <!-- SUM MODEL (Part-Whole) -->
               <div id="modelSum" style="display:none;">
-                <div class="braceSpan sumKnownBrace" aria-hidden="true">
+                <div class="braceSpan sumKnownBrace">
                   <svg viewBox="0 0 100 24" preserveAspectRatio="none">
                     <path d="M4 18 C4 10 6 6 12 6 L45 6 C47 6 48.5 6 50 2 C51.5 6 53 6 55 6 L88 6 C94 6 96 10 96 18"/>
                   </svg>
@@ -1080,7 +1229,7 @@
                   <div class="sumDivider"></div>
                 </div>
 
-                <div class="braceSpan sumTotalBrace" aria-hidden="true">
+                <div class="braceSpan sumTotalBrace">
                   <svg viewBox="0 0 100 24" preserveAspectRatio="none">
                     <path d="M4 6 C4 14 6 18 12 18 L45 18 C47 18 48.5 18 50 22 C51.5 18 53 18 55 18 L88 18 C94 18 96 14 96 6"/>
                   </svg>
@@ -1114,6 +1263,11 @@
 
           <div class="eq locked" id="eqLine"></div>
           <div class="result locked" id="finalLine"></div>
+
+          <div class="answerActions" id="answerActions">
+            <button class="btn primary answerBtn" id="btnCheckAnswer" type="button" disabled>Check Answer</button>
+            <button class="btn good answerBtn" id="btnNextQuestion" type="button" style="display:none;">Next Question →</button>
+          </div>
 
           <div id="msg" class="msg"></div>
         </div>
@@ -1198,6 +1352,7 @@
 <!-- ✅ FIX: Confetti canvas must exist -->
 <canvas id="confettiCanvas"></canvas>
 
+
 <script>
 (function(){
   "use strict";
@@ -1267,6 +1422,10 @@
     gate:{ chosen:null, passed:false },
     modelChecked:false
   };
+
+  // Tap-to-place state for touch devices. Desktop drag/drop remains available.
+  let selectedLabel = null;
+  let selectedOp = null;
 
   /* ===========================
      ELEMENTS
@@ -1447,6 +1606,8 @@
   function resetOps(){
     state.ops.op1=null;
     state.ops.eq=null;
+    selectedOp=null;
+    updateOpSelection();
   }
 
   function expectedModelKind(){
@@ -1456,6 +1617,8 @@
   function lockEquation(lock){
     eqLine.classList.toggle("locked", !!lock);
     finalLine.classList.toggle("locked", !!lock);
+    const bottomCheck=document.getElementById("btnCheckAnswer");
+    if(bottomCheck) bottomCheck.disabled=!!lock;
   }
 
   function setModelOverlay(show){
@@ -1478,11 +1641,29 @@
   }
 
   /* ===========================
-     DRAG: DIFFERENCE LABELS
+     DRAG / TAP: DIFFERENCE LABELS
   ============================ */
+  function updateLabelSelection(){
+    [chipGreater, chipSmaller].forEach(chip=>{
+      const active = selectedLabel === chip.dataset.label;
+      chip.classList.toggle("selected", active);
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
+  function updateOpSelection(){
+    document.querySelectorAll(".opChip").forEach(chip=>{
+      const symbol = chip.dataset.op === "-" ? "−" : chip.dataset.op;
+      const active = selectedOp === symbol;
+      chip.classList.toggle("selected", active);
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
   function resetLabelUI(){
     state.labels.top=null;
     state.labels.bottom=null;
+    selectedLabel=null;
 
     slotTop.classList.remove("filled");
     slotBottom.classList.remove("filled");
@@ -1495,6 +1676,7 @@
     chipSmaller.classList.remove("placed");
     chipGreater.setAttribute("draggable","true");
     chipSmaller.setAttribute("draggable","true");
+    updateLabelSelection();
   }
 
   function renderSlot(slotEl, label){
@@ -1527,18 +1709,34 @@
     chipSmaller.classList.toggle("placed", used.has("smaller"));
     chipGreater.setAttribute("draggable", used.has("greater") ? "false" : "true");
     chipSmaller.setAttribute("draggable", used.has("smaller") ? "false" : "true");
+    selectedLabel = null;
+    updateLabelSelection();
   }
 
   function wireLabelDrag(){
     [chipGreater, chipSmaller].forEach(chip=>{
+      if(chip.dataset.labelWired === "1") return;
+      chip.dataset.labelWired = "1";
+
       chip.addEventListener("dragstart",(e)=>{
         if(chip.classList.contains("placed")){ e.preventDefault(); return; }
         e.dataTransfer.setData("text/plain", chip.dataset.label);
         e.dataTransfer.effectAllowed="move";
       });
+
+      chip.addEventListener("click",(e)=>{
+        e.preventDefault();
+        if(chip.classList.contains("placed")) return;
+        const label = chip.dataset.label;
+        selectedLabel = (selectedLabel === label) ? null : label;
+        updateLabelSelection();
+      });
     });
 
     [slotTop, slotBottom].forEach(slot=>{
+      if(slot.dataset.labelSlotWired === "1") return;
+      slot.dataset.labelSlotWired = "1";
+
       slot.addEventListener("dragover",(e)=>{
         e.preventDefault();
         slot.classList.add("over");
@@ -1554,6 +1752,11 @@
       });
 
       slot.addEventListener("click",(e)=>{
+        if(selectedLabel){
+          applyLabelDrop(slot, selectedLabel);
+          return;
+        }
+
         const t = e.target;
         if(!(t && t.classList && t.classList.contains("chipInSlot"))) return;
         const slotKey = slot.dataset.slot;
@@ -1567,6 +1770,7 @@
         chipSmaller.classList.toggle("placed", used.has("smaller"));
         chipGreater.setAttribute("draggable", used.has("greater") ? "false" : "true");
         chipSmaller.setAttribute("draggable", used.has("smaller") ? "false" : "true");
+        updateLabelSelection();
       });
     });
   }
@@ -1620,23 +1824,43 @@
         const sym = e.dataTransfer.getData("text/plain");
         if(!["+", "−", "×", "÷", "="].includes(sym)) return;
         setSlot(slotEl, sym);
+        selectedOp = null;
+        updateOpSelection();
       });
 
-      slotEl.addEventListener("click", ()=>{
+      slotEl.addEventListener("click",(e)=>{
+        e.preventDefault();
+        if(selectedOp){
+          setSlot(slotEl, selectedOp);
+          selectedOp = null;
+          updateOpSelection();
+          return;
+        }
         if(slotEl.classList.contains("filled")) clearSlot(slotEl);
       });
     }
 
     chips.forEach(ch=>{
+      if(ch.dataset.opWired === "1") return;
+      ch.dataset.opWired = "1";
+
       ch.addEventListener("dragstart",(e)=>{
         const sym = ch.dataset.op === "-" ? "−" : ch.dataset.op;
         e.dataTransfer.setData("text/plain", sym);
         e.dataTransfer.effectAllowed="move";
       });
+
+      ch.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const sym = ch.dataset.op === "-" ? "−" : ch.dataset.op;
+        selectedOp = (selectedOp === sym) ? null : sym;
+        updateOpSelection();
+      });
     });
 
     bindSlot(document.getElementById("op1"));
     bindSlot(document.getElementById("opEq"));
+    updateOpSelection();
   }
 
   /* ===========================
@@ -1869,6 +2093,20 @@
     resetScore();
     resetTimer();
 
+    // Start every question with a fresh Working Space.
+    if(typeof strokes !== "undefined"){
+      strokes.length = 0;
+      redrawWork();
+    }
+
+    const bottomCheck=document.getElementById("btnCheckAnswer");
+    const nextBtn=document.getElementById("btnNextQuestion");
+    if(bottomCheck){
+      bottomCheck.style.display="";
+      bottomCheck.disabled=true;
+    }
+    if(nextBtn) nextBtn.style.display="none";
+
     let kind="diff";
     if(state.family==="sum") kind="sum";
     else if(state.family==="diff") kind="diff";
@@ -1985,6 +2223,11 @@
       playSound("correct");
       fireConfetti();
       pushToXAPI(1, feedback(true));
+
+      const bottomCheck=document.getElementById("btnCheckAnswer");
+      const nextBtn=document.getElementById("btnNextQuestion");
+      if(bottomCheck) bottomCheck.style.display="none";
+      if(nextBtn) nextBtn.style.display="";
     }else{
       setScore(false);
       showMsg("Not quite. Check your equation and final answer.","bad");
@@ -2043,6 +2286,11 @@
 
   document.getElementById("btnNew").addEventListener("click", newQuestion);
   document.getElementById("btnCheck").addEventListener("click", check);
+  document.getElementById("btnCheckAnswer").addEventListener("click", check);
+  document.getElementById("btnNextQuestion").addEventListener("click", ()=>{
+    newQuestion();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
 
   document.getElementById("btnUnlock").addEventListener("click", unlockSound);
   document.getElementById("btnTestCorrect").addEventListener("click", ()=>playSound("correct"));
@@ -2064,11 +2312,7 @@
   btnToggleTools.addEventListener("click", ()=>{
     const hidden = !mainGrid.classList.contains("toolsHidden");
     setToolsHidden(hidden);
-
-    // ✅ FIX: when Tools become visible, canvas gains size — resize it
-    if(!hidden){
-      requestAnimationFrame(resizeCanvas);
-    }
+    if(typeof refreshWorkingCanvas === "function") refreshWorkingCanvas();
   });
 
   /* ===========================
@@ -2206,7 +2450,27 @@
     redrawWork();
   });
 
-  window.addEventListener("resize", resizeCanvas);
+  function refreshWorkingCanvas(){
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        if(!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if(rect.width >= 2 && rect.height >= 2) resizeCanvas();
+      });
+    });
+  }
+
+  window.addEventListener("resize", refreshWorkingCanvas);
+  window.addEventListener("orientationchange", refreshWorkingCanvas);
+  window.addEventListener("load", refreshWorkingCanvas);
+
+  if(typeof ResizeObserver !== "undefined"){
+    const workResizeObserver = new ResizeObserver(()=>{
+      const rect = canvas.getBoundingClientRect();
+      if(rect.width >= 2 && rect.height >= 2) resizeCanvas();
+    });
+    workResizeObserver.observe(canvas);
+  }
 
   /* ===========================
      INIT
@@ -2222,12 +2486,8 @@
     setToolsHidden(true);
   }
 
-  // ✅ FIX: only resize working canvas when tools (and canvas) are visible
-  requestAnimationFrame(()=>{
-    if(!mainGrid.classList.contains("toolsHidden")){
-      resizeCanvas();
-    }
-  });
+  // The pupil working space is visible on mobile even when Teacher Tools are hidden.
+  refreshWorkingCanvas();
 
   // first question
   newQuestion();
