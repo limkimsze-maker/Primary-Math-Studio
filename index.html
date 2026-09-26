@@ -66,6 +66,9 @@
         font-size:15px;
         flex:0 0 30px;
       }
+      .annotation-tool.active{outline:2px solid #efc66d;outline-offset:1px}
+      .annotation-tool[data-annotation-tool="pointer"]::after,
+      .annotation-tool[data-annotation-tool="pen"]::after{display:none}
       .annotation-row-break{
         display:block;
         flex:0 0 100%;
@@ -130,8 +133,8 @@
   <canvas id="annotationCanvas" aria-hidden="true"></canvas>
   <div class="annotation-toolbar" id="annotationToolbar" role="group" aria-label="Annotation tools">
     <div class="annotation-body" id="annotationBody">
-      <button class="annotation-tool active" type="button" data-annotation-tool="pointer" title="Pointer / scroll" aria-label="Pointer and scroll">☝</button>
-      <button class="annotation-tool" type="button" data-annotation-tool="pen" title="Pen" aria-label="Pen">✎</button>
+      <button class="annotation-tool active" type="button" data-annotation-tool="pointer" title="Scroll / use lesson" aria-label="Scroll and use lesson">☝</button>
+      <button class="annotation-tool" type="button" data-annotation-tool="pen" title="Draw" aria-label="Draw with pen">✎</button>
       <button class="annotation-tool" type="button" data-annotation-tool="highlighter" title="Highlighter" aria-label="Highlighter">▰</button>
       <button class="annotation-tool" type="button" data-annotation-tool="line" title="Line" aria-label="Line">╱</button>
       <button class="annotation-tool" type="button" data-annotation-tool="arrow" title="Arrow" aria-label="Arrow">➜</button>
@@ -262,8 +265,11 @@
     }
     function annotationInteractive(target,doc){
       if(!target||target.nodeType!==1)return false;
-      if(target.closest?.('button,input,select,textarea,a,[contenteditable="true"],[draggable="true"],[role="button"],[role="slider"],[role="checkbox"],[role="radio"],[role="switch"],[role="textbox"],canvas,.draggable,.drag-handle,.counter,.token,.coin,.disc,.handle,[data-draggable],[data-drag]'))return true;
-      try{const c=doc.defaultView.getComputedStyle(target).cursor;return c==='pointer'||c==='grab'||c==='grabbing'||c==='text';}catch(e){return false;}
+      return Boolean(target.closest?.(
+        'button,input,select,textarea,a,label,[contenteditable="true"],' +
+        '[role="button"],[role="slider"],[role="checkbox"],[role="radio"],[role="switch"],[role="textbox"],' +
+        '[draggable="true"],.draggable,.drag-handle,[data-draggable],[data-drag]'
+      ));
     }
     function annotationPoint(e,doc){
       const canvasRect=annotationCanvas.getBoundingClientRect();
@@ -280,7 +286,7 @@
         e.preventDefault();e.stopPropagation();const value=window.prompt('Annotation text:');if(!value)return;annotationSnapshot();annotationItems.push({tool:'text',colour:annotationColour,size:Number(annotationSize.value),textSize:Number(annotationTextSize.value),text:value,x1:p.x,y1:p.y});annotationSave();annotationSetButtons();annotationRender();return;
       }
       e.preventDefault();e.stopPropagation();
-      try{e.target.setPointerCapture?.(e.pointerId);}catch(err){}
+      try{doc.documentElement?.setPointerCapture?.(e.pointerId);}catch(err){try{e.target.setPointerCapture?.(e.pointerId);}catch(_){} }
       if(annotationTool==='eraser'){annotationEraseSnapshot=annotationClone(annotationItems);annotationRemoveAt(p.x,p.y);annotationRender();return;}
       const base={tool:annotationTool,colour:annotationColour,size:Number(annotationSize.value),x1:p.x,y1:p.y,x2:p.x,y2:p.y};
       if(annotationTool==='pen'||annotationTool==='highlighter')base.points=[p];
@@ -324,13 +330,28 @@
       if(!doc||doc.__mathAnnotationAttached)return;doc.__mathAnnotationAttached=true;
       try{
         let style=doc.getElementById('mathAnnotationTouchStyle');
-        if(!style){style=doc.createElement('style');style.id='mathAnnotationTouchStyle';style.textContent='html.annotation-drawing-mode,html.annotation-drawing-mode body{touch-action:none!important;}';doc.head?.append(style);}
+        if(!style){
+          style=doc.createElement('style');
+          style.id='mathAnnotationTouchStyle';
+          style.textContent=
+            'html.annotation-drawing-mode,html.annotation-drawing-mode body,html.annotation-drawing-mode body *{touch-action:none!important;}' +
+            'html.annotation-drawing-mode button,html.annotation-drawing-mode button *,' +
+            'html.annotation-drawing-mode input,html.annotation-drawing-mode select,html.annotation-drawing-mode textarea,' +
+            'html.annotation-drawing-mode a,html.annotation-drawing-mode a *,' +
+            'html.annotation-drawing-mode label,html.annotation-drawing-mode label *,' +
+            'html.annotation-drawing-mode [role="button"],html.annotation-drawing-mode [role="button"] *,' +
+            'html.annotation-drawing-mode [role="slider"],html.annotation-drawing-mode [role="checkbox"],' +
+            'html.annotation-drawing-mode [role="radio"],html.annotation-drawing-mode [role="switch"],' +
+            'html.annotation-drawing-mode [role="textbox"]{touch-action:manipulation!important;}';
+          doc.head?.append(style);
+        }
         const drawing=annotationTool!=='pointer';
         doc.documentElement.classList.toggle('annotation-drawing-mode',drawing);
         doc.body?.classList.toggle('annotation-drawing-mode',drawing);
       }catch(e){}
       doc.addEventListener('pointerdown',e=>annotationBegin(e,doc),true);
       doc.addEventListener('pointermove',e=>annotationMove(e,doc),{capture:true,passive:false});
+      if('onpointerrawupdate' in doc)doc.addEventListener('pointerrawupdate',e=>{if(annotationDrawing||annotationEraseSnapshot)annotationMove(e,doc);},{capture:true,passive:false});
       doc.addEventListener('pointerup',e=>annotationEnd(e,doc),true);
       doc.addEventListener('pointercancel',e=>annotationEnd(e,doc),true);
     }
