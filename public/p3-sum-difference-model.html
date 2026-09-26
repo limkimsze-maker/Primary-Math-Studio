@@ -1107,7 +1107,7 @@
           <button id="tabB" type="button">Type B</button>
         </div>
 
-        <button class="btn" id="btnNew" type="button">New Question</button>
+        <button class="btn" id="btnNew" type="button">New Question</button><button class="btn" id="downloadActivityButton" type="button">Download activity</button>
         <button class="btn primary" id="btnCheck" type="button">Check</button>
       </div>
     </div>
@@ -2492,6 +2492,36 @@
   // first question
   newQuestion();
 
+})();
+</script>
+<script id="activityDownloadExport">
+(()=>{
+  const btn=document.getElementById('downloadActivityButton');
+  if(!btn)return;
+  function save(name,html){
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function build(name,cfg,restoreCode){
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelector('#downloadActivityButton')?.remove();
+    clone.querySelector('body')?.classList.remove('pupil');
+    const script=document.createElement('script');
+    script.textContent='(()=>{const cfg='+JSON.stringify(cfg)+';'+restoreCode+'})();';
+    clone.querySelector('body')?.append(script);
+    save(name,'<!doctype html>'+clone.outerHTML);
+  }
+  btn.addEventListener('click',()=>{
+    const cfg={
+      family:document.getElementById('modeSum')?.classList.contains('active')?'sum':document.getElementById('modeRand')?.classList.contains('active')?'rand':'diff',
+      diffType:document.getElementById('tabB')?.classList.contains('active')?'B':'A'
+    };
+    build('p3-sum-difference-activity.html',cfg,
+      "const fam=cfg.family==='sum'?'modeSum':cfg.family==='rand'?'modeRand':'modeDiff';document.getElementById(fam)?.click();"+
+      "if(cfg.family!=='sum')document.getElementById(cfg.diffType==='B'?'tabB':'tabA')?.click();"
+    );
+  });
 })();
 </script>
 </body>
