@@ -1670,7 +1670,7 @@ function drawMoney(){
 }
 function strip(n,den,interactive=false,second=false){return `<div class="fraction-strip" style="grid-template-columns:repeat(${den},1fr)">${Array.from({length:den},(_,i)=>`<${interactive?'button type="button"':'span'} class="fraction-cell ${i<n?'shaded':''} ${second?'second':''}" ${interactive?`data-cell="${i}" aria-label="Part ${i+1}"`:''}></${interactive?'button':'span'}>`).join('')}</div>`;}
 function fractionSymbol([n,d],extra=''){return d===1?`<span class="fraction-whole ${extra}" aria-label="${n}">${n}</span>`:`<span class="fraction-symbol ${extra}" aria-label="${n} over ${d}"><b>${n}</b><i></i><b>${d}</b></span>`;}
-function fractionModelCard(frac,label,index=0,extra=''){return `<div class="fraction-model-card ${extra}"><span>${E(label)}</span>${strip(frac[0],frac[1],false,index%2===1)}${fractionSymbol(frac)}</div>`;}
+function fractionModelCard(frac,label,index=0,extra='',showSymbol=true){return `<div class="fraction-model-card ${extra}"><span>${E(label)}</span>${strip(frac[0],frac[1],false,index%2===1)}${showSymbol?fractionSymbol(frac):''}</div>`;}
 function fractionCombineAnimation(c){
  if(!['like-add','unlike-add'].includes(c.task))return '';
  const left=c.changedFractions?.[0]||c.fractions?.[0],right=c.changedFractions?.[1]||c.fractions?.[1],result=c.rawResult;
@@ -1737,7 +1737,8 @@ function drawFractions(){
  if(['unlike-compare','unlike-add','unlike-subtract'].includes(c.task)&&step>=1)shown=c.changedFractions;
  if(['equivalent','simplify'].includes(c.task)&&finalStep)shown=[c.fractions[0],c.changedFractions[0]];
  const labels=shown.length===1?['One whole']:shown.map((_,i)=>i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'Same value':i===0?'First fraction':i===1?'Second fraction':'Third fraction');
- let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'')).join('');
+ const hideWritingModelAnswer=c.task==='write'&&!solved;
+ let models=shown.map((frac,i)=>fractionModelCard(frac,labels[i],i,i===shown.length-1&&['equivalent','simplify'].includes(c.task)?'fraction-equivalent-card':'',!hideWritingModelAnswer)).join('');
  const opTask=['like-add','like-subtract','unlike-add','unlike-subtract'].includes(c.task),showResultModel=opTask&&step>=2,combineDemo=['like-add','unlike-add'].includes(c.task)&&step===2?fractionCombineAnimation(c):'',subtractDemo=['like-subtract','unlike-subtract'].includes(c.task)&&step===2?fractionSubtractAnimation(c):'',teachingDemo=combineDemo||subtractDemo,staticResult=showResultModel&&(!teachingDemo||finalStep);
  if(staticResult&&!finalStep)models+=fractionModelCard(c.rawResult,'Answer before simplifying',2,'fraction-result-card');
  if(showResultModel&&finalStep)models+=fractionModelCard(c.resultFraction,'Simplest answer',2,'fraction-result-card');
