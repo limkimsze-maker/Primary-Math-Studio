@@ -24,31 +24,28 @@
   
     /* Universal classroom annotation toolbar */
     #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none;touch-action:none}.annotation-drawing #annotationCanvas{pointer-events:auto;cursor:crosshair}
-    .annotation-toolbar{position:fixed;z-index:99990;top:78px;right:8px;max-width:min(560px,94vw);border:1px solid #bfcdbf;border-radius:11px;background:#fffdf9f2;box-shadow:0 8px 28px #183c3530;backdrop-filter:blur(8px);font:12px/1.2 Arial,Helvetica,sans-serif;color:#183c35;user-select:none}
-    .annotation-toolbar.collapsed{width:38px;height:38px;overflow:hidden;border-radius:12px}
-    .annotation-toolbar.collapsed .annotation-head{height:38px;padding:0;justify-content:center}
-    .annotation-toolbar.collapsed .annotation-drag,.annotation-toolbar.collapsed .annotation-title{display:none}
-    .annotation-toolbar.collapsed .annotation-collapse{width:38px;height:38px;border:0;border-radius:11px;font-size:18px}
-    .annotation-toolbar.collapsed .annotation-body{display:none}
-    .annotation-head{display:flex;align-items:center;gap:5px;padding:4px 5px;border-bottom:1px solid #dce5d8;background:#f3f6ee;border-radius:10px 10px 0 0}
-    .annotation-drag{width:26px;height:28px;display:grid;place-items:center;border-radius:7px;cursor:grab;font-size:16px;color:#6b7e70;touch-action:none}
-    .annotation-drag:active{cursor:grabbing}
-    .annotation-title{font-weight:900;letter-spacing:.02em;margin-right:auto;white-space:nowrap}
-    .annotation-collapse,.annotation-tool,.annotation-action{height:30px;min-width:30px;padding:0 7px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;cursor:pointer;font-weight:850}
-    .annotation-tool:hover,.annotation-action:hover,.annotation-collapse:hover{background:#edf3e8}
-    .annotation-tool.active{background:#183c35;color:#fff;border-color:#183c35;box-shadow:0 0 0 2px #efc66d88}
-    .annotation-body{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:5px}
-    .annotation-divider{width:1px;height:24px;background:#d7e0d3;margin:0 1px}
-    .annotation-select{height:30px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;padding:0 4px;font:inherit;font-weight:800}
-    .annotation-colours{display:flex;align-items:center;gap:3px}
-    .annotation-colour{width:24px;height:24px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #b9c7b7;cursor:pointer;padding:0}
+    .annotation-toolbar{position:fixed;z-index:99990;top:0;left:0;right:0;height:46px;border:0;border-bottom:1px solid #c8d4c5;border-radius:0;background:#fffdf9f7;box-shadow:0 2px 10px #183c351f;backdrop-filter:blur(8px);font:12px/1.2 Arial,Helvetica,sans-serif;color:#183c35;user-select:none;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+    .annotation-head{display:none}
+    .annotation-body{height:45px;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;padding:5px 8px;min-width:max-content}
+    .annotation-collapse,.annotation-drag,.annotation-title{display:none!important}
+    .annotation-divider{width:1px;height:24px;background:#d7e0d3;margin:0 1px;flex:none}
+    .annotation-select{height:34px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;padding:0 5px;font:inherit;font-weight:800;flex:none}
+    .annotation-colours{display:flex;align-items:center;gap:4px;flex:none}
+    .annotation-colour{width:26px;height:26px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #b9c7b7;cursor:pointer;padding:0;flex:none}
     .annotation-colour.active{box-shadow:0 0 0 3px #efc66d}
+    .annotation-tool,.annotation-action{height:34px;min-width:34px;padding:0 8px;border:1px solid #cbd8c8;border-radius:7px;background:#fff;cursor:pointer;font-weight:850;flex:none}
+    .annotation-tool:hover,.annotation-action:hover{background:#edf3e8}
+    .annotation-tool.active{background:#183c35;color:#fff;border-color:#183c35;box-shadow:0 0 0 2px #efc66d88}
     .annotation-clear{color:#9b2c2c}
+    body{padding-top:46px!important}
+    #annotationCanvas{top:46px!important;height:calc(100vh - 46px)!important}
     @media(max-width:700px){
-      .annotation-toolbar{top:56px;right:6px;max-width:calc(100vw - 12px)}
-      .annotation-head{padding:3px 4px}.annotation-body{padding:4px;gap:3px}
-      .annotation-tool,.annotation-action{height:32px;min-width:32px;padding:0 6px}
-      .annotation-title{font-size:11px}
+      .annotation-toolbar{height:48px}
+      .annotation-body{height:47px;padding:6px 6px;gap:4px}
+      .annotation-tool,.annotation-action{height:34px;min-width:34px;padding:0 7px}
+      .annotation-select{height:34px;font-size:12px}
+      body{padding-top:48px!important}
+      #annotationCanvas{top:48px!important;height:calc(100vh - 48px)!important}
     }
 
   </style>
@@ -57,12 +54,7 @@
 <body>
 
   <canvas id="annotationCanvas" aria-hidden="true"></canvas>
-  <div class="annotation-toolbar collapsed" id="annotationToolbar" role="group" aria-label="Annotation tools">
-    <div class="annotation-head">
-      <span class="annotation-drag" id="annotationDrag" title="Drag to move the toolbar" aria-label="Drag annotation toolbar">⋮⋮</span>
-      <span class="annotation-title">Annotation</span>
-      <button class="annotation-collapse" id="annotationCollapse" type="button" title="Open annotation tools" aria-label="Open annotation tools">✎</button>
-    </div>
+  <div class="annotation-toolbar" id="annotationToolbar" role="group" aria-label="Annotation tools">
     <div class="annotation-body" id="annotationBody">
       <button class="annotation-tool active" type="button" data-annotation-tool="pointer" title="Pointer / scroll" aria-label="Pointer and scroll">☝</button>
       <button class="annotation-tool" type="button" data-annotation-tool="pen" title="Pen" aria-label="Pen">✎</button>
@@ -115,15 +107,14 @@
     // Universal annotation layer: persistent, collapsible, draggable and non-blocking.
     const annotationCanvas=document.querySelector('#annotationCanvas');
     const annotationToolbar=document.querySelector('#annotationToolbar');
-    const annotationCollapse=document.querySelector('#annotationCollapse');
-    const annotationDrag=document.querySelector('#annotationDrag');
+    const annotationCollapse=null;
+    const annotationDrag=null;
     const annotationSize=document.querySelector('#annotationSize');
     const annotationTextSize=document.querySelector('#annotationTextSize');
     const annotationUndo=document.querySelector('#annotationUndo');
     const annotationRedo=document.querySelector('#annotationRedo');
     const annotationClear=document.querySelector('#annotationClear');
     const annotationStoreKey='mathTeachingAnnotationsV1';
-    const annotationToolbarKey='mathTeachingAnnotationToolbarV1';
     const annotationCtx=annotationCanvas.getContext('2d');
     let annotationTool='pointer',annotationColour='#ef4444',annotationItems=[],annotationUndoStack=[],annotationRedoStack=[];
     let annotationDrawing=null,annotationEraseSnapshot=null,annotationDpr=1;
@@ -135,8 +126,9 @@
     function annotationSetButtons(){annotationUndo.disabled=!annotationUndoStack.length;annotationRedo.disabled=!annotationRedoStack.length;}
     function annotationResize(){
       annotationDpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
-      annotationCanvas.width=Math.round(innerWidth*annotationDpr);annotationCanvas.height=Math.round(innerHeight*annotationDpr);
-      annotationCanvas.style.width=innerWidth+'px';annotationCanvas.style.height=innerHeight+'px';
+      const rect=annotationCanvas.getBoundingClientRect(),w=Math.max(1,rect.width),h=Math.max(1,rect.height);
+      annotationCanvas.width=Math.round(w*annotationDpr);annotationCanvas.height=Math.round(h*annotationDpr);
+      annotationCanvas.style.width=w+'px';annotationCanvas.style.height=h+'px';
       annotationCtx.setTransform(annotationDpr,0,0,annotationDpr,0,0);annotationRender();
     }
     function annotationPathPoints(ctx,points){
@@ -164,7 +156,7 @@
       ctx.restore();
     }
     function annotationRender(){
-      if(!annotationCtx)return;annotationCtx.clearRect(0,0,innerWidth,innerHeight);
+      if(!annotationCtx)return;annotationCtx.clearRect(0,0,annotationCanvas.clientWidth,annotationCanvas.clientHeight);
       for(const o of annotationItems)annotationDrawItem(annotationCtx,o);
       if(annotationDrawing)annotationDrawItem(annotationCtx,annotationDrawing);
     }
@@ -191,8 +183,9 @@
       try{const c=doc.defaultView.getComputedStyle(target).cursor;return c==='pointer'||c==='grab'||c==='grabbing'||c==='text';}catch(e){return false;}
     }
     function annotationPoint(e,doc){
-      if(doc===document)return {x:e.clientX,y:e.clientY};
-      const rect=frame.getBoundingClientRect();return {x:rect.left+e.clientX,y:rect.top+e.clientY};
+      const canvasRect=annotationCanvas.getBoundingClientRect();
+      if(doc===document)return {x:e.clientX-canvasRect.left,y:e.clientY-canvasRect.top};
+      const rect=frame.getBoundingClientRect();return {x:rect.left+e.clientX-canvasRect.left,y:rect.top+e.clientY-canvasRect.top};
     }
     function annotationRemoveAt(x,y){
       const before=annotationItems.length;annotationItems=annotationItems.filter(o=>!annotationHit(o,x,y,Math.max(8,Number(annotationSize.value)*1.4)));return before!==annotationItems.length;
@@ -262,21 +255,10 @@
     document.querySelectorAll('.annotation-colour').forEach(btn=>btn.addEventListener('click',()=>{
       annotationColour=btn.dataset.colour;document.querySelectorAll('.annotation-colour').forEach(b=>b.classList.toggle('active',b===btn));
     }));
-    annotationCollapse.addEventListener('click',()=>{
-      const collapsed=annotationToolbar.classList.toggle('collapsed');annotationCollapse.textContent=collapsed?'✎':'−';annotationCollapse.title=collapsed?'Open annotation tools':'Collapse annotation tools';try{localStorage.setItem(annotationToolbarKey,JSON.stringify({collapsed,left:annotationToolbar.style.left,top:annotationToolbar.style.top}));}catch(e){}
-    });
     annotationUndo.addEventListener('click',()=>{if(!annotationUndoStack.length)return;annotationRedoStack.push(annotationClone(annotationItems));annotationItems=annotationUndoStack.pop();annotationSave();annotationSetButtons();annotationRender();});
     annotationRedo.addEventListener('click',()=>{if(!annotationRedoStack.length)return;annotationUndoStack.push(annotationClone(annotationItems));annotationItems=annotationRedoStack.pop();annotationSave();annotationSetButtons();annotationRender();});
     annotationClear.addEventListener('click',()=>{if(!annotationItems.length)return;annotationSnapshot();annotationItems=[];annotationSave();annotationSetButtons();annotationRender();});
-    let annotationDragState=null;
-    annotationDrag.addEventListener('pointerdown',e=>{e.preventDefault();annotationDrag.setPointerCapture?.(e.pointerId);const r=annotationToolbar.getBoundingClientRect();annotationDragState={dx:e.clientX-r.left,dy:e.clientY-r.top};});
-    annotationDrag.addEventListener('pointermove',e=>{if(!annotationDragState)return;const w=annotationToolbar.offsetWidth,h=annotationToolbar.offsetHeight;annotationToolbar.style.left=Math.max(0,Math.min(innerWidth-w,e.clientX-annotationDragState.dx))+'px';annotationToolbar.style.top=Math.max(0,Math.min(innerHeight-h,e.clientY-annotationDragState.dy))+'px';annotationToolbar.style.right='auto';});
-    annotationDrag.addEventListener('pointerup',()=>{if(!annotationDragState)return;annotationDragState=null;try{localStorage.setItem(annotationToolbarKey,JSON.stringify({collapsed:annotationToolbar.classList.contains('collapsed'),left:annotationToolbar.style.left,top:annotationToolbar.style.top}));}catch(err){}});
     annotationLoad();
-    try{
-      const st=JSON.parse(localStorage.getItem(annotationToolbarKey)||'null');
-      if(st){annotationToolbar.classList.toggle('collapsed',st.collapsed!==false);annotationCollapse.textContent=st.collapsed===false?'−':'✎';if(st.left)annotationToolbar.style.left=st.left;if(st.top)annotationToolbar.style.top=st.top;if(st.left)annotationToolbar.style.right='auto';}
-    }catch(e){}
     annotationSetTool(annotationTool);annotationSetButtons();annotationResize();window.addEventListener('resize',annotationResize);
     frame.addEventListener('load',annotationAttachFrame);
 
