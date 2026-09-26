@@ -204,7 +204,7 @@
             </div>
             <div class="top-actions">
               <button class="sound-btn" id="soundBtn" type="button">🔊 Sound On</button>
-              <button class="settings-btn" id="settingsBtn" type="button">⚙️ Settings</button>
+              <button class="settings-btn" id="settingsBtn" type="button">⚙️ Settings</button><button class="settings-btn" id="downloadActivityButton" type="button">⬇ Download activity</button>
             </div>
           </div>
 
@@ -777,5 +777,36 @@
     }
     boot();
   </script>
+<script id="activityDownloadExport">
+(()=>{
+  const btn=document.getElementById('downloadActivityButton');
+  if(!btn)return;
+  function save(name,html){
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function build(name,cfg,restoreCode){
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelector('#downloadActivityButton')?.remove();
+    clone.querySelector('body')?.classList.remove('pupil');
+    const script=document.createElement('script');
+    script.textContent='(()=>{const cfg='+JSON.stringify(cfg)+';'+restoreCode+'})();';
+    clone.querySelector('body')?.append(script);
+    save(name,'<!doctype html>'+clone.outerHTML);
+  }
+  btn.addEventListener('click',()=>{
+    const cfg={
+      mode:document.getElementById('modeSelect')?.value||'build',
+      tables:[...document.querySelectorAll('#tableChecks input:checked')].map(x=>Number(x.value))
+    };
+    build('times-table-builder-activity.html',cfg,
+      "const checks=[...document.querySelectorAll('#tableChecks input')];"+
+      "checks.forEach(x=>{const on=cfg.tables.includes(Number(x.value));if(x.checked!==on){x.checked=on;x.dispatchEvent(new Event('change',{bubbles:true}));}});"+
+      "const m=document.getElementById('modeSelect');if(m){m.value=cfg.mode;m.dispatchEvent(new Event('change',{bubbles:true}));}"
+    );
+  });
+})();
+</script>
 </body>
 </html>
