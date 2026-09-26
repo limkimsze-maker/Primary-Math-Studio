@@ -23,7 +23,7 @@
     }
   
     /* Universal classroom annotation toolbar */
-    #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none}
+    #annotationCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:99980;pointer-events:none;touch-action:none}.annotation-drawing #annotationCanvas{pointer-events:auto;cursor:crosshair}
     .annotation-toolbar{position:fixed;z-index:99990;top:78px;right:8px;max-width:min(560px,94vw);border:1px solid #bfcdbf;border-radius:11px;background:#fffdf9f2;box-shadow:0 8px 28px #183c3530;backdrop-filter:blur(8px);font:12px/1.2 Arial,Helvetica,sans-serif;color:#183c35;user-select:none}
     .annotation-toolbar.collapsed{width:38px;height:38px;overflow:hidden;border-radius:12px}
     .annotation-toolbar.collapsed .annotation-head{height:38px;padding:0;justify-content:center}
@@ -139,7 +139,16 @@
       annotationCanvas.style.width=innerWidth+'px';annotationCanvas.style.height=innerHeight+'px';
       annotationCtx.setTransform(annotationDpr,0,0,annotationDpr,0,0);annotationRender();
     }
-    function annotationPathPoints(ctx,points){if(!points?.length)return;ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);}
+    function annotationPathPoints(ctx,points){
+      if(!points?.length)return;
+      ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);
+      if(points.length===1){ctx.lineTo(points[0].x+.01,points[0].y+.01);return;}
+      for(let i=1;i<points.length-1;i++){
+        const p=points[i],n=points[i+1],mx=(p.x+n.x)/2,my=(p.y+n.y)/2;
+        ctx.quadraticCurveTo(p.x,p.y,mx,my);
+      }
+      const last=points[points.length-1];ctx.lineTo(last.x,last.y);
+    }
     function annotationDrawArrow(ctx,a,b,size){
       const ang=Math.atan2(b.y-a.y,b.x-a.x),head=Math.max(10,size*3.2);
       ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-head*Math.cos(ang-Math.PI/6),b.y-head*Math.sin(ang-Math.PI/6));ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-head*Math.cos(ang+Math.PI/6),b.y-head*Math.sin(ang+Math.PI/6));ctx.stroke();
@@ -169,6 +178,13 @@
       const pad=(o.size||4)+5;return {l:Math.min(o.x1,o.x2)-pad,r:Math.max(o.x1,o.x2)+pad,t:Math.min(o.y1,o.y2)-pad,b:Math.max(o.y1,o.y2)+pad};
     }
     function annotationHit(o,x,y,r=10){const b=annotationBounds(o);return x>=b.l-r&&x<=b.r+r&&y>=b.t-r&&y<=b.b+r;}
+    function annotationSetTool(tool){
+      annotationTool=tool;
+      document.body.classList.toggle('annotation-drawing',tool!=='pointer');
+      annotationCanvas.style.pointerEvents=tool==='pointer'?'none':'auto';
+      annotationCanvas.style.touchAction=tool==='pointer'?'auto':'none';
+      document.querySelectorAll('[data-annotation-tool]').forEach(b=>b.classList.toggle('active',b.dataset.annotationTool===tool));
+    }
     function annotationInteractive(target,doc){
       if(!target||target.nodeType!==1)return false;
       if(target.closest?.('button,input,select,textarea,a,[contenteditable="true"],[draggable="true"],[role="button"],[role="slider"],[role="checkbox"],[role="radio"],[role="switch"],[role="textbox"],canvas,.draggable,.drag-handle,.counter,.token,.coin,.disc,.handle,[data-draggable],[data-drag]'))return true;
@@ -182,25 +198,36 @@
       const before=annotationItems.length;annotationItems=annotationItems.filter(o=>!annotationHit(o,x,y,Math.max(8,Number(annotationSize.value)*1.4)));return before!==annotationItems.length;
     }
     function annotationBegin(e,doc){
-      if(annotationTool==='pointer'||e.button>0||annotationInteractive(e.target,doc))return;
+      if(annotationTool==='pointer'||e.button>0)return;
       const p=annotationPoint(e,doc);
       if(annotationTool==='text'){
         e.preventDefault();e.stopPropagation();const value=window.prompt('Annotation text:');if(!value)return;annotationSnapshot();annotationItems.push({tool:'text',colour:annotationColour,size:Number(annotationSize.value),textSize:Number(annotationTextSize.value),text:value,x1:p.x,y1:p.y});annotationSave();annotationSetButtons();annotationRender();return;
       }
       e.preventDefault();e.stopPropagation();
+      try{e.target.setPointerCapture?.(e.pointerId);}catch(err){}
       if(annotationTool==='eraser'){annotationEraseSnapshot=annotationClone(annotationItems);annotationRemoveAt(p.x,p.y);annotationRender();return;}
       const base={tool:annotationTool,colour:annotationColour,size:Number(annotationSize.value),x1:p.x,y1:p.y,x2:p.x,y2:p.y};
       if(annotationTool==='pen'||annotationTool==='highlighter')base.points=[p];
       annotationDrawing=base;annotationRender();
     }
     function annotationMove(e,doc){
-      const p=annotationPoint(e,doc);
+      if(annotationTool==='pointer')return;
+      const samples=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
       if(annotationTool==='eraser'&&annotationEraseSnapshot){
-        e.preventDefault();e.stopPropagation();if(annotationRemoveAt(p.x,p.y))annotationRender();return;
+        e.preventDefault();e.stopPropagation();
+        for(const sample of samples){const p=annotationPoint(sample,doc);annotationRemoveAt(p.x,p.y);}
+        annotationRender();return;
       }
       if(!annotationDrawing)return;e.preventDefault();e.stopPropagation();
-      if(annotationDrawing.points){const last=annotationDrawing.points[annotationDrawing.points.length-1];if(Math.hypot(p.x-last.x,p.y-last.y)>1.5)annotationDrawing.points.push(p);}
-      else{annotationDrawing.x2=p.x;annotationDrawing.y2=p.y;}annotationRender();
+      if(annotationDrawing.points){
+        for(const sample of samples){
+          const p=annotationPoint(sample,doc),last=annotationDrawing.points[annotationDrawing.points.length-1];
+          if(Math.hypot(p.x-last.x,p.y-last.y)>.65)annotationDrawing.points.push(p);
+        }
+      }else{
+        const p=annotationPoint(samples[samples.length-1]||e,doc);annotationDrawing.x2=p.x;annotationDrawing.y2=p.y;
+      }
+      annotationRender();
     }
     function annotationEnd(e,doc){
       if(annotationTool==='eraser'&&annotationEraseSnapshot){
@@ -219,15 +246,19 @@
     }
     function annotationAttachDocument(doc){
       if(!doc||doc.__mathAnnotationAttached)return;doc.__mathAnnotationAttached=true;
-      doc.addEventListener('pointerdown',e=>annotationBegin(e,doc),true);
-      doc.addEventListener('pointermove',e=>annotationMove(e,doc),{capture:true,passive:false});
-      doc.addEventListener('pointerup',e=>annotationEnd(e,doc),true);
-      doc.addEventListener('pointercancel',e=>annotationEnd(e,doc),true);
+      // The parent annotation canvas captures input in drawing mode.
+      // Frame listeners are retained only as a compatibility fallback.
+      doc.addEventListener('pointerdown',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationBegin(e,doc);},true);
+      doc.addEventListener('pointermove',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationMove(e,doc);},{capture:true,passive:false});
+      doc.addEventListener('pointerup',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationEnd(e,doc);},true);
+      doc.addEventListener('pointercancel',e=>{if(annotationCanvas.style.pointerEvents!=='auto')annotationEnd(e,doc);},true);
     }
+    annotationCanvas.addEventListener('pointerdown',e=>annotationBegin(e,document),{passive:false});
+    annotationCanvas.addEventListener('pointermove',e=>annotationMove(e,document),{passive:false});
+    annotationCanvas.addEventListener('pointerup',e=>annotationEnd(e,document),{passive:false});
+    annotationCanvas.addEventListener('pointercancel',e=>annotationEnd(e,document),{passive:false});
     function annotationAttachFrame(){try{annotationAttachDocument(frame.contentDocument);}catch(e){}}
-    document.querySelectorAll('[data-annotation-tool]').forEach(btn=>btn.addEventListener('click',()=>{
-      annotationTool=btn.dataset.annotationTool;document.querySelectorAll('[data-annotation-tool]').forEach(b=>b.classList.toggle('active',b===btn));
-    }));
+    document.querySelectorAll('[data-annotation-tool]').forEach(btn=>btn.addEventListener('click',()=>annotationSetTool(btn.dataset.annotationTool)));
     document.querySelectorAll('.annotation-colour').forEach(btn=>btn.addEventListener('click',()=>{
       annotationColour=btn.dataset.colour;document.querySelectorAll('.annotation-colour').forEach(b=>b.classList.toggle('active',b===btn));
     }));
@@ -246,7 +277,7 @@
       const st=JSON.parse(localStorage.getItem(annotationToolbarKey)||'null');
       if(st){annotationToolbar.classList.toggle('collapsed',st.collapsed!==false);annotationCollapse.textContent=st.collapsed===false?'−':'✎';if(st.left)annotationToolbar.style.left=st.left;if(st.top)annotationToolbar.style.top=st.top;if(st.left)annotationToolbar.style.right='auto';}
     }catch(e){}
-    annotationSetButtons();annotationResize();window.addEventListener('resize',annotationResize);
+    annotationSetTool(annotationTool);annotationSetButtons();annotationResize();window.addEventListener('resize',annotationResize);
     frame.addEventListener('load',annotationAttachFrame);
 
     const compareActivities={
