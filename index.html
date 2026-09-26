@@ -38,6 +38,7 @@
     .annotation-tool.active{background:#183c35;color:#fff;border-color:#183c35;box-shadow:0 0 0 2px #efc66d88}
     .annotation-clear{color:#9b2c2c}
     body{padding-top:46px!important}
+    body>.studio{height:calc(100dvh - 46px)!important;min-height:0!important}
     #annotationCanvas{top:46px!important;height:calc(100vh - 46px)!important}
     @media(max-width:700px){
       .annotation-toolbar{height:48px}
@@ -45,6 +46,15 @@
       .annotation-tool,.annotation-action{height:34px;min-width:34px;padding:0 7px}
       .annotation-select{height:34px;font-size:12px}
       body{padding-top:48px!important}
+      body>.studio{height:calc(100dvh - 48px)!important;min-height:0!important}
+      body>.studio.presentation,
+      body>.studio.presentation .studio-body,
+      body>.studio.presentation .workspace,
+      body>.studio.presentation .frame-wrap,
+      body>.studio.presentation .engine-frame{
+        height:calc(100dvh - 48px)!important;
+        min-height:calc(100dvh - 48px)!important;
+      }
       #annotationCanvas{top:48px!important;height:calc(100vh - 48px)!important}
     }
 
